@@ -31,7 +31,9 @@
 				</i>
 				<ul role="menu" class="dropdown-menu pull-right">
 					<li>
-						<a target="_blanck" href="#">Video 1</a>
+						<a target="_blanck" href="https://youtu.be/luHxmyKi9lo">Primeros pasos</a>
+						<a target="_blanck" href="https://youtu.be/SuMPsPGTG_U">¿Cómo configurar el correo del conjunto?</a>
+						<a target="_blanck" href="https://youtu.be/QlkRdLoz8k4">Módulo administrativo</a>
 					</li>
 				</ul>
 			</div>
