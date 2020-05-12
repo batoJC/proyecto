@@ -35,7 +35,8 @@
                                     </i>
                                     <ul role="menu" class="dropdown-menu pull-right">
                                         <li>
-                                            <a target="_blanck" href="#">Video 1</a>
+                                            <a target="_blanck" href="https://youtu.be/JgTPeQ7qJOQ">¿Cómo iniciar sesión?</a>
+                                            <a target="_blanck" href="https://youtu.be/j3t-rDq2bK0">¿Cómo recuperar contraseña?</a>
                                         </li>
                                     </ul>
                                 </div>
