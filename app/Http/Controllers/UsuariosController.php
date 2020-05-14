@@ -244,7 +244,7 @@ class UsuariosController extends Controller
                             mb_strtoupper($value->tipo_de_documento, 'UTF-8')
                         )->first();
                         if (!$tipo) {
-                            echo "si" . mb_strtoupper($value->tipo_de_documento, 'UTF-8');
+                            // echo "si" . mb_strtoupper($value->tipo_de_documento, 'UTF-8');
                             $tipo = new Tipo_Documento();
                             $tipo->tipo = mb_strtoupper($value->tipo_de_documento, 'UTF-8');
                             $tipo->save();
@@ -257,7 +257,7 @@ class UsuariosController extends Controller
                         $user->password          = Hash::make($value->password);
                         $user->telefono          = $value->telefono;
                         $user->celular           = $value->celular;
-                        $user->id_rol            = ($value->rol == "Porteria") ? 4 : 3;
+                        $user->id_rol            = ($value->rol == "Portero") ? 4 : 3;
                         $user->fecha_nacimiento  = $value->fecha_de_nacimiento;
                         $user->genero            = $value->genero;
                         $user->id_conjunto       = session('conjunto');

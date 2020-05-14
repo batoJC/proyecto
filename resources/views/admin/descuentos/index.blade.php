@@ -10,9 +10,6 @@
 				<li>
 					<a href="{{ url('admin') }}">Inicio</a>
 				</li>
-				<li>
-					<a href="{{ url('descuentos') }}">Descuentos</a>
-				</li>
 				  <li>Descuentos</li>
 			</ul>
 		</div>

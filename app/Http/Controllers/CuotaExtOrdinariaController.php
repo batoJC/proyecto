@@ -42,7 +42,8 @@ class CuotaExtOrdinariaController extends Controller
                 'ejecucion_presupuestal_total.id'
             )->where([
                 ['ejecucion_presupuestal_total.tipo', 'ingreso'],
-                ['ejecucion_presupuestal_total.conjunto_id', session('conjunto')]
+                ['ejecucion_presupuestal_total.conjunto_id', session('conjunto')],
+                ['ejecucion_presupuestal_total.vigente', true]
             ])->select('ejecucion_presupuestal_individual.*')
                 ->get();
             $unidades = Unidad::join('tipo_unidad', 'unidads.tipo_unidad_id', '=', 'tipo_unidad.id')
@@ -179,7 +180,7 @@ class CuotaExtOrdinariaController extends Controller
                         if ($unidad != "") {
                             $cuota_ext_ord->unidades()->attach(
                                 Unidad::find($unidad),
-                                ['valor' => round($valor/100)*100]
+                                ['valor' => round($request->valor/100)*100]
                             );
                         }
                     }
@@ -205,7 +206,7 @@ class CuotaExtOrdinariaController extends Controller
             }
             return array('res' => 1, 'msg' => 'Cuotas extraordinarias registradas correctamente.');
         } catch (\Throwable $th) {
-            return array('res' => 0, 'msg' => 'ocurrió un error al registrar las cuotas extraordinarias.');
+            return array('res' => 0, 'msg' => 'ocurrió un error al registrar las cuotas extraordinarias.','e'=>$th);
         }
     }
 

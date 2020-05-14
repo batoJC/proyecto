@@ -141,18 +141,22 @@ class SaldoInicialController extends Controller
 
 
         return Datatables::of($saldos)
-            ->addColumn('vigencia_inicio',function($saldo){
-                return date('d-m-Y',strtotime($saldo->vigencia_inicio));
-            })->addColumn('vigencia_fin',function($saldo){
-                return date('d-m-Y',strtotime($saldo->vigencia_fin));
-            })->addColumn('unidad',function($saldo){
-                return $saldo->unidad->tipo->nombre .' '. $saldo->unidad->numero_letra;
-            })->addColumn('valor',function($saldo){
-                return '$ '.number_format($saldo->valor);
-            })->addColumn('interes',function($saldo){
-                return ($saldo->interes)? 'Aplica' : 'No aplica';
+            ->addColumn('vigencia_inicio', function ($saldo) {
+                return date('d-m-Y', strtotime($saldo->vigencia_inicio));
+            })->addColumn('vigencia_fin', function ($saldo) {
+                if ($saldo->vigencia_fin) {
+                    return date('d-m-Y', strtotime($saldo->vigencia_fin));
+                } else {
+                    return 'No aplica';
+                }
+            })->addColumn('unidad', function ($saldo) {
+                return $saldo->unidad->tipo->nombre . ' ' . $saldo->unidad->numero_letra;
+            })->addColumn('valor', function ($saldo) {
+                return '$ ' . number_format($saldo->valor);
+            })->addColumn('interes', function ($saldo) {
+                return ($saldo->interes) ? 'Aplica' : 'No aplica';
             })->addColumn('action', function ($saldo) {
-                return '<button onclick="deleteData('.$saldo->id.')" class="btn btn-default">
+                return '<button data-toggle="tooltip" data-placement="top" title="Eliminar" onclick="deleteData(' . $saldo->id . ')" class="btn btn-default">
                             <i class="fa fa-trash"></i>
                         </button>';
             })->make(true);

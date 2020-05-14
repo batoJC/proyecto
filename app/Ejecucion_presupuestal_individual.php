@@ -28,10 +28,10 @@ class Ejecucion_presupuestal_individual extends Model
 
     public function porcentaje_ejecutado()
     {
-        if($this->total == 0){
-            return '$ '.number_format($this->totalEjecuado());
-        }else{
-            return round(($this->totalEjecuado() * 100) / $this->total,2).' %';
+        if ($this->total == 0) {
+            return '$ ' . number_format($this->totalEjecuado());
+        } else {
+            return round(($this->totalEjecuado() * 100) / $this->total, 2) . ' %';
         }
     }
 
@@ -50,13 +50,16 @@ class Ejecucion_presupuestal_individual extends Model
             ])->sum(DB::raw("carteras.valor"));
             return $total;
         }
-
-
     }
 
     public function porcentaje_total()
     {
         $total = ($this->ejecucion_presupuestal_total->valor_total() == 0) ? 1 : $this->ejecucion_presupuestal_total->valor_total();
-        return round(($this->total * 100) / $total, 2);
+        if ($total) {
+
+            return round(($this->total * 100) / $total, 2);
+        } else {
+            return 0;
+        }
     }
 }

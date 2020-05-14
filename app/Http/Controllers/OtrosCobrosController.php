@@ -38,6 +38,8 @@ class OtrosCobrosController extends Controller
                 'ejecucion_presupuestal_total.id'
             )
                 ->where('ejecucion_presupuestal_total.tipo', 'ingreso')
+                ->where('ejecucion_presupuestal_total.conjunto_id', session('conjunto'))
+                ->where('ejecucion_presupuestal_total.vigente', true)
                 ->select('ejecucion_presupuestal_individual.*')
                 ->get();
             $unidades = Unidad::join('tipo_unidad', 'unidads.tipo_unidad_id', '=', 'tipo_unidad.id')

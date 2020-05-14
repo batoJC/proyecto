@@ -60,15 +60,15 @@
 					<br>
         			{{-- Cada campo --}}
 					<div class="row">
-						<div class="col-md-4 error-validate-3">
+						<div class="col-md-4">
 							<i class="fa fa-dollar"></i>
 							<label class="margin-top">
 								Valor
 							</label>
 						</div>
 						<div class="col-md-8">
-							<input type="text" class="form-control field-3" onchange="changeValor(this,'total');" name="total_aux" placeholder="Ejemplo: 800,000" autocomplete="off" id="total_aux">
-							<input type="hidden" class="form-control field-3" name="total" placeholder="Ejemplo: 800,000" autocomplete="off" id="total">
+							<input type="text" class="form-control" onchange="changeValor(this,'total');" name="total_aux" placeholder="Ejemplo: 800,000" autocomplete="off" id="total_aux">
+							<input type="hidden" class="form-control" value="0" name="total" placeholder="Ejemplo: 800,000" autocomplete="off" id="total">
 						</div>
 					</div>
 					<br>

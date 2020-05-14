@@ -104,8 +104,7 @@
 								<option value="">Seleccione...</option>
 								@foreach($presupuestos_ingresos as $presupuesto)
 									<option value="{{ $presupuesto->id }}">
-										{{											$presupuesto->Tipo_ejecucion_pre->tipo
-										}}</option>
+										{{$presupuesto->Tipo_ejecucion_pre->tipo}}</option>
 								@endforeach
 							</select>
 						</div>

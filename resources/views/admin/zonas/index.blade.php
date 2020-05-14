@@ -115,7 +115,7 @@
 
 		function showForm(id){
 			$('#modal-form form')[0].reset();
-			$('.modal-title').text('Zonas Comun');
+			$('.modal-title').text('Zona social');
 			$('#send_form').hide();
 
 			$.ajax({
@@ -126,7 +126,9 @@
 					$('#modal-form').modal('show');
 					// Datos
 					$('#nombre').val(data.nombre);
-					$('#valor_uso').val(data.valor_uso);
+					$('#valor_uso_aux').val(data.valor_uso);
+					$('#numero').val(data.numero);
+					$('#tipo').val(data.tipo);
 				},
 				error: function(){
 					swal("Ocurrió un error", "Lo sentimos, Esta zona social no existe", "error");
