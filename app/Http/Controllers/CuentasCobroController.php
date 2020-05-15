@@ -84,7 +84,6 @@ class CuentasCobroController extends Controller
         foreach ($propietarios as $propietario) {
             $data = $propietario->cuentas();
             if (count($data) > 0) {
-                $consecutivo->numero++;
                 $tipo_cobro = 'normal';
                 $mayor = 0;
 
@@ -108,6 +107,7 @@ class CuentasCobroController extends Controller
                     'cuentas' => $data,
                     'tipo_cobro' => $tipo_cobro
                 );
+                $consecutivo->numero++;
             }
         }
 
@@ -185,8 +185,10 @@ class CuentasCobroController extends Controller
                 $auxCuentaCobro = new CuentaCobro();
                 $auxCuentaCobro->consecutivo = $consecutivo->prefijo . '-' . $consecutivo->numero;
                 $auxCuentaCobro->fecha = date('Y-m-d');
-                $auxCuentaCobro->fecha_pronto_pago = $request->fecha_pronto_pago;
-                $auxCuentaCobro->descuento = $request->descuento;
+                if($request->pronto_pago){
+                    $auxCuentaCobro->fecha_pronto_pago = $request->fecha_pronto_pago;
+                    $auxCuentaCobro->descuento = $request->descuento;
+                }
                 $auxCuentaCobro->propietario_id = $cuenta['propietario']->id;
                 $auxCuentaCobro->tipo_cobro = $cuenta['tipo_cobro'];
                 $auxCuentaCobro->saldo_favor = User::find($cuenta['propietario']->id)->saldo();
@@ -220,7 +222,7 @@ class CuentasCobroController extends Controller
             foreach ($cuentasGeneradas as $cuenta) {
                 $cuenta->delete();
             }
-            return array('res' => 0, 'msg' => 'Ócurrio un error al generar las cuentas de cobro.');
+            return array('res' => 0, 'msg' => 'Ócurrio un error al generar las cuentas de cobro.','e'=>$th);
         }
     }
 
@@ -237,8 +239,10 @@ class CuentasCobroController extends Controller
             $auxCuentaCobro = new CuentaCobro();
             $auxCuentaCobro->consecutivo = $consecutivo->prefijo . '-' . $consecutivo->numero;
             $auxCuentaCobro->fecha = date('Y-m-d');
-            $auxCuentaCobro->fecha_pronto_pago = $request->fecha_pronto_pago;
-            $auxCuentaCobro->descuento = $request->descuento;
+            if($request->pronto_pago){
+                $auxCuentaCobro->fecha_pronto_pago = $request->fecha_pronto_pago;
+                $auxCuentaCobro->descuento = $request->descuento;
+            }
             $auxCuentaCobro->tipo_cobro = $cuenta['tipo_cobro'];
             $auxCuentaCobro->propietario_id = $cuenta['propietario']->id;
             $auxCuentaCobro->saldo_favor = User::find($cuenta['propietario']->id)->saldo();

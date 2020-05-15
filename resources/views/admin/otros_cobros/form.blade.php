@@ -32,12 +32,12 @@
 					<div class="row">
 						<div class="col-md-4">
 							<i class="fa fa-font"></i>
-							<label class="margin-top validate-label-2">
+							<label class="margin-top validate-label-3">
 								Descripción
 							</label>
 						</div>
 						<div class="col-md-8">
-							<textarea name="descripcion" id="descripcion" cols="30" rows="5" placeholder="Ejemplo: Se acordó esta multa por la situacion de la empresa" class="form-control validate-input-2" autocomplete="off"></textarea>
+							<textarea name="descripcion" id="descripcion" cols="30" rows="5" placeholder="Ejemplo: Se acordó esta multa por la situacion de la empresa" class="form-control validate-input-3" autocomplete="off"></textarea>
 						</div>
 					</div>
 					<br>

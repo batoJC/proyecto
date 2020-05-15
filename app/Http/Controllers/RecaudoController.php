@@ -267,10 +267,7 @@ class RecaudoController extends Controller
 
         try {
 
-            $fecha = CuentaCobro::where([
-                ['conjunto_id', session('conjunto')],
-                ['anulada', false]
-            ])->orderBy('id', 'DESC')->first()->fecha;
+            $fecha = $cuenta->fecha;
 
             if ((date_diff(date_create($fecha), date_create($request->fecha))->format('%R%a') < 0)) {
                 return array('res' => 0, 'msg' => 'La fecha seleccionada es anterior a la última generación de cuentas de cobro.');
@@ -284,6 +281,7 @@ class RecaudoController extends Controller
 
             $recaudo->consecutivo = $consecutivo->prefijo . '-' . $consecutivo->numero;
             $recaudo->tipo_de_pago = $request->tipo_de_pago;
+            $recaudo->pronto_pago = true;
             $recaudo->propietario_id = $request->propietario;
             $recaudo->saldo_favor = 0;
             $recaudo->valor = $request->valor;
@@ -371,6 +369,7 @@ class RecaudoController extends Controller
 
                 $consecutivo->numero++;
                 $consecutivo->save();
+                $recaudo->save();
                 $recaudo->saldo_favor = User::find($request->propietario)->saldo();
                 $recaudo->save();
 

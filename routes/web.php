@@ -289,6 +289,9 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::post('restablecerPagosRecaudo/{recaudo}', 'anulacionController@restablecerPagosRecaudo');
 	// Route::post('deshacerAnulacionCuentaCobro/{cuenta}','anulacionController@deshacerAnulacionCuentaCobro');
 	// Route::post('deshacerAnulacionRecaudo/{recaudo}','anulacionController@deshacerAnulacionRecaudo');
+	//anulación pronto pago
+	Route::post('addProntoPago','anulacionController@addProntoPago');
+	Route::post('reemplazarProntoPago/{recaudoA}','anulacionController@reemplazarProntoPago');
 
 	//saldos iniciales
 	Route::resource('saldos_iniciales', 'SaldoInicialController');

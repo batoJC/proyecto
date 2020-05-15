@@ -19,7 +19,9 @@
     <h1 class="text-center">Cuenta de cobros</h1>
     <h4><b>Consecutivo: </b>{{ $cuenta->consecutivo }}</h4>
     <h4><b>Fecha: </b>{{ date('d-m-Y',strtotime($cuenta->fecha)) }}</h4>
-    <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($cuenta->fecha_pronto_pago)) }}</h4>
+    @if ($cuenta->fecha_pronto_pago != null and $cuenta->interes() == 0)
+        <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($cuenta->fecha_pronto_pago)) }}</h4>
+    @endif
     <h4><b>Nombre: </b>{{ $cuenta->propietario->nombre_completo }} - {{ $cuenta->propietario->numero_cedula }}</h4>
     <br>
     <h3 class="text-center">Detalles</h3>
@@ -68,9 +70,14 @@
         </tbody>
     </table>
     <h3><b>Total a pagar:  </b><span id="total_pagar"> $ {{ number_format($total) }} </span> <i class="fa fa-credit-card" data-toggle="tooltip" onclick="pagarTodas()" data-placement="top" title="Pagar todas las cuentas"></i></h3>
-    {{-- @if ($cuenta->interes() == 0 && (date_diff(date_create(date('Y-m-d')), date_create($cuenta->fecha_pronto_pago))->format('%R%a') == 0))
-        <h3><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($cuenta->descuento/100))) }} <i class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Pagar todas las cuentas con descuento por pronto pago"></i></h3>
-    @endif --}}
+    @if ($cuenta->interes() == 0 && (date_diff(date_create(date($fecha)), date_create($cuenta->fecha_pronto_pago))->format('%R%a') >= 0))
+        <h3><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($cuenta->descuento/100))) }} <i 
+                onclick="prontoPago({{ ($nueva)? 'true' : 'false' }})"
+                class="fa fa-credit-card" 
+                data-toggle="tooltip" 
+                data-placement="top" 
+                title="Pagar todas las cuentas con descuento por pronto pago"></i></h3>
+    @endif
     @if ($cuenta->propietario->saldo($fecha) > 0)
     <h3><b>Saldo a favor:  </b>$ {{ number_format($cuenta->propietario->saldo($fecha)) }}</h3>
 @endif
@@ -120,6 +127,62 @@
 
 <script>
 
+    let datos;
+
+    function prontoPago(tipo){
+
+        if(motivo_recaudo.value == ''){
+            swal('Error!','Debes de ingresar un motivo de anulación','info').then(res=>{
+                motivo_recaudo.focus();
+            });
+            return;
+        }
+
+        swal({
+                title : 'Avertencia!',
+                text:'¿Seguro de querer guardar este pago con el porcentaje de descuento?',
+                icon:'warning',
+                buttons:true
+            }).then(res=>{
+                if(res){
+                    let url;
+                    datos = new FormData(data_recaudo);
+                    if({{ ($nueva)? 'true': 'false' }}){
+                        url = "{{url('addProntoPago')}}"
+                    }else{
+                        url = "{{url('reemplazarProntoPago')}}/"+recaudo.id
+                        datos.append('motivo_recaudo',motivo_recaudo.value);
+                    }
+                    datos.append('cuenta',cuenta);
+                    datos.append('_token',csrf_token);
+
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: datos,
+                        dataType: "json",
+                        contentType: false,
+                        processData: false,
+                        success: (res)=>{
+                            respuesta = res;
+                            if (res.res) {
+                                swal('Logrado!',res.msg,'success').then(res=>{
+                                    var win = window.open('{{ url('pdfPago') }}/'+respuesta.pago.id, '_blank');
+                                    win.focus();
+                                    $('.save')[0].disabled = true;
+                                });
+                            }else{
+                                swal('Error!',res.msg,'error');
+                            }
+                        }
+                    }).fail((res)=>{
+                        swal('Error!','Ocurrió un error en el servidor.','error');
+                    });
+                }
+            });
+    }
+
+
     function guardarR(){
 
         $('.save')[0].disabled = true;
@@ -130,7 +193,7 @@
             pagosRealizados += e+';';
         });
 
-        let datos = new FormData(data_recaudo);
+        datos = new FormData(data_recaudo);
         datos.append('pagos',pagosRealizados.substring(0,pagosRealizados.length-1));
         datos.append('cuenta',cuenta);
         datos.append('fecha',fecha_recaudo.value);
@@ -163,7 +226,6 @@
                 $('.save')[0].disabled = false;
             }
         }).fail((res)=>{
-            console.log(res);
             $('.save')[0].disabled = false;
         });
     }

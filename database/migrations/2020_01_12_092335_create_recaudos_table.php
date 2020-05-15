@@ -16,6 +16,7 @@ class CreateRecaudosTable extends Migration
         Schema::create('recaudos', function (Blueprint $table) {
             $table->increments('id');
             $table->date('fecha');
+            $table->boolean('pronto_pago')->default(false);
             $table->string('consecutivo');
             $table->decimal('valor', 12, 2);
             $table->decimal('saldo_favor', 12, 2);

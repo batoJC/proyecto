@@ -6,7 +6,9 @@
     @endif</h1>
     <h4><b>Consecutivo: </b>{{ $cuenta['consecutivo'] }}</h4>
     <h4><b>Fecha: </b>{{ date('d-m-Y',strtotime($datos['fecha'])) }}</h4>
-    <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($datos['fecha_pronto_pago'])) }}</h4>
+    @if ($cuenta['propietario']->interes() == 0 and $datos['fecha_pronto_pago'] != null)
+        <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($datos['fecha_pronto_pago'])) }}</h4>
+    @endif
     <h4><b>Nombre: </b>{{ $cuenta['propietario']->nombre_completo }} - {{ $cuenta['propietario']->numero_cedula }}</h4>
     <br>
     <h3 class="text-center">Detalles</h3>
@@ -41,7 +43,7 @@
         </tbody>
     </table>
     <h3><b>Total a pagar:  </b>$ {{ number_format($total) }}</h3>
-    @if ($cuenta['propietario']->interes() == 0)
+    @if ($cuenta['propietario']->interes() == 0 and $datos['fecha_pronto_pago'] != null)
         <h3><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($datos['descuento']/100))) }}</h3>
     @endif
     @if ($cuenta['propietario']->saldo()>0)

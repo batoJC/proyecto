@@ -31,6 +31,7 @@
     <div class="col-12 text-center">
         <button onclick="guardar();" class="btn btn-success">Guardar</button>
     <form method="GET" action="{{ url('guardarDescargarCuentasCobro') }}">
+        <input id="pronto_pago_form" name="pronto_pago" value="" type="hidden">
         <input id="consecutivo_form" name="consecutivo" value="" type="hidden">
         <input id="fecha_pronto_pago_form" name="fecha_pronto_pago" value="" type="hidden">
         <input id="descuento_form" name="descuento" value="" type="hidden">
@@ -146,6 +147,7 @@
                 data: {
                     _token : csrf_token,
                     consecutivo : consecutivo.value,
+                    pronto_pago : pronto_pago.checked,
                     fecha_pronto_pago : fecha_pronto_pago.value,
                     descuento : descuento.value
                 },
@@ -158,7 +160,7 @@
                     }else{
                         swal('Error!',response.msg,'error');
                     }
-                    $('#loading').fadeIn(800);
+                    $('#loading').fadeOut(800);
                 }
             });
         });
@@ -166,6 +168,7 @@
 
     function loadData(){
         consecutivo_form.value = consecutivo.value;
+        pronto_pago_form.value = pronto_pago.checked;
         fecha_pronto_pago_form.value = fecha_pronto_pago.value;
         descuento_form.value = descuento.value;
         return true;

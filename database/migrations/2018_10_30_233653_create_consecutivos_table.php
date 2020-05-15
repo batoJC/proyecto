@@ -24,7 +24,7 @@ class CreateConsecutivosTable extends Migration
             $table->foreign('conjunto_id')->references('id')->on('conjuntos')->onDelete('cascade');
 
             //único consecutivo
-            $table->unique(['prefijo', 'numero'],'consecutivo_unico');
+            $table->unique(['prefijo', 'numero','conjunto_id'],'consecutivo_unico');
 
             $table->timestamps();
         });

@@ -104,8 +104,13 @@
     </table>
     <br>
     <h3 class="text-left"><b>Total pagado:  </b>$ {{ number_format($total) }}</h3>
-    @if (($recaudo->cuentaCobro->valor() - $total) >= 0)
+    {{-- @if (($recaudo->cuentaCobro->valor() - $total) >= 0)
         <h3 class="text-left"><b>Saldo después de este pago:  </b>$ {{ number_format(($recaudo->cuentaCobro->valor() + $recaudo->cuentaCobro->valor()) - $total) }}</h3>
+    @else
+        <h3 class="text-left"><b>Saldo a favor después de este pago:  </b>$ {{ number_format($recaudo->saldo_favor) }}</h3>
+    @endif --}}
+    @if (($recaudo->cuentaCobro->valor() - $total) >= 0 && !$recaudo->pronto_pago)
+        <h3 class="text-left"><b>Saldo después de este pago:  </b>$ {{ number_format(($recaudo->cuentaCobro->valor() + $recaudo->cuentaCobro->interes()) - $total) }}</h3>
     @else
         <h3 class="text-left"><b>Saldo a favor después de este pago:  </b>$ {{ number_format($recaudo->saldo_favor) }}</h3>
     @endif

@@ -19,7 +19,7 @@ class CreateCuentaCobrosTable extends Migration
             $table->decimal('saldo_favor', 12, 2);
             $table->date('fecha');
             $table->enum('tipo_cobro',['normal','pre-juridico','juridico'])->default('normal');
-            $table->date('fecha_pronto_pago');
+            $table->date('fecha_pronto_pago')->nullable();
             $table->boolean('anulada')->default(false);
             $table->text('motivo')->nullable();
             $table->date('fecha_anulado')->nullable();

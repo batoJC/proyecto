@@ -287,7 +287,8 @@ function cargarCuentas(){
             type: "POST",
             url: "{{url('anularLoadRecaudo')}}/"+recaudo.id,
             data: {
-                _token : csrf_token
+                _token : csrf_token,
+                fecha_recaudo : fecha_recaudo.value
             },
             dataType: "html",
             success: function (response) {

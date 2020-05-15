@@ -77,7 +77,9 @@
     @endif</h1>
     <h4><b>Consecutivo: </b>{{ $cuenta->consecutivo }}</h4>
     <h4><b>Fecha: </b>{{ date('d-m-Y',strtotime($cuenta->fecha)) }}</h4>
-    <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($cuenta->fecha_pronto_pago ))}}</h4>
+    @if ($cuenta->interes() == 0 and $cuenta->fecha_pronto_pago != null)
+        <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($cuenta->fecha_pronto_pago ))}}</h4>
+    @endif
     <h4><b>Nombre: </b>{{ $cuenta->propietario->nombre_completo }} - {{ $cuenta->propietario->numero_cedula }}</h4>
     <br>
     <h3 class="text-center">Detalles</h3>
@@ -113,9 +115,10 @@
             @endforeach
         </tbody>
     </table>
+    <br>
     <h3 class="text-left"><b>Total a pagar:  </b>$ {{ number_format($total) }}</h3>
-    @if ($cuenta->propietario->interes() == 0)
-    <h3 class="text-left"><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($cuenta->descuento/100))) }}</h3>
+    @if ($cuenta->interes() == 0 and $cuenta->fecha_pronto_pago != null)
+        <h3 class="text-left"><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($cuenta->descuento/100))) }}</h3>
     @endif
     @if ($cuenta->saldo_favor > 0)
         <h3 class="text-left"><b>Saldo a favor:  </b>$ {{ number_format($cuenta->saldo_favor) }}</h3>

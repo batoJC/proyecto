@@ -23,7 +23,9 @@
     @endif</h1>
     <h4><b>Consecutivo: </b>{{ $cuenta->consecutivo }}</h4>
     <h4><b>Fecha: </b>{{ date('d-m-Y',strtotime($cuenta->fecha)) }}</h4>
-    <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($cuenta->fecha_pronto_pago)) }}</h4>
+    @if ($cuenta->fecha_pronto_pago != null and $cuenta->interes() == 0 && (date_diff(date_create(date('Y-m-d')), date_create($cuenta->fecha_pronto_pago))->format('%R%a') >= 0))
+        <h4><b>Fecha pronto pago: </b>{{ date('d-m-Y',strtotime($cuenta->fecha_pronto_pago)) }}</h4>
+    @endif
     <h4><b>Nombre: </b>{{ $cuenta->propietario->nombre_completo }} - {{ $cuenta->propietario->numero_cedula }}</h4>
     <br>
     <h3 class="text-center">Detalles</h3>
@@ -72,12 +74,12 @@
         </tbody>
     </table>
     <h3><b>Total a pagar:  </b><span id="total_pagar"> $ {{ number_format($total) }} </span> <i class="fa fa-credit-card" data-toggle="tooltip" onclick="pagarTodas()" data-placement="top" title="Pagar todas las cuentas"></i></h3>
-    @if ($cuenta->interes() == 0 && (date_diff(date_create(date('Y-m-d')), date_create($cuenta->fecha_pronto_pago))->format('%R%a') >= 0))
+    @if ($cuenta->fecha_pronto_pago != null and $cuenta->interes() == 0 && (date_diff(date_create(date('Y-m-d')), date_create($cuenta->fecha_pronto_pago))->format('%R%a') >= 0))
         <h3><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($cuenta->descuento/100))) }} <i onclick="guardarProntoPago();" class="fa fa-credit-card" data-toggle="tooltip" data-placement="top" title="Pagar todas las cuentas con descuento por pronto pago"></i></h3>
     @endif
     @if ($cuenta->propietario->saldo() > 0)
-    <h3><b>Saldo a favor:  </b>$ {{ number_format($cuenta->propietario->saldo()) }}</h3>
-@endif
+        <h3><b>Saldo a favor:  </b>$ {{ number_format($cuenta->propietario->saldo()) }}</h3>
+    @endif
 </div>
 <br>
     <h3>Total pagado: <span id="total_pagado">$ 0</span></h3>

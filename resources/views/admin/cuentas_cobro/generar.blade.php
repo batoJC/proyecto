@@ -66,6 +66,15 @@
 					</div>
 				</div>
 				<div class="col-md-6 text-center">
+						<input onchange="showDivProntoPago(this);" onchange="" type="checkbox" name="pronto_pago" id="pronto_pago">
+						<label for="pronto_pago" class="margin-top">
+							Habilitar pronto pago
+						</label>
+				</div>
+			</div>
+			<br>
+			<div class="row hide" id="div_pronto_pago">
+				<div class="col-md-6 text-center">
 					<div class="col-md-4 text-center validate-label-2">
 						<i class="fa fa-calendar-check-o"></i>
 						<label class="margin-top">
@@ -76,17 +85,14 @@
 						<input name="fecha_pronto_pago" id="fecha_pronto_pago" type="date" class="form-control  validate-input-2">
 					</div>
 				</div>
-			</div>
-			<br>
-			<div class="row">
 				<div class="col-md-6 text-center">
-					<div class="col-md-4 text-center validate-label-3">
+					<div class="col-md-7 text-center validate-label-3">
 						<i class="">%</i>
 						<label class="margin-top">
 							Porcentaje de descuento
 						</label>
 					</div>
-					<div class="col-md-6">
+					<div class="col-md-5">
 						<input name="descuento" id="descuento" type="number" class="form-control validate-input-3">
 					</div>
 				</div>
@@ -116,7 +122,10 @@
 		// generar vista de las cuentas de cobro
 		//--------------------------------------
 		function visualizar(){
-			if(verificarFormulario('data',3)){
+
+			let campos = (pronto_pago.checked)? 3: 1;
+
+			if(verificarFormulario('data',campos)){
 				$.ajax({
 					type: "POST",
 					url: "{{ url('visualizarCuentasCobro') }}",
@@ -132,6 +141,15 @@
 						$('#data_cuentas').html(response);
 					}
 				});
+			}
+		}
+
+
+		function showDivProntoPago(check){
+			if(check.checked){
+				div_pronto_pago.classList.remove('hide');
+			}else{
+				div_pronto_pago.classList.add('hide');
 			}
 		}
 
