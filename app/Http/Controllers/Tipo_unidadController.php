@@ -161,7 +161,7 @@ class Tipo_unidadController extends Controller
                             <i class="fa fa-pencil"></i>
                         </a>
                         <a data-toggle="tooltip" data-placement="top" 
-                                    title="Eliminar onclick="deleteData('.$tipo_unidad->id.')" class="btn btn-default">
+                                    title="Eliminar" onclick="deleteData('.$tipo_unidad->id.')" class="btn btn-default">
                             <i class="fa fa-trash"></i>
                         </a>';
             })->make(true);

@@ -42,11 +42,19 @@
         </tbody>
     </table>
     <h3><b>Total a pagar:  </b>$ {{ number_format($total) }}</h3>
-    @if ($cuenta['propietario']->interes() == 0)
+    @if ($cuenta['propietario']->interes($datos['fecha']) == 0)
         <h3><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($datos['descuento']/100))) }}</h3>
     @endif
-    @if ($cuenta['propietario']->saldo()>0)
-        <h3><b>Saldo a favor:  </b>$ {{ number_format($cuenta['propietario']->saldo()) }}</h3>
+    @php
+        $descontar = 0;
+        if($recaudo){
+            if($datos['fecha'] == $recaudo->fecha){
+                $descontar = $recaudo->valor;
+            }
+        }
+    @endphp
+    @if ($cuenta['propietario']->saldo($datos['fecha']) > 0)
+        <h3><b>Saldo a favor:  </b>$ {{ number_format($cuenta['propietario']->saldo($datos['fecha'])) }}</h3>
     @endif
 </div>
 <br>

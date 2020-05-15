@@ -42,7 +42,6 @@ class anulacionController extends Controller
 
         $cuentas = CuentaCobro::where([
             ['fecha', '>=', $cuenta->fecha],
-            ['id', '>=', $cuenta->id],
             ['propietario_id', $cuenta->propietario_id],
             ['anulada', false],
         ])->get();
@@ -132,6 +131,11 @@ class anulacionController extends Controller
             );
         }
 
+        $recaudo = Recaudo::where([
+            ['anulada',false],
+            ['propietario_id',$request->propietario],
+            ['fecha', $request->fecha]
+        ])->first();
 
         $datos  = array(
             'fecha' => $request->fecha,
@@ -139,7 +143,7 @@ class anulacionController extends Controller
             'descuento' => $request->descuento,
         );
 
-        return view('admin.anular.cuenta')->with('datos', $datos)->with('cuenta', $cuentas);
+        return view('admin.anular.cuenta')->with('datos', $datos)->with('cuenta', $cuentas)->with('recaudo', $recaudo);
     }
 
     public function recaudo(Recaudo $recaudo, Request $request)
@@ -207,7 +211,7 @@ class anulacionController extends Controller
                 $auxCuentaCobro->descuento = $request->descuento;
                 $auxCuentaCobro->propietario_id = $cuentas['propietario']->id;
                 $auxCuentaCobro->tipo_cobro = $cuentas['tipo_cobro'];
-                $auxCuentaCobro->saldo_favor = $propietario->saldo();
+                $auxCuentaCobro->saldo_favor = $propietario->saldo($request->fecha);
                 $auxCuentaCobro->conjunto_id = session('conjunto');
                 if ($auxCuentaCobro->save()) {
                     $cuentaA->anulada = true;
@@ -729,7 +733,7 @@ class anulacionController extends Controller
                 $cartera = new Cartera();
                 $cartera->prefijo = $consecutivo[0];
                 $cartera->numero = $consecutivo[1];
-                $cartera->fecha = $detalle->fecha;
+                $cartera->fecha = $recaudo->fecha;
                 $cartera->valor = $detalle->valor;
                 $cartera->tipo_de_pago = $recaudo->tipo_de_pago;
                 $cartera->tipo_de_cuota = $detalle->tipo_de_cuota;

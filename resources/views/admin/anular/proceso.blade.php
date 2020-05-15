@@ -49,17 +49,26 @@
         </tbody>
     </table>
     <h3><b>Total a pagar:  </b>$ {{ number_format($total) }}</h3>
-    @if ($cuenta->propietario->interes() == 0)
+    @if ($cuenta->interes() == 0)
         <h3><b>Total a pagar con descuento:  </b>$ {{ number_format($total*(1-($cuenta->descuento/100))) }}</h3>
     @endif
-    @if ($cuenta->propietario->saldo()>0)
-        <h3><b>Saldo a favor:  </b>$ {{ number_format($cuenta->propietario->saldo()) }}</h3>
+    @php
+        $descontar = 0;
+        if($cuenta->recaudo){
+            if($cuenta->fecha == $cuenta->recaudo->fecha){
+                $descontar = $cuenta->recaudo->valor;
+            }
+        }
+    @endphp
+    @if (($cuenta->propietario->saldo($cuenta->fecha) - $descontar ) > 0)
+        <h3><b>Saldo a favor:  </b>$ {{ number_format($cuenta->propietario->saldo($cuenta->fecha) - $descontar ) }}</h3>
     @endif
 </div>
 
 @if (!$cuenta->anulada)
     <div class="row">
-        <div class="col-12 text-center"><button onclick="modificarCuenta(this)" class="btn btn-primary"><i class="fa fa-wrench"></i> Modificar cuenta de cobro</button></div>
+        <div class="col-12 text-center"><button onclick="modificarCuenta(this)" class="btn btn-primary">
+            <i class="fa fa-wrench"></i> Modificar cuenta de cobro</button></div>
     </div>    
     <div class="row" id="change_cuenta"></div>
 @endif

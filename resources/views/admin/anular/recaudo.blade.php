@@ -127,7 +127,6 @@
 
 <script>
 
-    let datos;
 
     function prontoPago(tipo){
 
@@ -146,7 +145,7 @@
             }).then(res=>{
                 if(res){
                     let url;
-                    datos = new FormData(data_recaudo);
+                    let datos = new FormData(data_recaudo);
                     if({{ ($nueva)? 'true': 'false' }}){
                         url = "{{url('addProntoPago')}}"
                     }else{
@@ -193,7 +192,7 @@
             pagosRealizados += e+';';
         });
 
-        datos = new FormData(data_recaudo);
+        let datos = new FormData(data_recaudo);
         datos.append('pagos',pagosRealizados.substring(0,pagosRealizados.length-1));
         datos.append('cuenta',cuenta);
         datos.append('fecha',fecha_recaudo.value);
@@ -231,7 +230,7 @@
     }
 
     var cuenta = {{ $cuenta->id }};
-    var cuentas = new FormData();
+    var cuentas_recaudo = new FormData();
 
     $.ajax({
         type: "POST",
@@ -242,7 +241,7 @@
         dataType: "json",
         success: function (response) {
             response.forEach(e => {
-                cuentas.append(e.id,JSON.stringify(e));
+                cuentas_recaudo.append(e.id,JSON.stringify(e));
             });
         }
     });
@@ -263,7 +262,7 @@
 
     //funcion para pagar todo 
     function pagarTodas(){
-        cuentas.forEach(e=>{
+        cuentas_recaudo.forEach(e=>{
             pagarTodo(JSON.parse(e).id);
         });
     }
@@ -279,7 +278,7 @@
             let interes = calcularCuota(id,'interes');
             let valor = calcularCuota(id,'valor');
 
-            let response = JSON.parse(cuentas.get(id));
+            let response = JSON.parse(cuentas_recaudo.get(id));
             valorPagado +=  parseInt(valor_cuota);
             if(valor > 0){
                 pagos.append(nro_pagos,JSON.stringify({detalle:response.id,tipo:'valor',valor:valor}));
@@ -316,7 +315,7 @@
         valorPagar(valor_cuota,(_valor)=>{
 
             if((valorPagado + _valor) <= valorRecibido){
-                let response = JSON.parse(cuentas.get(id));
+                let response = JSON.parse(cuentas_recaudo.get(id));
                 valorPagado +=  parseInt(_valor);
                 pagos.append(nro_pagos,JSON.stringify({detalle:response.id,tipo:'interes',valor:_valor}));
                 $('#data_pagos').append(`
@@ -343,7 +342,7 @@
         valorPagar(valor_cuota,(_valor)=>{
 
             if((valorPagado + _valor) <= valorRecibido){
-                let response = JSON.parse(cuentas.get(id));
+                let response = JSON.parse(cuentas_recaudo.get(id));
                 valorPagado +=  parseInt(_valor);
                 pagos.append(nro_pagos,JSON.stringify({detalle:response.id,tipo:'valor',valor:_valor}));
                 $('#data_pagos').append(`
@@ -368,13 +367,13 @@
 
         switch (tipo) {
             case 'valor':
-                salida += JSON.parse(cuentas.get(id)).valor;
+                salida += JSON.parse(cuentas_recaudo.get(id)).valor;
                 break;
             case 'interes':
-                salida += JSON.parse(cuentas.get(id)).interes;
+                salida += JSON.parse(cuentas_recaudo.get(id)).interes;
                 break;
             case 'ambos':
-                salida += JSON.parse(cuentas.get(id)).valor +  JSON.parse(cuentas.get(id)).interes;
+                salida += JSON.parse(cuentas_recaudo.get(id)).valor +  JSON.parse(cuentas_recaudo.get(id)).interes;
                 break;
         }
 
@@ -436,7 +435,7 @@
         let valor = calcularCuota(id,'valor');
         let interes = calcularCuota(id,'interes');
         let total = valor + interes;
-        let data = JSON.parse(cuentas.get(id));
+        let data = JSON.parse(cuentas_recaudo.get(id));
         if(total > 0){
 
             let contenido = `

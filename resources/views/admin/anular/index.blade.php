@@ -118,7 +118,6 @@
 		}
 
 		function verificar(){
-			// return true;
 			return (indice < ids.length);
 		}
 

@@ -185,7 +185,7 @@ class CuentasCobroController extends Controller
                 $auxCuentaCobro = new CuentaCobro();
                 $auxCuentaCobro->consecutivo = $consecutivo->prefijo . '-' . $consecutivo->numero;
                 $auxCuentaCobro->fecha = date('Y-m-d');
-                if($request->pronto_pago){
+                if ($request->pronto_pago == 'true') {
                     $auxCuentaCobro->fecha_pronto_pago = $request->fecha_pronto_pago;
                     $auxCuentaCobro->descuento = $request->descuento;
                 }
@@ -205,7 +205,7 @@ class CuentasCobroController extends Controller
                     $nombre_archivo = $nombre_carpeta . '/' . str_replace('/', ' ', $auxCuentaCobro->propietario->nombre_completo) . ' - ' . $auxCuentaCobro->consecutivo . ".pdf";
                     file_put_contents(public_path($nombre_archivo), $archivo);
 
-                    $this->enviarEmail($auxCuentaCobro->propietario,$nombre_archivo);
+                    $this->enviarEmail($auxCuentaCobro->propietario, $nombre_archivo);
                     // $this->enviarEmail([User::find(6)], $nombre_archivo);
 
                     $consecutivo->numero++;
@@ -222,7 +222,7 @@ class CuentasCobroController extends Controller
             foreach ($cuentasGeneradas as $cuenta) {
                 $cuenta->delete();
             }
-            return array('res' => 0, 'msg' => 'Ócurrio un error al generar las cuentas de cobro.','e'=>$th);
+            return array('res' => 0, 'msg' => 'Ócurrio un error al generar las cuentas de cobro.', 'e' => $th);
         }
     }
 
@@ -239,7 +239,8 @@ class CuentasCobroController extends Controller
             $auxCuentaCobro = new CuentaCobro();
             $auxCuentaCobro->consecutivo = $consecutivo->prefijo . '-' . $consecutivo->numero;
             $auxCuentaCobro->fecha = date('Y-m-d');
-            if($request->pronto_pago){
+            $auxCuentaCobro->descuento = 0;
+            if ($request->pronto_pago == 'true') {
                 $auxCuentaCobro->fecha_pronto_pago = $request->fecha_pronto_pago;
                 $auxCuentaCobro->descuento = $request->descuento;
             }
@@ -259,7 +260,7 @@ class CuentasCobroController extends Controller
                 $nombre_archivo = $nombre_carpeta . '/' . str_replace('/', ' ', $auxCuentaCobro->propietario->nombre_completo) . ' - ' . $auxCuentaCobro->consecutivo . ".pdf";
                 file_put_contents(public_path($nombre_archivo), $archivo);
 
-                $this->enviarEmail($auxCuentaCobro->propietario,$nombre_archivo);
+                $this->enviarEmail($auxCuentaCobro->propietario, $nombre_archivo);
                 // $this->enviarEmail([User::find(6)], $nombre_archivo);
 
 
@@ -529,9 +530,9 @@ class CuentasCobroController extends Controller
         // $cuenta = CuentaCobro::whereRaw("upper(replace(consecutivo,' ','')) = ?", [strtolower(str_replace(' ', '', $request->consecutivo))])
         //     ->where('conjunto_id', session('conjunto'))
         //     ->first();
-        $cuenta = CuentaCobro::where('consecutivo',trim(strtoupper($request->consecutivo)))
+        $cuenta = CuentaCobro::where('consecutivo', trim(strtoupper($request->consecutivo)))
             ->where('conjunto_id', session('conjunto'))->first();
-            // dd($cuenta);
+        // dd($cuenta);
         if ($cuenta) {
             return array('res' => 1, 'id' => $cuenta->id);
         } else {
@@ -604,7 +605,7 @@ class CuentasCobroController extends Controller
         $cuenta->delete();
     }
 
-   
+
     // para listar por datatables cuentas de cobro de un propietario
     // ****************************
     public function datatablesDueno()

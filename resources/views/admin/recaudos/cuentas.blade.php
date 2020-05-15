@@ -206,37 +206,40 @@
                 buttons:true
             }).then(res=>{
                 if(res){
-                    let datos = new FormData(data);
-                    datos.append('fecha',fecha.value);
-                    datos.append('cuenta',cuenta);
-                    datos.append('_token',csrf_token);
+                    $('#loading').css("display", "flex")
+                    .hide().fadeIn(800,()=>{
+                        let datos = new FormData(data);
+                        datos.append('fecha',fecha.value);
+                        datos.append('cuenta',cuenta);
+                        datos.append('_token',csrf_token);
 
-                    $.ajax({
-                        type: "POST",
-                        url: "{{url('recaudosProntoPago')}}",
-                        data: datos,
-                        dataType: "json",
-                        contentType: false,
-                        processData: false,
-                        success: (res)=>{
-                            respuesta = res;
-                            if (res.res) {
-                                swal('Logrado!',res.msg,'success').then(res=>{
-                                    var win = window.open('{{ url('pdfPago') }}/'+respuesta.pago.id, '_blank');
-                                    location.reload();
-                                    win.focus();
-                                });
-                            }else{
-                                swal('Error!',res.msg,'error');
+                        $.ajax({
+                            type: "POST",
+                            url: "{{url('recaudosProntoPago')}}",
+                            data: datos,
+                            dataType: "json",
+                            contentType: false,
+                            processData: false,
+                            success: (res)=>{
+                                respuesta = res;
+                                if (res.res) {
+                                    swal('Logrado!',res.msg,'success').then(res=>{
+                                        var win = window.open('{{ url('pdfPago') }}/'+respuesta.pago.id, '_blank');
+                                        location.reload();
+                                        win.focus();
+                                    });
+                                }else{
+                                    swal('Error!',res.msg,'error');
+                                }
+                                $('#loading').fadeOut();
                             }
-                        }
-                    }).fail((res)=>{
-                        swal('Error!','Ocurrió un error en el servidor.','error');
+                        }).fail((res)=>{
+                            swal('Error!','Ocurrió un error en el servidor.','error');
+                            $('#loading').fadeOut();
+                        });
                     });
                 }
             });
-            
-
         }
 
     @endif

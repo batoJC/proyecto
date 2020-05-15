@@ -23,7 +23,10 @@ class CarteraController extends Controller
         session(['section' => 'carteras']);
         //listar unidades y propietarios
         $unidades = Unidad::where('conjunto_id', session('conjunto'))->get();
-        $propietarios = User::where('id_conjunto', session('conjunto'))->get();
+        $propietarios = User::where([
+            ['id_conjunto', session('conjunto')],
+            ['id_rol',3]
+        ])->get();
         $user       = User::where('id_conjunto', session('conjunto'))->get();
         $conjuntos  = Conjunto::find(session('conjunto'));
         // $actas      = Acta::where('id_conjunto', session('conjunto'))->get();
@@ -188,7 +191,7 @@ class CarteraController extends Controller
 
 
     public function verMiCartera()
-    {   
+    {
         session(['section' => 'miCartera']);
 
 
@@ -206,22 +209,22 @@ class CarteraController extends Controller
 
         $detalles = Cartera::where([['user_id', $propietario->id]])->orderBy('fecha', 'DESC')->get();
         return Datatables::of($detalles)
-            ->addColumn('fecha',function($detalle){
-                return date('d-m-Y',strtotime($detalle->fecha));
-            })->addColumn('valor',function($detalle){
-                return '$ '.number_format($detalle->valor);
-            })->addColumn('unidad',function($detalle){
-                return ($detalle->unidad)? $detalle->unidad->tipo->nombre.' '.$detalle->unidad->numero_letra : 'No Aplica';
-            })->addColumn('propietario',function($detalle){
+            ->addColumn('fecha', function ($detalle) {
+                return date('d-m-Y', strtotime($detalle->fecha));
+            })->addColumn('valor', function ($detalle) {
+                return '$ ' . number_format($detalle->valor);
+            })->addColumn('unidad', function ($detalle) {
+                return ($detalle->unidad) ? $detalle->unidad->tipo->nombre . ' ' . $detalle->unidad->numero_letra : 'No Aplica';
+            })->addColumn('propietario', function ($detalle) {
                 return ($detalle->propietario) ? $detalle->propietario->nombre_completo : 'No Aplica';
-            })->addColumn('usuario',function($detalle){
+            })->addColumn('usuario', function ($detalle) {
                 return $detalle->usuario->nombre_completo;
             })->addColumn('action', function ($detalle) {
                 return '<a target="_blanck" 
                             href="' . url('pdfRecaudoC', ['consecutivo' => $detalle->prefijo . '-' . $detalle->numero]) . '">
                             <i class="fa fa-eye"></i>
-                            '.$detalle->prefijo.' '.$detalle->numero.
-                        '</a>';
+                            ' . $detalle->prefijo . ' ' . $detalle->numero .
+                    '</a>';
             })->make(true);
     }
 
