@@ -150,6 +150,7 @@ class ConjuntosController extends Controller
             $conjunto->logo = $file;
             $conjunto->save();
         }
+        return public_path('imgs/logos_conjuntos');
     }
 
     // Metodo personalizado para eliminar la Imagen
