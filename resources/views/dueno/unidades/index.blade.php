@@ -39,7 +39,7 @@
         <table id="unidades-table" class="table table-striped">
             <thead>
                 <tr>
-                    <th>Número / letra</th>
+                    <th>Unidad</th>
                     <th>Coeficiente (%)</th>
                     <th>División</th>
                     <th>Observaciones</th>
@@ -83,7 +83,7 @@
           	serverSide: true,
           	ajax : actualizarTabla,
           	columns: [
-          		{ data: 'numero_letra', name: 'numero_letra'},
+          		{ data: 'unidad', name: 'unidad'},
           		{ data: 'coeficiente', name: 'coeficiente'},
           		{ data: 'division', name: 'division'},
           		{ data: 'observaciones', name: 'observaciones'},

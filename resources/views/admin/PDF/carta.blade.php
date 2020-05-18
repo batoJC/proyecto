@@ -159,12 +159,9 @@
             <br>
             <br>
             <br>
-            @php
-                $usuario = Auth::user();
-            @endphp
-            @for ($i = 0; $i < strlen($usuario->nombre_completo)*1.5; $i++){{'_'}}@endfor
-            <h3>{{ mb_strtoupper($usuario->nombre_completo,'UTF-8') }}</h3>
-            <h3>C.c. {{ $usuario->numero_cedula }}</h3>
+            @for ($i = 0; $i < strlen($administrador->nombre_completo)*1.5; $i++){{'_'}}@endfor
+            <h3>{{ mb_strtoupper($administrador->nombre_completo,'UTF-8') }}</h3>
+            <h3>C.c. {{ $administrador->numero_cedula }}</h3>
             <h4>Administrador</h4>
         </main>
     </body>

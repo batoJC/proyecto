@@ -103,11 +103,35 @@
 						<div class="col-md-4 error-validate-3">
 							<i class="fa fa-lock"></i>
 							<label class="margin-top">
-								Password
+								Contraseña
 							</label>
 						</div>
 						<div class="col-md-8">
+							<style>
+								.show_pass{
+									right: 19px;
+									margin-top: -25px;
+									position: absolute;
+									cursor: pointer;
+								}
+							</style>
 							<input type="password" class="form-control field-3" name="password" placeholder="Ejemplo: 123456789ASDF" autocomplete="off" id="password">
+							<i title="Mostrar contraseña" onclick="showPass(this);" class="fa fa-eye show_pass"></i>
+							<script>
+								function showPass(e){
+									if(password.type == 'password'){
+										$(e).removeClass('fa-eye');
+										$(e).addClass('fa-eye-slash');
+										$(e).attr('title','Ocultar contraseña');
+										password.type = 'text';
+									}else{
+										$(e).addClass('fa-eye');
+										$(e).removeClass('fa-eye-slash');
+										$(e).attr('title','Mostrar contraseña');
+										password.type = 'password';
+									}
+								}
+							</script>
 						</div>
 					</div>
 					<br>

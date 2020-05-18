@@ -29,4 +29,14 @@ class Conjunto extends Model
     return $this->hasOne(Reglamento::class,'conjunto_id');
   }
 
+  public function administrador(){
+    // return $this->hasMany(User::class,'id_conjunto')->where('id_rol',2)->first();
+    $administrador = User::where([
+      ['estado','Activo'],
+      ['id_conjunto',$this->id],
+      ['id_rol',2]
+    ])->first();
+    return $administrador;
+  }
+
 }

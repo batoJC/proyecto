@@ -70,7 +70,8 @@
     @endif
 
     <h1 class="text-center titulo">Recibo de pago</h1>
-    <img class="qr_img" src="{{public_path() }}/qrcodes/qrcoderecaudo_{{$recaudo->id}}.png" alt="QR">
+    {{-- {{public_path() }}/qrcodes/qrcoder_{{$recaudo->id}}.png --}}
+    <img class="qr_img" src="{{public_path() }}/qrcodes/qrcoder_{{$recaudo->id}}.png" alt="QR">
 
     <h4><b>Consecutivo: </b>{{ $recaudo->consecutivo }}</h4>
     <h4><b>Fecha: </b>{{ date('d-m-Y',strtotime($recaudo->fecha)) }}</h4>
@@ -120,7 +121,7 @@
 <br>
 <br>
 @php
-    $usuario = Auth::user();
+    $usuario = Auth::user()->conjunto->administrador();
 @endphp
 @for ($i = 0; $i < strlen($usuario->nombre_completo)*1.5; $i++){{'_'}}@endfor
 <h3>{{ mb_strtoupper($usuario->nombre_completo,'UTF-8') }}</h3>
