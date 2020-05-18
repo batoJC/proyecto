@@ -479,7 +479,8 @@ class RecaudoController extends Controller
         $text_qr .= '$ '.number_format($recaudo->valor)."\n\r";
         $text_qr .= $recaudo->tipo_de_pago.' '.$recaudo->banco;
 
-        QR::format('png')->size(140)->margin(2)->generate($text_qr, public_path('qrcodes/qrcoderecaudo_' . $recaudo->id . '.png'));
+        QR::format('png')->size(140)->margin(2)->generate($text_qr, public_path('qrcodes/qrcoder_' . $recaudo->id . '.png'));
+
 
         // validar que sea el administrador o el dueño del recibo
         $usuario = Auth::user();
@@ -498,6 +499,25 @@ class RecaudoController extends Controller
     public function pdfC($consecutivo)
     {
         $recaudo  = Recaudo::where([['conjunto_id', session('conjunto')], ['consecutivo', $consecutivo]])->first();
+
+        
+        $pdf = null;
+        $files = glob(public_path('qrcodes') . '/*');
+        foreach ($files as $file) {
+            if (is_file($file))
+                unlink($file); 
+        }
+
+
+        $text_qr = $recaudo->conjunto->nombre."\n\r";
+        $text_qr .= $recaudo->propietario->nombre_completo .' - '. $recaudo->propietario->numero_cedula."\n\r";
+        $text_qr .= $recaudo->consecutivo."\n\r";
+        $text_qr .= date('d-m-Y', strtotime($recaudo->fecha))."\n \r";
+        $text_qr .= '$ '.number_format($recaudo->valor)."\n\r";
+        $text_qr .= $recaudo->tipo_de_pago.' '.$recaudo->banco;
+
+        QR::format('png')->size(140)->margin(2)->generate($text_qr, public_path('qrcodes/qrcoder_' . $recaudo->id . '.png'));
+
 
         // validar que sea el administrador o el dueño del recibo
         $usuario = Auth::user();

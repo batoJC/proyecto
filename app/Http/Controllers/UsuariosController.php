@@ -8,6 +8,7 @@ use App\User;
 use App\Conjunto;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\MasivoRequest;
 use App\Tipo_Documento;
@@ -103,7 +104,9 @@ class UsuariosController extends Controller
         } else {
             $user->id_conjunto   = $request->id_conjunto;
         }
-        $user->save();
+        if($user->save()){
+            $this->enviarEmail($user,$request->password);
+        }
     }
 
     /**
@@ -263,11 +266,13 @@ class UsuariosController extends Controller
                         $user->id_conjunto       = session('conjunto');
                         $last_name = $value->nombre_completo;
                         $last_cc = $value->numero_de_documento;
-                        $user->save();
-                        return redirect('usuarios')
-                            ->with('status', 'Se insertó correctamente')
-                            ->with('last', "El último registro fue '$last_name' cc: '$last_cc'");
+                        if($user->save()){
+                            $this->enviarEmail($user,$value->password);
+                        }
                     }
+                    return redirect('usuarios')
+                        ->with('status', 'Se insertó correctamente')
+                        ->with('last', "El último registro fue '$last_name' cc: '$last_cc'");
                 } catch (\Throwable $th) {
                     return redirect('usuarios')
                         ->with('error', 'Ocurrió un error al registrar el último registro, verifique que no se encuentre ya registrado.')
@@ -287,6 +292,39 @@ class UsuariosController extends Controller
         $user->save();
     }
 
+    // Enviar email de registro 
+    // ************************
+    private function enviarEmail(User $usuario,$password)
+    {
+        $email = new CorreoController();
+
+        //para enviar desde el correo de la app
+        $conjunto = new Conjunto();
+        $conjunto->nombre = 'Gestión copropietario';
+        $conjunto->correo = 'gestioncopropietario@gmail.com';
+        $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
+
+        $tipo = '';
+
+        switch ($usuario->id_rol) {
+            case 2:
+                $tipo = 'Administrador';
+                break;
+            case 3:
+                $tipo = 'Propietario';
+                break;
+            case 4:
+                $tipo = 'Portero';
+                break;
+        }
+
+
+        $contenido = "Ha sido registrado como {$tipo} en la página <a href='".url('login')."' >gestioncopropietario.com</a><br> 
+                                <b>Correo Electrónico:</b> {$usuario->email} <br>
+                                <b>Contraseña:</b> {$password} <br>
+                    Requerde que puede cambiar esta contraseña pulsando en olvide mi contraseña.";
+        $email->enviarEmail(Conjunto::find(session('conjunto')), [$usuario], 'Registro', $contenido);
+    }
 
 
     // para listar por datatables
@@ -306,7 +344,7 @@ class UsuariosController extends Controller
                     else
                         return  $usuario->conjunto->nombre;
                 })->addColumn('estado', function ($usuario) {
-                   return json_encode([$usuario->estado]);
+                    return json_encode([$usuario->estado]);
                 })->addColumn('action', function ($usuario) {
                     $salida = '<a data-toggle="tooltip" data-placement="top" title="Ver" onclick="showForm(' . $usuario->id . ')" class="btn btn-default">
                             <i class="fa fa-search"></i>

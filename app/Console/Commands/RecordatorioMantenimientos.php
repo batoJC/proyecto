@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Http\Controllers\CorreoController;
 use App\Mantenimiento;
+use App\Conjunto;
 use App\User;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Console\Command;

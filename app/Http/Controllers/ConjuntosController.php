@@ -144,7 +144,7 @@ class ConjuntosController extends Controller
         // Imagen
         if ($request->hasFile('foto')) {
             $file = time() . '.' . $request->foto->getClientOriginalExtension();
-            $request->foto->move(public_path('imgs/logos_conjuntos'), $file);
+            $request->foto->move(public_path('/imgs/logos_conjuntos'), $file);
 
             // Ruta de la img en la BD
             $conjunto->logo = $file;
@@ -207,7 +207,7 @@ class ConjuntosController extends Controller
             ->addColumn('tipo_conjunto', function ($conjunto) {
                 return $conjunto->tipo_conjunto->tipo;
             })->addColumn('action', function ($conjunto) {
-                return '<a data-toggle="tooltip" data-placement="top" title="Editar" onclick="editForm(' . $conjunto->id . ')" class="btn btn-default">
+                return '<a wsd onclick="editForm(' . $conjunto->id . ')" class="btn btn-default">
                             <i class="fa fa-pencil"></i>
                         </a>
                         <a data-toggle="tooltip" data-placement="top" title="Eliminar" onclick="deleteData(' . $conjunto->id . ')" class="btn btn-default">

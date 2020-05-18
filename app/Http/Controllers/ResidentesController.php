@@ -281,6 +281,9 @@ class ResidentesController extends Controller
         } else if ($usuario->id_rol == 4) {
             $residente = $residentes->where('estado', 'Activo')->get();
             return Datatables::of($residentes)
+                ->addColumn('unidad', function ($residente) {
+                    return $residente->unidad->tipo->nombre.' '.$residente->unidad->numero_letra;
+                })
                 ->addColumn('tipo_documento', function ($residente) {
                     return $residente->tipo_documento->tipo;
                 })->addColumn('fecha_ingreso', function ($residente) {

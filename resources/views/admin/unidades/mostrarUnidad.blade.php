@@ -12,15 +12,17 @@
                 División: {{ $unidad->division->tipo_division->division }} {{ $unidad->division->numero_letra }}
             </h4>                   
 
-            @if (in_array('coeficiente', $atributos))
+            @if (in_array('coeficiente', $atributos) and Auth::user()->id_rol == 2)
                 <h4>
                     Coeficiente(%): {{ $unidad->coeficiente }}
                 </h4>
             @endif
-
-            <h4>
-                Referencia de pago: {{ ($unidad->referencia)? $unidad->referencia : 'No aplica' }}
-            </h4>
+            
+            @if (Auth::user()->id_rol == 2)
+                <h4>
+                    Referencia de pago: {{ ($unidad->referencia )? $unidad->referencia : 'No aplica' }}
+                </h4>
+            @endif
 
             @if (in_array('unidad_id', $atributos))
                 

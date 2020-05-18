@@ -9,7 +9,7 @@
                     <a href="{{ url('home') }}">Inicio</a>
                 </li>
                   <li>
-                      <a href="{{ url('unidades') }}">Tipos de unidad</a>
+                      <a href="{{ url('unidades_porteria') }}">Tipos de unidad</a>
                 </li>
                 <li>{{ ucfirst(strtolower($tipo->nombre)) }}</li>
             </ul>
@@ -44,9 +44,6 @@
             <thead>
                 <tr>
                     <th>Número / letra</th>
-                    @if (in_array('coeficiente', $atributos))
-                        <th>Coeficiente (%)</th>
-                    @endif
                     <th>División</th>
                     @if (in_array('observaciones', $atributos))
                         <th>Observaciones</th>
@@ -93,9 +90,6 @@
           	ajax : actualizarTabla,
           	columns: [
           		{ data: 'numero_letra', name: 'numero_letra'},
-                @if (in_array('coeficiente', $atributos))
-                    { data: 'coeficiente', name: 'coeficiente'},
-                @endif
           		{ data: 'division', name: 'division'},
                 @if (in_array('observaciones', $atributos))
                     { data: 'observaciones', name: 'observaciones'},

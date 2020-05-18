@@ -465,7 +465,9 @@ class UnidadController extends Controller
                     ->select('unidads.*')
                     ->get();
                 return Datatables::of($unidades)
-                    ->addColumn('coeficiente', function ($unidad) {
+                    ->addColumn('unidad', function ($unidad) {
+                        return $unidad->tipo->nombre . ' ' . $unidad->numero_letra;
+                    })->addColumn('coeficiente', function ($unidad) {
                         return ($unidad->coeficiente) ? $unidad->coeficiente : 'No aplica';
                     })->addColumn('division', function ($unidad) {
                         return $unidad->division->tipo_division->division . ' ' . $unidad->division->numero_letra;

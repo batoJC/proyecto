@@ -41,7 +41,6 @@
             <th>Tipo de Documento</th>
             <th>Documento</th>
             <th>Fecha de Ingreso</th>
-            <th>Estado</th>
             <th>Acciones</th>
         </thead>
         <tbody>
@@ -86,7 +85,6 @@
           		{ data: 'tipo_documento', name: 'tipo_documento'},
           		{ data: 'documento', name: 'documento'},
           		{ data: 'fecha_ingreso', name: 'fecha_ingreso'},
-          		{ data: 'estado', name: 'estado'},
           		{ data: 'action', name: 'action', orderable: false, searchable: false},
           	],
 			language: {

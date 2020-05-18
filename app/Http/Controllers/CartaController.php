@@ -146,8 +146,10 @@ class CartaController extends Controller
         $text_qr .= "\n\r Unidad: " . $carta->unidad->tipo->nombre . ' ' . $carta->unidad->numero_letra;
         $text_qr .= "\n\r Copropiedad: " . Conjunto::find(session('conjunto'))->nombre;
 
+        $administrador = Conjunto::find(session('conjunto'))->administrador();
+
         QR::format('png')->size(180)->margin(10)->generate($text_qr, public_path('qrcodes/qrcode_' . $carta->id . '.png'));
-        $pdf = PDF::loadView('admin.PDF.carta', ['carta' => $carta]);
+        $pdf = PDF::loadView('admin.PDF.carta', ['carta' => $carta,'administrador' => $administrador]);
         return $pdf->stream();
     }
 
