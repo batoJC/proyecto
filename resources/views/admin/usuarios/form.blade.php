@@ -137,14 +137,14 @@
 					<br>
 					{{-- Cada campo --}}
 					<div class="row">
-						<div class="col-md-4 error-validate-4">
+						<div class="col-md-4">
 							<i class="fa fa-calendar"></i>
 							<label class="margin-top">
 								Fecha de Nacimiento
 							</label>
 						</div>
 						<div class="col-md-8">
-							<input type="date" class="form-control field-4" name="fecha_nacimiento"  autocomplete="off" id="fecha_nacimiento">
+							<input type="date" class="form-control" name="fecha_nacimiento"  autocomplete="off" id="fecha_nacimiento">
 						</div>
 					</div>
 					<br>

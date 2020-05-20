@@ -147,7 +147,7 @@
 						<div class="col-md-4">
 							<i class="fa fa-phone"></i>
 							<label class="margin-top">
-								Telefono
+								Teléfono
 							</label>
 						</div>
 						<div class="col-md-8">

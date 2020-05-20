@@ -8,7 +8,7 @@
 				<li>
 					<a href="{{ asset('home') }}">Inicio</a>
 				</li>
-				  <li>Empleados</li>
+				  <li>Empleados conjunto</li>
 			</ul>
 		</div>
 		<div class="col-1 col md-1 text-right">
@@ -22,7 +22,7 @@
 				</i>
 				<ul role="menu" class="dropdown-menu pull-right">
 					<li>
-						<a target="_blanck" href="#">Video 1</a>
+						<a target="_blanck" href="https://youtu.be/XNzbxH4rzSU">¿Qué puedo hacer?</a>
 					</li>
 				</ul>
 			</div>
