@@ -34,6 +34,7 @@
 						<a target="_blanck" href="https://youtu.be/luHxmyKi9lo">Primeros pasos</a>
 						<a target="_blanck" href="https://youtu.be/SuMPsPGTG_U">¿Cómo configurar el correo del conjunto?</a>
 						<a target="_blanck" href="https://youtu.be/QlkRdLoz8k4">Módulo administrativo</a>
+						<a target="_blanck" href="https://youtu.be/PHioOQlS5N4">Módulo financiero</a>
 					</li>
 				</ul>
 			</div>
