@@ -24,7 +24,8 @@
 				</i>
 				<ul role="menu" class="dropdown-menu pull-right">
 					<li>
-						<a target="_blanck" href="#">Video 1</a>
+						<a target="_blanck" href="https://youtu.be/5PESDJA6KFY">¿Qué puedo hacer?</a>
+						<a target="_blanck" href="https://youtu.be/_WUt7I2-FQU">¿Cómo cargar desde csv?</a>
 					</li>
 				</ul>
 			</div>

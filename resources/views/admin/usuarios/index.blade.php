@@ -22,7 +22,8 @@
                 </i>
                 <ul role="menu" class="dropdown-menu pull-right">
                     <li>
-                        <a target="_blanck" href="#">Video 1</a>
+                        <a target="_blanck" href="https://youtu.be/D7cT7piNkbY">¿Qué puedo hacer?</a>
+                        <a target="_blanck" href="https://youtu.be/yIOMkZOxFxY">¿Cómo hacer carga masiva?</a>
                     </li>
                 </ul>
             </div>

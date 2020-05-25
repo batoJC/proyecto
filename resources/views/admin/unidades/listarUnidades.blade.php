@@ -29,7 +29,8 @@
                 </i>
                 <ul role="menu" class="dropdown-menu pull-right">
                     <li>
-                        <a target="_blanck" href="#">Video 1</a>
+                        <a target="_blanck" href="https://youtu.be/LLvi697BC7Q">¿Cómo editar?</a>
+                        <a target="_blanck" href="https://youtu.be/sCf97c6O-TE">¿Cómo agregar novedades?</a>
                     </li>
                 </ul>
             </div>
