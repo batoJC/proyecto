@@ -481,16 +481,23 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>CSV carga de Usuarios</td>
+							<td>Excel carga de Usuarios</td>
 							<td>
 							<a download href="{{ url('download_users') }}" target="_blanck" data-toggle="tooltip" data-placement="top" title="Descargar" class="btn btn-default">
 									<i class="fa fa-download"></i>
 								</a></td>
 						</tr>
 						<tr>
-							<td>CSV carga de presupuestos</td>
+							<td>Excel carga de presupuestos</td>
 							<td>
 								<a download href="{{ url('download_presupuesto') }}" target="_blanck"  data-toggle="tooltip" data-placement="top" title="Descargar" class="btn btn-default">
+									<i class="fa fa-download"></i>
+								</a></td>
+						</tr>
+						<tr>
+							<td>Excel carga de saldos iniciales</td>
+							<td>
+								<a download href="{{ url('download_base_saldos') }}" target="_blanck"  data-toggle="tooltip" data-placement="top" title="Descargar" class="btn btn-default">
 									<i class="fa fa-download"></i>
 								</a></td>
 						</tr>

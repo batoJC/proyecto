@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Conjunto;
 use App\Ejecucion_presupuestal_individual;
 use App\saldoInicial;
+use Excel;
 use Yajra\Datatables\Datatables;
 use App\Unidad;
 use Illuminate\Http\Request;
@@ -131,6 +132,119 @@ class SaldoInicialController extends Controller
             return array('res' => 0, 'msg' => 'Ocurrió un error al eliminar el saldo  inicial.');
         }
     }
+
+
+    //mostrar vista para cargar saldos iniciales d eforma masiva
+    //**********************************************************
+    public function viewMasivo()
+    {
+        $conjunto = Conjunto::find(session('conjunto'));
+
+        return view('admin.saldos_iniciales.masivo')
+            ->with('conjuntos', $conjunto);
+    }
+
+
+    //para la carga masiva de saldos iniciales
+    //****************************************
+    public function masivo(Request $request)
+    {
+        // Validador si llega un archivo
+        // *****************************
+        if ($request->hasFile('archivo')) {
+            $path = $request->file('archivo')->getRealPath();
+            $data = Excel::load($path, function ($reader) {
+            })->get();
+            // Validador si el arreglo está vacío
+            // **********************************
+            if (!empty($data) && $data->count()) {
+                try {
+                    $unidad = '';
+                    $contador = 0;
+                    foreach ($data as $key => $value) {
+
+                        $saldo_inicial = new saldoInicial();
+                        $saldo_inicial->concepto = $value->concepto;
+                        $saldo_inicial->vigencia_inicio = $value->vigencia_inicio;
+                        $saldo_inicial->vigencia_fin = $value->vigencia_fin;
+                        $saldo_inicial->interes = ($value->interes == 'si');
+                        $saldo_inicial->valor = $value->valor;
+                        $saldo_inicial->conjunto_id = session('conjunto');
+
+                        //verificar que exista el presupuesto
+                        /*****************************************/
+                        $ejecucion_individual = Ejecucion_presupuestal_individual::join('tipo_ejecucion_pre', 'ejecucion_presupuestal_individual.id_tipo_ejecucion', 'tipo_ejecucion_pre.id')
+                            ->join('ejecucion_presupuestal_total', 'ejecucion_presupuestal_individual.id_ejecucion_pre_total', 'ejecucion_presupuestal_total.id')//TODO
+                            ->where([
+                                ['ejecucion_presupuestal_total.vigente', true],
+                                ['ejecucion_presupuestal_total.tipo', 'ingreso'],
+                                ['ejecucion_presupuestal_total.conjunto_id', session('conjunto')],
+                                ['tipo_ejecucion_pre.tipo', trim(mb_strtoupper($value->presupuesto, 'UTF-8'))]
+                            ])->select('ejecucion_presupuestal_individual.id')->first();
+
+                        // dd($ejecucion_individual);
+
+
+                        if ($ejecucion_individual) {
+                            $saldo_inicial->presupuesto_cargar_id = $ejecucion_individual->id;
+                        } else {
+                            return redirect('saldos_iniciales')
+                                ->with('error', 'El presupuesto individual no existe!')
+                                ->with('last', "La última fila insertada fue la $contador, unidad: $unidad");
+                        }
+
+                        //verificar que exista la unidad
+                        $data = explode('-', $value->unidad);
+                        $tipo_unidad = mb_strtoupper($data[0], 'UTF-8');
+                        $numero_unidad = $data[1];
+                        $unidad = Unidad::where('numero_letra', $numero_unidad)
+                            ->where('unidads.conjunto_id', session('conjunto'))
+                            ->join('tipo_unidad', 'unidads.tipo_unidad_id', 'tipo_unidad.id')
+                            ->where('tipo_unidad.nombre', $tipo_unidad)
+                            ->select('unidads.id')
+                            ->first();
+
+                        if ($unidad) {
+                            $saldo_inicial->unidad_id = $unidad->id;
+                        } else {
+                            return redirect('saldos_iniciales')
+                                ->with('error', 'La unidad no existe!')
+                                ->with('last', "La última fila insertada fue la $contador, unidad: $unidad");
+                        }
+
+
+                        if ($saldo_inicial->save()) {
+                            $contador++;
+                            $unidad = $value->unidad;
+                        } else {
+                            return redirect('saldos_iniciales')
+                                ->with('error', 'Ocurrió un error al guardar!')
+                                ->with('last', "La última fila insertada fue la $contador, unidad: $unidad");
+                        }
+                    }
+                    return redirect('saldos_iniciales')
+                        ->with('status', 'Se insertó correctamente!')
+                        ->with('last', "La última fila insertada fue la $contador, unidad: $unidad");
+                } catch (\Throwable $th) {
+                    return redirect('saldos_iniciales')
+                        ->with('error', 'Ocurrió un error al registrar!')
+                        ->with('last', "La última fila insertada fue la $contador, unidad: $unidad");
+                }
+            } else {
+                return redirect('saldos_iniciales')
+                    ->with('error', 'El archivo esta vacío!')
+                    ->with('last', "No se encontró ningun registro");
+            }
+        }
+    }
+
+    //para descargar el archivo dbase
+    public function download()
+    {
+        $pathtoFile = public_path() . '/docs/basesaldosiniciales.xlsx';
+        return response()->download($pathtoFile);
+    }
+
 
     // para listar por datatables
     // ****************************

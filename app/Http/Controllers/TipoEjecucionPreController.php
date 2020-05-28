@@ -54,7 +54,7 @@ class TipoEjecucionPreController extends Controller
     public function store(Request $request)
     {
         $tipo_ejecucion_pre              = new Tipo_ejecucion_pre();
-        $tipo_ejecucion_pre->tipo        = mb_strtoupper($request->tipo);
+        $tipo_ejecucion_pre->tipo        = mb_strtoupper($request->tipo, 'UTF-8');
         $tipo_ejecucion_pre->descripcion = $request->descripcion;
         $tipo_ejecucion_pre->conjunto_id = session('conjunto');
         $tipo_ejecucion_pre->save();

@@ -30,10 +30,40 @@
 			</div>
 		</div>
 	</div>
+	@if(session('status'))
+        <div class="alert alert-success-original alert-dismissible" role="alert">
+            <button type="button" class="close btn_close_alert" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">x</span>
+            </button>
+            {{-- {!! html_entity_decode(session('status')) !!}
+            {!! html_entity_decode(session('last')) !!} --}}
+            <h4>
+                {{ session('status') }}
+            </h4>
+            <h4>
+                {{ session('last') }}
+            </h4>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger-original alert-dismissible" role="alert">
+            <button type="button" class="close btn_close_alert" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">x</span>
+            </button>
+            <h4>
+                {{ session('error') }}
+            </h4>
+            <h4>
+                {{ session('last') }}
+            </h4>
+        </div>
+    @endif
+
 	<a class="btn btn-success" onclick="addForm()">
 		<i class="fa fa-plus"></i>
 		Agregar saldo inicial
 	</a>
+	<a class="btn btn-default" href="{{ url('masivo_saldos') }}"><i class="fa fa-upload"></i> Carga masiva</a>
 	@include('admin.saldos_iniciales.form')
 	<br><br>
 	<table id="saldos-table" class="table">

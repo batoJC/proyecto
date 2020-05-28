@@ -13,11 +13,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-//prueba
-Route::get('prueba',function(){
-	$prueba = 'eo';
-	echo "{ $prueba }";
-});
 
 // Rutas de autenticacion got it?
 Auth::routes();
@@ -127,16 +122,15 @@ Route::group(['middleware' => ['owner']], function () {
 	Route::get('api.tipo_conjunto', 'TipoConjuntoController@reload')->name('api.tipo_conjunto');
 
 	//Rutas para las datatables
-	Route::get('api.conjuntos','ConjuntosController@datatables');
-	Route::get('api.usuarios_owner','UsuariosController@datatables');
-	Route::get('api.tabla_interes_owner','TablaInteresesController@datatables');
-	Route::get('api.contactos','ContactoController@datatables');
+	Route::get('api.conjuntos', 'ConjuntosController@datatables');
+	Route::get('api.usuarios_owner', 'UsuariosController@datatables');
+	Route::get('api.tabla_interes_owner', 'TablaInteresesController@datatables');
+	Route::get('api.contactos', 'ContactoController@datatables');
 
 	//reglamento
-	Route::post('reglamento.owner.show','ReglamentoController@show');
-	Route::post('reglamento.owner.add','ReglamentoController@store');
-	Route::post('reglamento.owner.edit/{reglamento}','ReglamentoController@update');
-
+	Route::post('reglamento.owner.show', 'ReglamentoController@show');
+	Route::post('reglamento.owner.add', 'ReglamentoController@store');
+	Route::post('reglamento.owner.edit/{reglamento}', 'ReglamentoController@update');
 });
 
 // Middleware de autenticación para el admin del conjunto
@@ -145,9 +139,9 @@ Route::group(['middleware' => ['owner']], function () {
 Route::group(['middleware' => ['admin']], function () {
 
 	//reglamento
-	Route::post('reglamento.show','ReglamentoController@show');
-	Route::post('reglamento.add','ReglamentoController@store');
-	Route::post('reglamento.edit/{reglamento}','ReglamentoController@update');
+	Route::post('reglamento.show', 'ReglamentoController@show');
+	Route::post('reglamento.add', 'ReglamentoController@store');
+	Route::post('reglamento.edit/{reglamento}', 'ReglamentoController@update');
 
 	//contraseña de envio de email
 	Route::get('passwordEmail', 'ConjuntosController@passwordConjunto');
@@ -237,13 +231,13 @@ Route::group(['middleware' => ['admin']], function () {
 	// Route::post('pagarCuenta','RecaudoController')
 
 	Route::get('paz_salvo', 'PazSalvoController@pazSalvo');
-	Route::post('pdfPazSalvo','PazSalvoController@pazSalvoPdf');
-	Route::post('cuerpoPazSalvo/{propietario}','PazSalvoController@cuerpoCarta');
+	Route::post('pdfPazSalvo', 'PazSalvoController@pazSalvoPdf');
+	Route::post('cuerpoPazSalvo/{propietario}', 'PazSalvoController@cuerpoCarta');
 	Route::get('paz_salvoDownload', 'PazSalvoController@pdfPazSalvo');
 	Route::get('en_mora', 'CertificadoMoraController@enMora');
 	Route::get('en_moraDownload', 'CertificadoMoraController@pdfEnMora');
 	Route::post('cuotasMora/{propietario}', 'CertificadoMoraController@cuotas');
-	Route::post('certificadoMora','CertificadoMoraController@certificado');
+	Route::post('certificadoMora', 'CertificadoMoraController@certificado');
 	Route::get('certificadoMora', 'CuentasCobroController@certificadoMora');
 
 	//gestion de recaudos
@@ -290,12 +284,14 @@ Route::group(['middleware' => ['admin']], function () {
 	// Route::post('deshacerAnulacionCuentaCobro/{cuenta}','anulacionController@deshacerAnulacionCuentaCobro');
 	// Route::post('deshacerAnulacionRecaudo/{recaudo}','anulacionController@deshacerAnulacionRecaudo');
 	//anulación pronto pago
-	Route::post('addProntoPago','anulacionController@addProntoPago');
-	Route::post('reemplazarProntoPago/{recaudoA}','anulacionController@reemplazarProntoPago');
+	Route::post('addProntoPago', 'anulacionController@addProntoPago');
+	Route::post('reemplazarProntoPago/{recaudoA}', 'anulacionController@reemplazarProntoPago');
 
 	//saldos iniciales
 	Route::resource('saldos_iniciales', 'SaldoInicialController');
-
+	Route::get('masivo_saldos','SaldoInicialController@viewMasivo');
+	Route::get('download_base_saldos','SaldoInicialController@download');
+	Route::post('masivo_saldos','SaldoInicialController@masivo');
 
 	//Unidades
 	/*************************************/
@@ -304,7 +300,7 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//inactivar
 	Route::post('empleados/inactivar/{empleado}', 'EmpleadoController@inactivar');
-	Route::post('retiroEmpleadoConjunto/{empleado}','EmpleadosConjuntoController@inactivar');
+	Route::post('retiroEmpleadoConjunto/{empleado}', 'EmpleadosConjuntoController@inactivar');
 	Route::post('visitantes/inactivar/{visitante}', 'VisitanteController@inactivar');
 	Route::post('residentes/inactivar/{residente}', 'ResidentesController@inactivar');
 	Route::post('mascotas/inactivar/{mascota}', 'MascotasController@inactivar');
@@ -320,53 +316,52 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('listaReservas', 'ReservasController@lista');
 
 	//multas
-	Route::get('downloadMultaFile/{multa}','MultasController@download');
+	Route::get('downloadMultaFile/{multa}', 'MultasController@download');
 
 	//mantenimientos
-	Route::get('downloadMantenimiento/{mantenimiento}','MantenimientoController@download');
+	Route::get('downloadMantenimiento/{mantenimiento}', 'MantenimientoController@download');
 
 
 	//Rutas para datatables
 	//módulo administrativo
-	Route::get('api.noticias_admin','NoticiasController@datatables');
-	Route::get('api.reclamos','QuejasReclamosController@datatables');
-	Route::get('api.novedades_conjunto','NovedadesConjuntoController@datatables');
-	Route::get('api.evidencias','EvidenciaController@datatables');
-	Route::get('api.divisiones','DivisionesController@datatables');
-	Route::get('api.tipos_unidad','Tipo_unidadController@datatables');
-	Route::get('api.usuarios','UsuariosController@datatables');
-	Route::get('api.unidades.admin/{tipo}','UnidadController@datatables');
-	Route::get('api.cartas.admin','CartaController@datatables');
-	Route::get('api.residentes.admin','ResidentesController@datatables');
-	Route::get('api.mascotas.admin','MascotasController@datatables');
-	Route::get('api.vehiculos.admin','VehiculoController@datatables');
-	Route::get('api.empleados_unidad.admin','EmpleadoController@datatables');
-	Route::get('api.empleados_conjunto.admin','EmpleadosConjuntoController@datatables');
-	Route::get('api.visitantes.admin','VisitanteController@datatables');
-	Route::get('api.proveedores','ProveedorController@datatables');
-	Route::get('api.reservas','ReservasController@datatables');
-	Route::get('api.mantenimientos','MantenimientoController@datatables');
-	Route::get('api.zonas_comunes.admin','ZonasComunesController@datatables');
-	Route::get('api.inventarios','InventarioController@datatables');
+	Route::get('api.noticias_admin', 'NoticiasController@datatables');
+	Route::get('api.reclamos', 'QuejasReclamosController@datatables');
+	Route::get('api.novedades_conjunto', 'NovedadesConjuntoController@datatables');
+	Route::get('api.evidencias', 'EvidenciaController@datatables');
+	Route::get('api.divisiones', 'DivisionesController@datatables');
+	Route::get('api.tipos_unidad', 'Tipo_unidadController@datatables');
+	Route::get('api.usuarios', 'UsuariosController@datatables');
+	Route::get('api.unidades.admin/{tipo}', 'UnidadController@datatables');
+	Route::get('api.cartas.admin', 'CartaController@datatables');
+	Route::get('api.residentes.admin', 'ResidentesController@datatables');
+	Route::get('api.mascotas.admin', 'MascotasController@datatables');
+	Route::get('api.vehiculos.admin', 'VehiculoController@datatables');
+	Route::get('api.empleados_unidad.admin', 'EmpleadoController@datatables');
+	Route::get('api.empleados_conjunto.admin', 'EmpleadosConjuntoController@datatables');
+	Route::get('api.visitantes.admin', 'VisitanteController@datatables');
+	Route::get('api.proveedores', 'ProveedorController@datatables');
+	Route::get('api.reservas', 'ReservasController@datatables');
+	Route::get('api.mantenimientos', 'MantenimientoController@datatables');
+	Route::get('api.zonas_comunes.admin', 'ZonasComunesController@datatables');
+	Route::get('api.inventarios', 'InventarioController@datatables');
 	//módulo financiero
-	Route::get('api.presupuesto_total.admin','EjecucionPreTotalController@datatables');
-	Route::get('api.tipo_presupuesto.admin','TipoEjecucionPreController@datatables');
-	Route::get('api.presupuesto_individual.admin','EjecucionPreIndividual@datatables');
-	Route::get('api.consecutivos.admin','ConsecutivosController@datatables');
-	Route::get('api.administrativas.admin','CuotaAdmonController@datatables');
-	Route::get('api.extraordinarias.admin','CuotaExtOrdinariaController@datatables');
-	Route::get('api.otros.admin','OtrosCobrosController@datatables');
-	Route::get('api.multas.admin','MultasController@datatables');
-	Route::get('api.flujos.admin','FlujoEfectivoController@datatables');
-	Route::post('api.saldo_actual.admin','FlujoEfectivoController@saldoActual');
-	Route::get('api.descuentos.admin','DescuentoController@datatables');
-	Route::get('api.saldos.admin','SaldoInicialController@datatables');
+	Route::get('api.presupuesto_total.admin', 'EjecucionPreTotalController@datatables');
+	Route::get('api.tipo_presupuesto.admin', 'TipoEjecucionPreController@datatables');
+	Route::get('api.presupuesto_individual.admin', 'EjecucionPreIndividual@datatables');
+	Route::get('api.consecutivos.admin', 'ConsecutivosController@datatables');
+	Route::get('api.administrativas.admin', 'CuotaAdmonController@datatables');
+	Route::get('api.extraordinarias.admin', 'CuotaExtOrdinariaController@datatables');
+	Route::get('api.otros.admin', 'OtrosCobrosController@datatables');
+	Route::get('api.multas.admin', 'MultasController@datatables');
+	Route::get('api.flujos.admin', 'FlujoEfectivoController@datatables');
+	Route::post('api.saldo_actual.admin', 'FlujoEfectivoController@saldoActual');
+	Route::get('api.descuentos.admin', 'DescuentoController@datatables');
+	Route::get('api.saldos.admin', 'SaldoInicialController@datatables');
 
-	Route::get('api.intereses.admin','TablaInteresesController@datatables');
+	Route::get('api.intereses.admin', 'TablaInteresesController@datatables');
 
 	//módulo documental
-	Route::get('api.documentos.admin','DocumentosController@datatables');
-
+	Route::get('api.documentos.admin', 'DocumentosController@datatables');
 });
 
 // Middleware de autenticación para el dueño de apto del conjunto
@@ -402,21 +397,20 @@ Route::group(['middleware' => ['dueno']], function () {
 	Route::post('rechazarReservaPropietario/{reserva}', 'ReservasController@rechazar');
 
 	//multas
-	Route::get('downloadMultaFilePropietario/{multa}','MultasController@download');
+	Route::get('downloadMultaFilePropietario/{multa}', 'MultasController@download');
 
 	//Rutas para las datatables
-	Route::get('api.quejas.dueno','QuejasReclamosController@datatables');
-	Route::get('api.unidades.dueno','UnidadController@datatables');
-	Route::get('api.zonas_comunes.dueno','ZonasComunesController@datatables');
-	Route::get('api.multas.dueno','MultasController@datatables');
-	Route::get('api.intereses.dueno','TablaInteresesController@datatables');
-	Route::get('api.micartera.dueno','CarteraController@miCarteraDatatable');
-	Route::get('api.cuentas.dueno','CuentasCobroController@datatablesDueno');
-	Route::get('api.recibos.dueno','RecaudoController@datatablesDueno');
-	Route::get('api.cartas.dueno','CartaController@datatables');
-	Route::get('api.evidencias.dueno','EvidenciaController@datatables');
-	Route::get('api.documentos.dueno','DocumentosController@datatables');
-
+	Route::get('api.quejas.dueno', 'QuejasReclamosController@datatables');
+	Route::get('api.unidades.dueno', 'UnidadController@datatables');
+	Route::get('api.zonas_comunes.dueno', 'ZonasComunesController@datatables');
+	Route::get('api.multas.dueno', 'MultasController@datatables');
+	Route::get('api.intereses.dueno', 'TablaInteresesController@datatables');
+	Route::get('api.micartera.dueno', 'CarteraController@miCarteraDatatable');
+	Route::get('api.cuentas.dueno', 'CuentasCobroController@datatablesDueno');
+	Route::get('api.recibos.dueno', 'RecaudoController@datatablesDueno');
+	Route::get('api.cartas.dueno', 'CartaController@datatables');
+	Route::get('api.evidencias.dueno', 'EvidenciaController@datatables');
+	Route::get('api.documentos.dueno', 'DocumentosController@datatables');
 });
 
 
@@ -430,18 +424,17 @@ Route::group(['middleware' => ['porteria']], function () {
 	Route::get('unidadesTipoPorteria/{tipo}', 'UnidadController@indexTipo');
 
 	//Rutas para las datatables
-	Route::get('api.cartas.porteria','CartaController@datatables');
-	Route::get('api.zonas.porteria','ZonasComunesController@datatables');
-	Route::get('api.unidades.porteria/{tipo}','UnidadController@datatables');
-	Route::get('api.residentes.porteria','ResidentesController@datatables');
-	Route::get('api.mascotas.porteria','MascotasController@datatables');
-	Route::get('api.vehiculos.porteria','VehiculoController@datatables');
-	Route::get('api.empleados_unidad.porteria','EmpleadoController@datatables');
-	Route::get('api.empleados_conjunto.porteria','EmpleadosConjuntoController@datatables');
-	Route::get('api.visitantes.porteria','VisitanteController@datatables');
-	Route::get('api.evidencias.porteria','EvidenciaController@datatables');
-	Route::get('api.documentos.porteria','DocumentosController@datatables');
-
+	Route::get('api.cartas.porteria', 'CartaController@datatables');
+	Route::get('api.zonas.porteria', 'ZonasComunesController@datatables');
+	Route::get('api.unidades.porteria/{tipo}', 'UnidadController@datatables');
+	Route::get('api.residentes.porteria', 'ResidentesController@datatables');
+	Route::get('api.mascotas.porteria', 'MascotasController@datatables');
+	Route::get('api.vehiculos.porteria', 'VehiculoController@datatables');
+	Route::get('api.empleados_unidad.porteria', 'EmpleadoController@datatables');
+	Route::get('api.empleados_conjunto.porteria', 'EmpleadosConjuntoController@datatables');
+	Route::get('api.visitantes.porteria', 'VisitanteController@datatables');
+	Route::get('api.evidencias.porteria', 'EvidenciaController@datatables');
+	Route::get('api.documentos.porteria', 'DocumentosController@datatables');
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
