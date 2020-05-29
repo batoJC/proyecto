@@ -24,7 +24,7 @@
 				</i>
 				<ul role="menu" class="dropdown-menu pull-right">
 					<li>
-						<a target="_blanck" href="#">Video 1</a>
+						<a target="_blanck" href="https://youtu.be/XzGd2Ht2GV4">¿Cómo generar cuentas de cobro?</a>
 					</li>
 				</ul>
 			</div>

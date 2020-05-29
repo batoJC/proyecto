@@ -29,7 +29,7 @@
             @foreach ($cuenta['cuentas'] as $detalle)
                     <tr data-row="{{ $detalle['tipo'].'_'.$detalle['cuota_id'] }}">
                     <td><i onclick="eliminarCuota('{{ $detalle['tipo'] }}','{{ $detalle['cuota_id'] }}','{{ $detalle['unidad_id'] }}','{{ $cuenta['propietario']->id }}')" class="fa fa-trash" data-toggle="tooltip" data-placement="top" title="Eliminar esta cuenta"></i>  {{ date('d-m-Y',strtotime($detalle['vigencia_inicio'])) }}</td>
-                    <td>{{ date('d-m-Y',strtotime($detalle['vigencia_fin'])) }}</td>
+                    <td>{{ ($detalle['vigencia_fin'])? date('d-m-Y',strtotime($detalle['vigencia_fin'])) : '' }}</td>
                     <td>{{ $detalle['referencia'] }}</td>
                     <td>{{ $detalle['concepto'] }}</td>
                     <td>$ {{ number_format($detalle['valor']) }} <i onclick="editarValor('{{ $detalle['tipo'] }}','{{ $detalle['cuota_id'] }}','{{ $detalle['unidad_id'] }}','{{ $cuenta['propietario']->id }}')" class="fa fa-pencil" data-toggle="tooltip" data-placement="top" title="Editar el valor de esta cuenta"></i></td>

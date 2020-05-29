@@ -36,7 +36,7 @@
         <input id="fecha_pronto_pago_form" name="fecha_pronto_pago" value="" type="hidden">
         <input id="descuento_form" name="descuento" value="" type="hidden">
         @csrf
-        <button onclick="return loadData();" type="submit" class="btn btn-primary">Guardar y descargar</button>
+        <button id="btn_guardar_descargar" onclick="return loadData();" type="submit" class="btn btn-primary">Guardar y descargar</button>
     </form>
     </div>
 </div>
@@ -171,6 +171,7 @@
         pronto_pago_form.value = pronto_pago.checked;
         fecha_pronto_pago_form.value = fecha_pronto_pago.value;
         descuento_form.value = descuento.value;
+        btn_guardar_descargar.disabled = true;
         return true;
     }
 

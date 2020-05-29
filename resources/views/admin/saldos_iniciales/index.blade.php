@@ -25,6 +25,7 @@
 				<ul role="menu" class="dropdown-menu pull-right">
 					<li>
 						<a target="_blanck" href="https://youtu.be/e21dZi-_EIk">¿Qué puedo hacer?</a>
+						<a target="_blanck" href="https://youtu.be/34im8cvVZBo">¿Cómo hacer carga masiva?</a>
 					</li>
 				</ul>
 			</div>

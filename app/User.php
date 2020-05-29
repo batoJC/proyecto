@@ -137,7 +137,7 @@ class User extends Authenticatable
         } else {
             $multas = $this->hasMany(Multa::class, 'user_id', 'id')->where([
                 ['vigencia_inicio', '<=', $fecha],
-                ['estado','!=','Pronto pago']
+                ['estado', '!=', 'Pronto pago']
             ])->get();
         }
 
@@ -158,7 +158,7 @@ class User extends Authenticatable
             ->where([
                 ['propietario_id', $this->id],
                 ['fecha', '<=', $fecha],
-                ['anulada',false]
+                ['anulada', false]
             ])->sum(DB::raw("valor"));
         $sumaCartera = DB::table("carteras")
             ->where([
