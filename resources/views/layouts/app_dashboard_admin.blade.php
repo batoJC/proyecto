@@ -536,6 +536,13 @@
                                         </a>
                                     </li>
                                 @endif
+                                @if(Auth::user()->habeas_data == 'Acepto')
+                                <li @if(session('section') == 'exportar') class="current-page"@endif>
+                                    <a href="{{ url('exportar') }}">
+                                        <i class="fa fa-download"></i> Exportar
+                                    </a>
+                                </li>
+                            @endif
                                 {{-- <li>
                                     <a><i class="fa fa-file-text-o"></i> Modulo Documental <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">  --}}

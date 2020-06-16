@@ -362,6 +362,13 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//módulo documental
 	Route::get('api.documentos.admin', 'DocumentosController@datatables');
+
+	//Exportar
+	/*******************************************/
+	Route::get('exportar','exportarController@index');
+	Route::post('downloadSeveral','exportarController@downloadSeveral');
+
+
 });
 
 // Middleware de autenticación para el dueño de apto del conjunto
