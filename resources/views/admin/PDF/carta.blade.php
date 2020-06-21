@@ -42,6 +42,9 @@
             h4{
                 margin-top: 2px;
             }
+            th{
+                text-align: left;
+            }
 
 
         </style>

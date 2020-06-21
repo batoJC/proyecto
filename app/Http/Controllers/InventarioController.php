@@ -59,7 +59,7 @@ class InventarioController extends Controller
             $nuevo_articulo->fecha_compra = $request->fecha_compra;
             $nuevo_articulo->fabricante = $request->fabricante;
             $nuevo_articulo->estilo = $request->estilo;
-            $nuevo_articulo->numero_serie = $request->nuemro_serie;
+            $nuevo_articulo->numero_serie = $request->numero_serie;
             $nuevo_articulo->observaciones = $request->observaciones;
             $nuevo_articulo->conjunto_id = session('conjunto');
 

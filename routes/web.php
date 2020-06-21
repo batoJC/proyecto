@@ -367,8 +367,7 @@ Route::group(['middleware' => ['admin']], function () {
 	/*******************************************/
 	Route::get('exportar','exportarController@index');
 	Route::post('downloadSeveral','exportarController@downloadSeveral');
-
-
+	Route::get('pruebaExportar','exportarController@probarPDF');
 });
 
 // Middleware de autenticación para el dueño de apto del conjunto

@@ -6,7 +6,7 @@
         transition: 0.3s all;
         border: 2px solid #1ABB9C;
         width: 100%;
-        margin: auto;
+        margin: 10px auto 10px auto;
         padding: 20px;
         border-radius: 5px;
     }
@@ -21,8 +21,8 @@
         cursor: pointer;
         color: white;
     }
-
     .selected > h3{
+
         color: white !important;
     }
 
@@ -186,7 +186,6 @@
                 </label>
             </div>
         </div>
-        <br>
         <div class="row">
             <div class="col-12 col-md-4">
                 <label for="evidencias" class="tarjeta text-center" id="div_evidencias">
@@ -217,7 +216,7 @@
                     <br>
                     <i class="fa fa-list-alt icon"></i>
                     <h3 class="text-center">Novedades unidades</h3>
-                    <button onclick="crearData('novedaes_unidades')" class="btn">Descargar <i class="fa fa-download"></i></button>
+                    <button onclick="crearData('novedades_unidades')" class="btn">Descargar <i class="fa fa-download"></i></button>
                 </label>
             </div>
             <div class="col-12 col-md-4">
@@ -237,7 +236,6 @@
                 </label>
             </div>
         </div>
-        <br>
         <div class="row">
             <div class="col-12 col-md-4">
                 <label for="empleados" class="tarjeta text-center" id="div_empleados">
@@ -288,7 +286,6 @@
                 </label>
             </div>
         </div>
-        <br>
         <div class="row">
             <div class="col-12 col-md-4">
                 <label for="reservas" class="tarjeta text-center" id="div_reservas">
@@ -319,11 +316,44 @@
                     <br>
                     <i class="fa fa-barcode icon"></i>
                     <h3 class="text-center">Inventario</h3>
-                    <button onclick="crearData('inventarios')" class="btn">Descargar <i class="fa fa-download"></i></button>
+                    <button onclick="crearData('inventario')" class="btn">Descargar <i class="fa fa-download"></i></button>
+                </label>
+            </div>
+            <div class="col-12 col-md-4">
+                <label for="deudas" class="tarjeta text-center" id="div_deudas">
+                    <input onchange="seleccionar(this)" type="checkbox" name="deudas" id="deudas" value="1">
+                    <i
+                        data-placement="left" 
+                        title="Descripción" 
+                        data-toggle="dropdown" 
+                        type="button" 
+                        aria-expanded="false" 
+                        class="fa fa-info ayuda"></i>
+                    <br>
+                    <i class="fa fa-usd icon"></i>
+                    <h3 class="text-center">Deudas</h3>
+                    <button onclick="crearData('deudas')" class="btn">Descargar <i class="fa fa-download"></i></button>
                 </label>
             </div>
         </div>
-        <br>
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <label for="flujo_efectivo" class="tarjeta text-center" id="div_flujo_efectivo">
+                    <input onchange="seleccionar(this)" type="checkbox" name="flujo_efectivo" id="flujo_efectivo" value="1">
+                    <i
+                        data-placement="left" 
+                        title="Descripción" 
+                        data-toggle="dropdown" 
+                        type="button" 
+                        aria-expanded="false" 
+                        class="fa fa-info ayuda"></i>
+                    <br>
+                    <i class="fa fa-pie-chart icon"></i>
+                    <h3 class="text-center">Flujo efectivo</h3>
+                    <button onclick="crearData('flujo_efectivo')" class="btn">Descargar <i class="fa fa-download"></i></button>
+                </label>
+            </div>
+        </div>
     </div>
 </div>
 

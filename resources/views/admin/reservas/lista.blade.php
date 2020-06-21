@@ -139,7 +139,8 @@
 
 		//agregar una reserva
 		function showForm(){
-			$('#modal_reserva').modal('show');
+			$('#formReserva').trigger('reset');
+			$('#modal_reserva').modal('show'); 
 		}
 
 		function registrarReserva(){

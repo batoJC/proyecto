@@ -75,7 +75,7 @@
                         </div>
                     </div>
                 @endif
-                {{-- lista de visitantes frecuentes colocar activos--}}
+                {{-- lista de unidades enlazadas--}}
                 @if (in_array('lista_unidades', $atributos) and $unidad->unidades->count() > 0)
                     <h3>Listado de unidades</h3>
                     <table class="table">
@@ -421,7 +421,7 @@
                 @endif
 
               {{-- lista de visitantes frecuentes colocar activos--}}
-              @if (in_array('lista_visitantes', $atributos))
+              @if (in_array('lista_visitantes', $atributos) and $unidad->visitantes()->where('estado','Inactivo')->count() > 0)
                 <h3>Listado de visitantes</h3>
                 <table class="table">
                     <thead>

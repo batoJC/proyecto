@@ -168,4 +168,8 @@ class User extends Authenticatable
 
         return $sumaRecaudo - $sumaCartera;
     }
+
+    public function pqr(){
+        return $this->hasMany(QuejasReclamos::class,'id_user');
+    }
 }

@@ -18,7 +18,7 @@ class CreateInventariosTable extends Migration
             $table->string('nombre');
             $table->string('ubicacion')->nullable();
             $table->text('descripcion');
-            $table->string('condicion', 128)->nullable();
+            $table->text('condicion')->nullable();
             $table->double('valor', 12, 2);
             $table->boolean('garantia')->default(false);
             $table->date('valido_hasta')->nullable();
