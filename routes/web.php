@@ -11,7 +11,13 @@
 |
 */
 
+use App\Feriados;
 use Illuminate\Support\Facades\Route;
+
+
+Route::get('prueba', function () {
+
+});
 
 
 // Rutas de autenticacion got it?
@@ -289,9 +295,9 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//saldos iniciales
 	Route::resource('saldos_iniciales', 'SaldoInicialController');
-	Route::get('masivo_saldos','SaldoInicialController@viewMasivo');
-	Route::get('download_base_saldos','SaldoInicialController@download');
-	Route::post('masivo_saldos','SaldoInicialController@masivo');
+	Route::get('masivo_saldos', 'SaldoInicialController@viewMasivo');
+	Route::get('download_base_saldos', 'SaldoInicialController@download');
+	Route::post('masivo_saldos', 'SaldoInicialController@masivo');
 
 	//Unidades
 	/*************************************/
@@ -365,9 +371,14 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//Exportar
 	/*******************************************/
-	Route::get('exportar','exportarController@index');
-	Route::post('downloadSeveral','exportarController@downloadSeveral');
-	Route::get('pruebaExportar','exportarController@probarPDF');
+	Route::get('exportar', 'exportarController@index');
+	Route::post('downloadSeveral', 'exportarController@downloadSeveral');
+	Route::get('pruebaExportar', 'exportarController@probarPDF');
+
+
+	//Liquidador de Nómina
+	/*****************************************/
+	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
 });
 
 // Middleware de autenticación para el dueño de apto del conjunto

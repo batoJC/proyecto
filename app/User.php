@@ -54,6 +54,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Unidad::class, 'unidads_users', 'user_id', 'unidad_id')->withPivot('estado');
     }
 
+    public function unidadesActivas()
+    {
+        return $this->belongsToMany(Unidad::class, 'unidads_users', 'user_id', 'unidad_id')->wherePivot('estado', 'Activo')->withPivot('estado');
+    }
+
     public function cuentas($fecha = null)
     {
         if (!$fecha) {
@@ -107,6 +112,24 @@ class User extends Authenticatable
             }
         }
         return $salida;
+    }
+
+    public function deudaPropia()
+    {
+        $saldo = 0;
+        $interes = 0;
+        $multas = null;
+        $fecha = date('Y-m-d');
+        $multas = $this->hasMany(Multa::class, 'user_id', 'id')->where([
+            ['vigencia_inicio', '<=', $fecha],
+            ['estado', 'No pago']
+        ])->get();
+
+        foreach ($multas as $multa) {
+            $saldo += $multa->calcularValor();
+            $interes += $multa->calcularInteres();
+        }
+        return ['saldo' => $saldo, 'interes' => $interes];
     }
 
 
@@ -169,7 +192,8 @@ class User extends Authenticatable
         return $sumaRecaudo - $sumaCartera;
     }
 
-    public function pqr(){
-        return $this->hasMany(QuejasReclamos::class,'id_user');
+    public function pqr()
+    {
+        return $this->hasMany(QuejasReclamos::class, 'id_user');
     }
 }

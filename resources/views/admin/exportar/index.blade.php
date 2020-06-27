@@ -417,34 +417,36 @@
 
         //descargar seleccionados
         function downloadSeveral(data){
-            if(JSON.stringify(Object.fromEntries(data)) != '{}'){
-                $('#loading').css("display", "flex")
-                .hide().fadeIn(800,()=>{
-                    $('#loading').css('display','flex');
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', "{{ url('downloadSeveral') }}");
-                    data.append('_token',csrf_token);
-                    // xhr.responseType = 'blob';
+            swal('Advertencia!','Este proceso puede tomar un gran tiempo según la información solicitada.','info').then(res=>{
+                if(JSON.stringify(Object.fromEntries(data)) != '{}'){
+                    $('#loading').css("display", "flex")
+                    .hide().fadeIn(800,()=>{
+                        $('#loading').css('display','flex');
+                        var xhr = new XMLHttpRequest();
+                        xhr.open('POST', "{{ url('downloadSeveral') }}");
+                        data.append('_token',csrf_token);
+                        // xhr.responseType = 'blob';
 
-                    xhr.onload = function(e) {
-                        let data = JSON.parse(this.response);
-                        if (this.status == 200) {
-                            var link = document.createElement('a');
-                            link.href = '../'+data.data;
-                            link.download = "export.zip";
-                            link.click();
-                            $('#loading').fadeOut(800);
-                        }else{
-                            swal('Error!',data.msg,'error');
-                            $('#loading').fadeOut(800);
-                        }
-                    };
+                        xhr.onload = function(e) {
+                            let data = JSON.parse(this.response);
+                            if (this.status == 200) {
+                                var link = document.createElement('a');
+                                link.href = '../'+data.data;
+                                link.download = "export.zip";
+                                link.click();
+                                $('#loading').fadeOut(800);
+                            }else{
+                                swal('Error!',data.msg,'error');
+                                $('#loading').fadeOut(800);
+                            }
+                        };
 
-                    xhr.send(data);
-                });
-            }else{
-                swal('Advertencia!','Debe de seleccionar al menos un item para descargar!','warning');
-            }
+                        xhr.send(data);
+                    });
+                }else{
+                    swal('Advertencia!','Debe de seleccionar al menos un item para descargar!','warning');
+                }
+            });
         }
 
 

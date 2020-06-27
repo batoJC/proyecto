@@ -44,6 +44,7 @@
 				<th>Nombre completo</th>
 				<th>Cargo</th>
 				<th>Dirección</th>
+				<th>Salario</th>
 				<th>Estado</th>
 				<th>Fecha retiro</th>
 				<th>Opciones</th>
@@ -57,7 +58,13 @@
 	
 @endsection
 @section('ajax_crud')
+	<script src="{{ asset('js/jquery.maskMoney.min.js') }}"></script>
+
 	<script>
+
+		$(document).ready(function () {
+            $('#salario_aux').maskMoney({precision:0});
+        });
 
 		var actualizarTabla = (data,callback,settings) => {
             $.ajax({
@@ -103,6 +110,7 @@
           		{ data: 'nombre_completo', name: 'nombre_completo'},
           		{ data: 'cargo', name: 'cargo'},
           		{ data: 'direccion', name: 'direccion'},
+          		{ data: 'salario', name: 'salario'},
           		{ data: 'estado', name: 'estado'},
           		{ data: 'fecha_retiro', name: 'fecha_retiro'},
           		{ data: 'action', name: 'action', orderable: false, searchable: false},
@@ -170,13 +178,14 @@
 					$('#nombre_completo').val(data.nombre_completo);
 					$('#cedula').val(data.cedula);
 					$('#direccion').val(data.direccion);
+					$('#salario_aux').val(data.salario);
 					$('#cargo').val(data.cargo);
 				}
 			});
         }
 
 		function guardarEmpleado(){
-			if(verificarFormulario('dataEmpleado',5)){
+			if(verificarFormulario('dataEmpleado',6)){
 				let id = $('#id').val();
 				let url = (action == 'add')? '{{url('empleados_conjunto')}}' : '{{url('empleados_conjunto')}}/'+id;
 

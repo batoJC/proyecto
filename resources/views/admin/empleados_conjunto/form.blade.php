@@ -28,6 +28,11 @@
 				<input type="text" class="form-control validate-input-4" name="direccion" id="direccion">
 				<br>
 
+				<label class="validate-label-6" for="salario">Salario</label>
+				<input class="form-control validate-input-6" onchange="changeValor(this,'salario');" type="text"  id="salario_aux" name="salario_aux">
+				<input class="form-control" type="hidden"  id="salario" name="salario">
+				<br>
+
 				<label class="validate-label-5" for="cargo">Cargo</label>
 				<input type="text" class="form-control validate-input-5" name="cargo" id="cargo">
 				<br>

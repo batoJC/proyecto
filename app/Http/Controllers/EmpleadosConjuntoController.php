@@ -63,6 +63,7 @@ class EmpleadosConjuntoController extends Controller
             $empleado->nombre_completo = $request->nombre_completo;
             $empleado->cedula = $request->cedula;
             $empleado->direccion = $request->direccion;
+            $empleado->salario = $request->salario;
             $empleado->cargo = $request->cargo;
             if ($request->hasFile('foto')) {
                 // if ($empleado->foto != ''){
@@ -118,6 +119,7 @@ class EmpleadosConjuntoController extends Controller
             $empleadosConjunto->nombre_completo = $request->nombre_completo;
             $empleadosConjunto->cedula = $request->cedula;
             $empleadosConjunto->direccion = $request->direccion;
+            $empleadosConjunto->salario = $request->salario;
             $empleadosConjunto->cargo = $request->cargo;
             if ($request->hasFile('foto')) {
                 if ($empleadosConjunto->foto != '') {
@@ -182,12 +184,17 @@ class EmpleadosConjuntoController extends Controller
                     return date('d-m-Y', strtotime($empleado->fecha_ingreso));
                 })->addColumn('fecha_retiro', function ($empleado) {
                     return ($empleado->fecha_retiro) ? date('d-m-Y', strtotime($empleado->fecha_retiro)) : 'No aplica';
+                })->addColumn('salario', function ($empleado) {
+                    return "$".number_format($empleado->salario);
                 })->addColumn('foto', function ($empleado) {
                     return json_encode([$empleado->foto]);
                 })->addColumn('action', function ($empleado) {
                     $salida = '<a data-toggle="tooltip" data-placement="top" title="Editar" class="btn btn-default" 
                                 onclick="showEdit(' . $empleado->id . ')">
                                 <i class="fa fa-pencil"></i>
+                            </a>
+                            <a data-toggle="tooltip" data-placement="top" title="Ingresar a liquidador de nómina" class="btn btn-default" href="'.url('liquidador').'/'.$empleado->id.'">
+                                <i class="fa fa-calculator"></i>
                             </a>';
                     if ($empleado->estado == 'Activo') {
                         $salida .= ' <a data-toggle="tooltip" data-placement="top" title="Retirar" class="btn btn-default" 

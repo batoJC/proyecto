@@ -15,6 +15,8 @@
             <br>
             <b>Fecha solicitud: </b>{{ date('d/m/Y',strtotime($reserva->fecha_solicitud)) }}
             <br>
+            <b>Solicitada por: </b>{{ $reserva->propietario->nombre_completo }} - {{ $reserva->propietario->numero_cedula  }}
+            <br>
             <b>Motivo: </b>{{ $reserva->motivo }}
             <br>
             <b>Número de asistentes: </b>{{ $reserva->asistentes }}

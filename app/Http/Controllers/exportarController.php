@@ -7,6 +7,7 @@ use App\Conjunto;
 use App\EmpleadosConjunto;
 use App\Evidencia;
 use App\FlujoEfectivo;
+use App\Inventario;
 use App\Mantenimiento;
 use App\NovedadesConjunto;
 use App\Reserva;
@@ -56,12 +57,26 @@ class exportarController extends Controller
 
 
         //empleados conjunto
-        $conjunto = Conjunto::find(session('conjunto'));
-        $empleados = EmpleadosConjunto::where('conjunto_id', session('conjunto'))->get();
-        $pdf = PDF::loadView('admin.exportar.empleados_conjunto', [
-            'empleados' => $empleados
+        // $conjunto = Conjunto::find(session('conjunto'));
+        // $empleados = EmpleadosConjunto::where('conjunto_id', session('conjunto'))->get();
+        // $pdf = PDF::loadView('admin.exportar.empleados_conjunto', [
+        //     'empleados' => $empleados
+        // ]);
+
+        // $flujo_efectivo = FlujoEfectivo::where('conjunto_id', session('conjunto'))
+        //     ->orderBy('fecha', 'ASC')
+        //     ->get();
+        // $pdf = PDF::loadView('admin.exportar.flujo_efectivo', [
+        //     'flujo_efectivo' => $flujo_efectivo
+        // ]);
+
+        //inventario
+        $inventario = Inventario::where('conjunto_id',9)->get();
+        $pdf = PDF::loadView('admin.exportar.inventario', [
+            'inventario' => $inventario
         ]);
 
+        // $this->deudas();
         return $pdf->stream();
     }
 
@@ -253,6 +268,10 @@ class exportarController extends Controller
         mkdir(public_path($carpeta));
         foreach ($propietarios as $propietario) {
             if ($propietario->pqr->count() > 0) {
+                mkdir(public_path($carpeta . '/archivos'));
+                foreach ($propietario->pqr as $pqr) {
+                    copy(public_path('quejas/' . $pqr->archivo), public_path($carpeta . '/archivos/archivo_' . $pqr->id . '.' . explode('.', $pqr->archivo)[1]));
+                }
                 $pdf = PDF::loadView('admin.exportar.pqrs', [
                     'propietario' => $propietario
                 ]);
@@ -326,29 +345,36 @@ class exportarController extends Controller
     {
         // $pdf = null;
         $conjunto = Conjunto::find(session('conjunto'));
-        $cartas = Carta::where('conjunto_id', session('conjunto'))->get();
+        $unidades = Unidad::where('conjunto_id', session('conjunto'))->get();
+        // $cartas = Carta::where('conjunto_id', session('conjunto'))->get();
         $carpeta = "exports/{$conjunto->id}/ingresos_y_retiros";
         mkdir(public_path($carpeta));
-        foreach ($cartas as $carta) {
-            $files = glob(public_path('qrcodes') . '/*');
-            foreach ($files as $file) {
-                if (is_file($file))
-                    unlink($file); //elimino el fichero
+        foreach ($unidades as $unidad) {
+            if ($unidad->cartas->count() > 0) {
+                mkdir(public_path($carpeta . "/{$unidad->tipo->nombre} {$unidad->numero_letra}"));
+                foreach ($unidad->cartas as $carta) {
+                    $files = glob(public_path('qrcodes') . '/*');
+                    foreach ($files as $file) {
+                        if (is_file($file))
+                            unlink($file); //elimino el fichero
+                    }
+
+                    $pdf = null;
+
+                    $text_qr = "Fecha: " . date('d-m-Y', strtotime($carta->fecha));
+                    $text_qr .= "\n\r Unidad: " . $carta->unidad->tipo->nombre . ' ' . $carta->unidad->numero_letra;
+                    $text_qr .= "\n\r Copropiedad: " . $conjunto->nombre;
+
+                    $administrador = $conjunto->administrador();
+
+                    QR::format('png')->size(180)->margin(10)->generate($text_qr, public_path('qrcodes/qrcode_' . $carta->id . '.png'));
+                    $pdf = PDF::loadView('admin.PDF.carta', ['carta' => $carta, 'administrador' => $administrador]);
+                    $archivo =  $pdf->stream();
+                    $fecha = date('d M Y', strtotime($carta->fecha));
+                    $nombre_archivo = "exports/{$conjunto->id}/ingresos_y_retiros/{$unidad->tipo->nombre} {$unidad->numero_letra}/carta_{$carta->id} fecha {$fecha}.pdf";
+                    file_put_contents(public_path($nombre_archivo), $archivo);
+                }
             }
-
-            $pdf = null;
-
-            $text_qr = "Fecha: " . date('d-m-Y', strtotime($carta->fecha));
-            $text_qr .= "\n\r Unidad: " . $carta->unidad->tipo->nombre . ' ' . $carta->unidad->numero_letra;
-            $text_qr .= "\n\r Copropiedad: " . $conjunto->nombre;
-
-            $administrador = $conjunto->administrador();
-
-            QR::format('png')->size(180)->margin(10)->generate($text_qr, public_path('qrcodes/qrcode_' . $carta->id . '.png'));
-            $pdf = PDF::loadView('admin.PDF.carta', ['carta' => $carta, 'administrador' => $administrador]);
-            $archivo =  $pdf->stream();
-            $nombre_archivo = "exports/{$conjunto->id}/ingresos_y_retiros/carta_{$carta->id}.pdf";
-            file_put_contents(public_path($nombre_archivo), $archivo);
         }
     }
 
@@ -415,7 +441,7 @@ class exportarController extends Controller
             ->orderBy('reservas.fecha_inicio', 'DESC')
             ->select('reservas.*')
             ->get();
-        $pdf = PDF::loadView('admin.exportar.reservas_aprovadas', [
+        $pdf = PDF::loadView('admin.exportar.reservas_aprobadas', [
             'reservas' => $reservas_aceptadas
         ]);
         $archivo = $pdf->stream();
@@ -443,18 +469,24 @@ class exportarController extends Controller
     {
         // $pdf = null;
         $conjunto = Conjunto::find(session('conjunto'));
-        // $unidades = Unidad::where('conjunto_id',session('conjunto'))->get();
+        $inventario = Inventario::where('conjunto_id', session('conjunto'))->get();
         $carpeta = "exports/{$conjunto->id}/inventario";
-        mkdir(public_path($carpeta));
-        // foreach ($unidades as $unidad) {
-        //     $pdf = PDF::loadView('admin.exportar.unidad', [
-        //         'unidad' => $unidad
-        //     ]);
-        //     $archivo = $pdf->stream();
-        //     $nombre_archivo = "exports/{$conjunto->id}/unidades/{$unidad->tipo->nombre} {$unidad->numero_letra}.pdf";
-        //     file_put_contents(public_path($nombre_archivo), $archivo);
-        // }
-
+        @mkdir(public_path($carpeta));
+        $pdf = PDF::loadView('admin.exportar.inventario', [
+            'inventario' => $inventario
+        ]);
+        mkdir(public_path($carpeta.'/archivos'));
+        foreach ($inventario as $articulo) {
+            $data = explode(';',$articulo->foto);
+            $n = 0;
+            foreach ($data as $d ) {
+                $ext = explode('.',$d)[1];
+                copy(public_path("imgs/private_imgs/{$d}"),public_path($carpeta."/archivos/foto_{$articulo->id}{$n}.{$ext}"));
+            }
+        }
+        $archivo = $pdf->stream();
+        $nombre_archivo = "exports/{$conjunto->id}/inventario/info.pdf";
+        file_put_contents(public_path($nombre_archivo), $archivo);
     }
 
     //TODO
@@ -462,18 +494,49 @@ class exportarController extends Controller
     {
         // $pdf = null;
         $conjunto = Conjunto::find(session('conjunto'));
-        // $unidades = Unidad::where('conjunto_id',session('conjunto'))->get();
-        $carpeta = "exports/{$conjunto->id}/inventario";
-        mkdir(public_path($carpeta));
-        // foreach ($unidades as $unidad) {
-        //     $pdf = PDF::loadView('admin.exportar.unidad', [
-        //         'unidad' => $unidad
-        //     ]);
-        //     $archivo = $pdf->stream();
-        //     $nombre_archivo = "exports/{$conjunto->id}/unidades/{$unidad->tipo->nombre} {$unidad->numero_letra}.pdf";
-        //     file_put_contents(public_path($nombre_archivo), $archivo);
-        // }
+        $propietariosAux = User::where([
+            ['id_rol', 3],
+            ['id_conjunto', session('conjunto')]
+        ])->get();
 
+        $cuentas = array();
+        foreach ($propietariosAux as $propietario) {
+            $data = $propietario->cuentas();
+            if (count($data) > 0) {
+                $deuda = $propietario->deudaPropia();
+                if (($deuda['saldo'] + $deuda['interes']) > 0) {
+                    $cuentas[] = array(
+                        'id' => $propietario->numero_cedula,
+                        'propietario' => $propietario->nombre_completo,
+                        'unidad' => '',
+                        'capital' => $deuda['saldo'],
+                        'interes' =>  $deuda['interes']
+                    );
+                }
+                if ($propietario->unidadesActivas->count() > 0) {
+
+                    foreach ($propietario->unidadesActivas as $unidad) {
+                        if (($unidad->total() + $unidad->interes()) > 0) {
+                            $cuentas[] = array(
+                                'id' => $propietario->numero_cedula,
+                                'propietario' => $propietario->nombre_completo,
+                                'unidad' => $unidad->tipo->nombre . ' '.$unidad->numero_letra,
+                                'capital' => $unidad->total(),
+                                'interes' =>  $unidad->interes()
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        $carpeta = "exports/{$conjunto->id}/deudas";
+        mkdir(public_path($carpeta));
+        $pdf = PDF::loadView('admin.exportar.deudas', [
+            'cuentas' => $cuentas
+        ]);
+        $archivo = $pdf->stream();
+        $nombre_archivo = "exports/{$conjunto->id}/deudas/info.pdf";
+        file_put_contents(public_path($nombre_archivo), $archivo);
     }
 
     //TODO

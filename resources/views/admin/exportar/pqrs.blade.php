@@ -12,6 +12,9 @@
 <p>
     <b>Tipo: </b>{{ $p->tipo }}<br>
     <b>Fecha: </b>{{ date('d-m-Y',strtotime($p->fecha_solicitud))}}<br>
+    @if ($p->archivo)
+        <b>Archivo: </b> archivo_{{$p->id.'.'.explode('.',$p->archivo)[1]}} <br>
+    @endif
     <b>Hechos: </b>{{ $p->hechos }}<br>
     <b>Petición: </b>{{ $p->peticion }}<br>
     <b>Estado: </b>{{ $p->estado }}<br>

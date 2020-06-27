@@ -27,6 +27,11 @@ class Unidad extends Model
         return $this->hasMany('App\Residentes', 'unidad_id', 'id');
     }
 
+    public function cartas()
+    {
+        return $this->hasMany(Carta::class, 'unidad_id', 'id');
+    }
+
     public function mascotas()
     {
         return $this->hasMany('App\Mascota', 'unidad_id', 'id');
@@ -220,16 +225,20 @@ class Unidad extends Model
 
         $totalIntereses = 0;
 
+        //saldos iniciales
+        $saldos = $this->hasMany(saldoInicial::class, 'unidad_id')->where('estado', 'No pago')->where('vigencia_inicio', '<=', $fecha)->get();
+
+        foreach ($saldos as $saldo) {
+            $totalIntereses += $saldo->calcularInteres();
+        }
+
         //cuotas administracion
         $administracion = $this->belongsToMany(Cuota_admon::class, 'administracion_unidades', 'unidad_id', 'cuota_id')->withPivot('estado', 'valor')->wherePivot('estado', '=', 'No pago')->where('vigencia_inicio', '<=', $fecha)->get();
-
-        // dd($administracion);
 
         foreach ($administracion as $cuota) {
             $totalIntereses += $cuota->calcularInteres();
         }
 
-        // dd($totalIntereses);
 
         //cuotas extraordinarias
         $extraordinarias = $this->belongsToMany('App\Cuota_extOrd', 'extraordinaria_unidades', 'unidad_id', 'cuota_id')->withPivot('estado', 'valor')->wherePivot('estado', '=', 'No pago')->where('vigencia_inicio', '<=', $fecha)->get();
@@ -249,4 +258,45 @@ class Unidad extends Model
 
         return $totalIntereses;
     }
+
+    public function total(){
+        $saldo = 0;
+        $fecha = date('Y-m-d');
+
+        $saldos = $this->hasMany(saldoInicial::class, 'unidad_id')->where('estado', 'No pago')->where('vigencia_inicio', '<=', $fecha)->get();
+
+        foreach ($saldos as $saldo) {
+            $saldo += $saldo->calcularValor();
+        }
+
+        //cuotas administracion
+        $administracion = $this->belongsToMany(Cuota_admon::class, 'administracion_unidades', 'unidad_id', 'cuota_id')->withPivot('estado', 'valor')->wherePivot('estado', '=', 'No pago')->where('vigencia_inicio', '<=', $fecha)->get();
+
+        // dd($administracion);
+
+        foreach ($administracion as $cuota) {
+            $saldo += $cuota->calcularValor();
+        }
+
+        // dd($saldo);
+
+        //cuotas extraordinarias
+        $extraordinarias = $this->belongsToMany('App\Cuota_extOrd', 'extraordinaria_unidades', 'unidad_id', 'cuota_id')->withPivot('estado', 'valor')->wherePivot('estado', '=', 'No pago')->where('vigencia_inicio', '<=', $fecha)->get();
+        foreach ($extraordinarias as $cuota) {
+            $saldo += $cuota->calcularValor();
+        }
+
+        //otros cobros
+        $otros = $this->hasMany(Otros_cobros::class, 'unidad_id', 'id')->where([
+            ['vigencia_inicio', '<=', $fecha],
+            ['estado', 'No pago']
+        ])->get();
+        foreach ($otros as $cuota) {
+            $saldo += $cuota->calcularValor();
+        }
+
+
+        return $saldo;
+    }
+
 }

@@ -36,7 +36,7 @@
         </div>
     </div>
     <br>
-    <h3><span  class="@if ($saldoActual < 0)
+    <h3><span id="saldo_color"  class="@if ($saldoActual < 0)
         red
     @else
         green
@@ -172,6 +172,13 @@
                         data: {},
                         dataType: "json",
                         success: function (response) {
+                            if(response.texto >= 0){
+                                $('#saldo_color').removeClass('red');
+                                $('#saldo_color').addClass('green');
+                            }else{
+                                $('#saldo_color').addClass('red');
+                                $('#saldo_color').removeClass('green');
+                            }
                             saldo_texto.innerHTML = response.texto;
                         }
                     });
