@@ -7,9 +7,9 @@ class Feriados
 {
     //
 
-    public function isFeriado($fecha)
+    public static function isFeriado($fecha)
     {
-        $holidays = $this->generateHolidays(date('Y', strtotime($fecha)));
+        $holidays = Feriados::generateHolidays(date('Y', strtotime($fecha)));
         // usort($holidays, function ($a, $b) {
         //     return strtotime($a) - strtotime($b);
         // });
@@ -22,9 +22,9 @@ class Feriados
     // }
 
 
-    private function generateHolidays($year)
+    private static function generateHolidays($year)
     {
-        // $this->easterMonth--;
+        // Feriados::easterMonth--;
         $a = floor($year % 19);
         $b = floor($year % 4);
         $c = floor($year % 7);
@@ -86,37 +86,37 @@ class Feriados
 
         //Fechas trasladables
         //Epífania
-        $date = $this->calculate("06-01-{$year}");
+        $date = Feriados::calculate("06-01-{$year}");
         $holidays[] = $date;
         //Día de san jóse
-        $date = $this->calculate("19-03-{$year}");
+        $date = Feriados::calculate("19-03-{$year}");
         $holidays[] = $date;
 
         //Día de san pedro y san pablo
-        $date = $this->calculate("29-06-{$year}");
+        $date = Feriados::calculate("29-06-{$year}");
         // echo $date;
         $holidays[] = $date;
 
         //Asunción de la virgen
-        $date = $this->calculate("15-08-{$year}");
+        $date = Feriados::calculate("15-08-{$year}");
         $holidays[] = $date;
 
         //Día de la raza
-        $date = $this->calculate("12-10-{$year}");
+        $date = Feriados::calculate("12-10-{$year}");
         $holidays[] = $date;
 
         //Día de todos los santos
-        $date = $this->calculate("01-11-{$year}");
+        $date = Feriados::calculate("01-11-{$year}");
         $holidays[] = $date;
 
         //Día de independencia de cartagena
-        $date = $this->calculate("11-11-{$year}");
+        $date = Feriados::calculate("11-11-{$year}");
         $holidays[] = $date;
 
         return $holidays;
     }
 
-    private function calculate($fecha)
+    private static function calculate($fecha)
     {
 
         $dayOfWeek = date('N', strtotime($fecha));

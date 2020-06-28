@@ -100,6 +100,7 @@
 
 </style>
 @section('content')
+
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-11 col-md-11">
@@ -138,7 +139,7 @@
         </p>
         <div class="row">
             <div class="col-12 col-md-4">
-                <a for="unidades" class="tarjeta text-center" id="div_unidades">
+                <a href="{{ url('jornadas',['empleado'=>$empleado->id]) }}" for="unidades" class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 
@@ -237,6 +238,9 @@
 	<script>
 
         var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        
+
 
     </script>
 @endsection
