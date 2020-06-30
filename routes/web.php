@@ -401,6 +401,7 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//Liquidador de Nómina
 	/*****************************************/
+	Route::get('informacionLiquidador','LiquidadorController@informacion');
 	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
 	Route::post('liquidadorJornadas','LiquidadorController@getJornadas');
 	Route::get('jornadas/{empleado}','JornadasController@index');

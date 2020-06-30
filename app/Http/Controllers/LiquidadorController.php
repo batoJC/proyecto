@@ -22,15 +22,34 @@ class LiquidadorController extends Controller
 
     public function getJornadas(Request $request)
     {
-        // try {
+        try {
             return $this->crearJornadas($request->fecha_inicio, $request->fecha_fin, $request->continuo);
-        // } catch (Exception $th) {
-        //     return ['res' => 0, 'msg' => 'Ocurrión un error al generar las jornadas!', 'e' => $th];
-        // }
+        } catch (Exception $th) {
+            return ['res' => 0, 'msg' => 'Ocurrión un error al generar las jornadas!', 'e' => $th];
+        }
+    }
+
+    public function informacion(){
+        $datos = array();
+        $datos['salario'] = 993800;
+        $datos['horas_jornada'] = 240;
+        $datos['jornada_ordinaria'] = 8;
+        $datos['inicio_jornada'] = '6:00';
+        $datos['final_jornada'] = '21:00';
+        $datos['recargo_ordinario_nocturno'] = 35;
+        $datos['recargo_ordinario_diurno_festivo'] = 75;
+        $datos['recargo_ordinario_nocturno_festivo'] = 75;
+        $datos['hora_extra_ordinaria_diurna'] = 1.25;
+        $datos['hora_extra_ordinaria_nocturna'] = 1.75;
+        $datos['hora_extra_ordinaria_diurna_fesiva'] = 2.00;
+        $datos['hora_extra_ordinaria_nocturna_festiva'] = 2.50;
+
+
+        return view('admin.liquidador.informacion')->with('datos',$datos);
     }
 
 
-    public function crearJornadas($inicio, $fin, $continuo = true)
+    private function crearJornadas($inicio, $fin, $continuo = true)
     {
         $jornadas = array();
         $inicio = new DateTime($inicio);

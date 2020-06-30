@@ -6,7 +6,7 @@
 		        	<span aria-hidden="true">x</span>
 		        </button>
 		        <h4 class="text-center modal-title">
-		        	Registar Jornada
+		        	Registrar Jornada
 		        </h4>
       		</div>
       		<div class="modal-body">
