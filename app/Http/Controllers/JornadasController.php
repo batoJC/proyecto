@@ -85,4 +85,42 @@ class JornadasController extends Controller
     }
 
 
+    public function show(Jornada $jornada){
+        if($jornada->empleado->conjunto_id != session('conjunto')){
+            return ['res'=>0,'msg'=>'No tienes permiso para ver esto.'];
+        }
+        return $jornada;
+    }
+
+
+    public function update(Request $request){
+        try {
+            $jornada = Jornada::find($request->jornada_id);
+            if($jornada->empleado->conjunto_id != session('conjunto')){
+                session(['error'=>'No tienes permisos para realizar esta acción']);
+                return redirect()->action('JornadasController@index',['empelado'=>$request->empleado,$request]);
+            }
+            $jornada->fecha = $request->fecha;
+            $jornada->entrada = $request->entrada;
+            $jornada->salida = $request->salida;
+            $jornada->HOD = $request->HOD;
+            $jornada->HON = $request->HON;
+            $jornada->HODF = $request->HODF;
+            $jornada->HONF = $request->HONF;
+            $jornada->HEDO = $request->HEDO;
+            $jornada->HENO = $request->HENO;
+            $jornada->HEDF = $request->HEDF;
+            $jornada->HENF = $request->HENF;
+            $jornada->save();
+
+            session(['status'=>'Se actualizo el registro correctamente!']);
+            return redirect()->action('JornadasController@index',['empelado'=>$request->empleado,$request]);
+
+        } catch (\Throwable $th) {
+            session(['error'=>'Ocurrión un error al intentar actualizar el registro.']);
+            return redirect()->action('JornadasController@index',['empelado'=>$request->empleado,$request]);
+        }
+    }
+
+
 }

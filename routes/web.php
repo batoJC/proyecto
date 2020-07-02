@@ -404,9 +404,14 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('informacionLiquidador','LiquidadorController@informacion');
 	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
 	Route::post('liquidadorJornadas','LiquidadorController@getJornadas');
+	Route::get('generarLiquidacion/{empleado}','LiquidadorController@vistaGenerar');
+
+
 	Route::get('jornadas/{empleado}','JornadasController@index');
 	Route::post('jornadasStore','JornadasController@store');
 	Route::post('deleteJornada','JornadasController@delete');
+	Route::get('jornada/{jornada}','JornadasController@show');
+	Route::post('updateJornada','JornadasController@update');
 });
 
 // Middleware de autenticación para el dueño de apto del conjunto

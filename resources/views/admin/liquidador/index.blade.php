@@ -139,7 +139,7 @@
         </p>
         <div class="row">
             <div class="col-12 col-md-4">
-                <a href="{{ url('jornadas',['empleado'=>$empleado->id]) }}" for="unidades" class="tarjeta text-center">
+                <a href="{{ url('jornadas',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 
@@ -153,7 +153,7 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a for="pqr" class="tarjeta text-center">
+                <a href="{{ url('generarLiquidacion',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 
@@ -167,7 +167,7 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a for="novedades_conjunto" class="tarjeta text-center">
+                <a class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 
@@ -183,7 +183,7 @@
         </div>
         <div class="row">
             <div class="col-12 col-md-4">
-                <a for="unidades" class="tarjeta text-center">
+                <a class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 
@@ -197,7 +197,7 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a for="pqr" class="tarjeta text-center">
+                <a class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 

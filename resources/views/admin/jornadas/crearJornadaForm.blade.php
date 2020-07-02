@@ -32,7 +32,7 @@
                         <div class="col-4 col-md-3 text-center">
                              <div class="m-5">
                                 <label for="">Minuto</label>
-                                <input value="00" min="00" max="60" class="form-control input" type="number" id="inicio_minuto">
+                                <input value="00" min="00" max="59" class="form-control input" type="number" id="inicio_minuto">
                                 <span class="validity span"></span>
                             </div>
                         </div>
@@ -68,7 +68,7 @@
                         <div class="col-4 col-md-3 text-center">
                              <div class="m-5">
                                 <label for="">Minuto</label>
-                                <input value="00" min="00" max="60" class="form-control input" type="number" id="final_minuto">
+                                <input value="00" min="00" max="59" class="form-control input" type="number" id="final_minuto">
                                 <span class="validity span"></span>
                             </div>
                         </div>
@@ -128,7 +128,6 @@
                             </form>
                         </div>
                     </div>
-
       		</div>
     	</div>
   	</div>

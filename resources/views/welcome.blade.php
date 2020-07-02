@@ -203,9 +203,9 @@
             </div>
             <div class="second-content" id="quienes_somos">
                 <div class="row reset-styles">
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 quienes-section-img"></div>
+                    
                     <br>
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 quienes-section-textos">
+                   
                         <h2 class="text-center">
                             <span class="quienes">
                                 &nbsp;¿Quienes
@@ -215,15 +215,12 @@
                             </span>
                         </h2>
                         <br>
-                        <p class="text-justify">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsum quas sit autem corporis in impedit repudiandae esse dignissimos. Distinctio nihil dignissimos magnam quibusdam incidunt ullam quaerat praesentium ratione cumque iure. Veritatis sit nostrum ex aut id, tempora magni recusandae soluta adipisci nesciunt consequatur, est, enim error impedit eum sequi. Non commodi necessitatibus quod aliquam tempora rem vero voluptatibus perferendis eligendi fugit.</p>
+                        <p class="text-justify">
+                            <iframe width="100%" height="450" src="https://www.youtube.com/embed/ggFydzDX7pg" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </p>
                         <br>
-                        <div class="col-lg-6 col-md-8 col-sm-8 ">
-                            <button class="btn-gestion btn-block">
-                                Read More
-                            </button>
-                            <br>
-                        </div>
-                    </div>
+
+                   
                 </div>
             </div>
             <div class="third-content">

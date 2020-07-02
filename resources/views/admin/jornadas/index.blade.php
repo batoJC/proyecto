@@ -1,9 +1,3 @@
-
-
-
-
-
-
 @extends('../layouts.app_dashboard_admin')
 
 @section('title', 'Liquidador de nómina')
@@ -59,6 +53,7 @@
 </style>
 @section('content')
 @include('admin.jornadas.crearJornadaForm')
+@include('admin.jornadas.editarJornadaForm')
 
 <div class="container-fluid">
 	<div class="row">
@@ -174,6 +169,7 @@
                         <th class="cursor-pointer" data-toggle="tooltip" data-placement="top" title="Horas extra diurnas festivas">{{ $jornada->HEDF }}</th>
                         <th class="cursor-pointer" data-toggle="tooltip" data-placement="top" title="Horas extra nocturnas festivas">{{ $jornada->HENF }}</th>
                         <th>
+                            <a onclick="editar({{ $jornada->id }})" href="#"><i data-toggle="tooltip" data-placement="top" title="Editar" class="fa fa-pencil green"></i></a>&nbsp;&nbsp;
                             <a onclick="eliminar({{ $jornada->id }})" href="#"><i data-toggle="tooltip" data-placement="top" title="Eliminar" class="fa fa-trash red"></i></a>
                         </th>
                     </tr>
@@ -288,6 +284,33 @@
                    });
                 }
             })
+        }
+
+
+        function editar(id){
+            $.ajax({
+                type: "GET",
+                url: "{{url('jornada')}}/"+id,
+                data: {
+                    _token : csrf_token,
+                },
+                dataType: "json",
+                success: function (response) {
+                    $('#editarJornadaModal').modal('show');
+                    $('#jornada_id').val(response.id);
+                    $('#fecha').val(response.fecha);
+                    $('#entrada').val(response.entrada);
+                    $('#salida').val(response.salida);
+                    $('#HOD').val(response.HOD);
+                    $('#HON').val(response.HON);
+                    $('#HODF').val(response.HODF);
+                    $('#HONF').val(response.HONF);
+                    $('#HEDO').val(response.HEDO);
+                    $('#HENO').val(response.HENO);
+                    $('#HEDF').val(response.HEDF);
+                    $('#HENF').val(response.HENF);
+                }
+            });
         }
 
     </script>
