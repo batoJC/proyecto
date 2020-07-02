@@ -160,6 +160,10 @@ Route::group(['middleware' => ['owner']], function () {
 	Route::post('reglamento.owner.show', 'ReglamentoController@show');
 	Route::post('reglamento.owner.add', 'ReglamentoController@store');
 	Route::post('reglamento.owner.edit/{reglamento}', 'ReglamentoController@update');
+
+	//Liquidador
+	Route::post('editarVariable','LiquidadorController@editarVariable');
+
 });
 
 // Middleware de autenticación para el admin del conjunto
@@ -401,7 +405,7 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//Liquidador de Nómina
 	/*****************************************/
-	Route::get('informacionLiquidador','LiquidadorController@informacion');
+	Route::get('informacionLiquidador/{empleado}','LiquidadorController@informacion');
 	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
 	Route::post('liquidadorJornadas','LiquidadorController@getJornadas');
 	Route::get('generarLiquidacion/{empleado}','LiquidadorController@vistaGenerar');

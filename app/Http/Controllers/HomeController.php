@@ -11,6 +11,7 @@ use App\Conjunto;
 use App\CuentaBancaria;
 use App\QuejasReclamos;
 use App\Reglamento;
+use App\Variable;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -54,7 +55,8 @@ class HomeController extends Controller
     public function owner()
     {
         session(['section' => 'home']);
-        return view('owner.home');
+        $variablesLiquidador = Variable::where('modulo','liquidacion')->get();
+        return view('owner.home')->with('variablesLiquidador',$variablesLiquidador);
     }
 
     // Admin Conjunto

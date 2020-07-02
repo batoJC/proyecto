@@ -211,7 +211,7 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a target="_blanck" href="{{ url('informacionLiquidador') }}" class="tarjeta text-center">
+                <a target="_blanck" href="{{ url('informacionLiquidador',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 

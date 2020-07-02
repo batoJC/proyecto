@@ -112,6 +112,36 @@
 			<a onclick="openModalReglamento();" class="btn btn-success" href="#">Click aquí para cambiar o agregar</a>
 		</div>
 	</div>
+	<br><br>
+	<div class="container-fluid">
+		<div style="padding:10px;" class="col-12 box-shadow">
+			<h2 class="text-center">
+				<b>Lista de variables para el liquidador de nómina</b>
+			</h2>
+			<br>
+			<table class="table">
+				<thead>
+					<tr>
+						<th class="text-center">Descripción</th>
+						<th class="text-center">Valor</th>
+						<th class="text-center">Editar</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach ($variablesLiquidador as $variable)
+						<tr>
+							<td class="text-center">{{ $variable->descripcion }}</td>
+							<td class="text-center">{{ $variable->value }}</td>
+							<td class="text-center">
+								<i onclick="editarVariable('{{ $variable->name }}')" class="fa fa-pencil green"></i>
+							</td>
+						</tr>
+					@endforeach
+
+				</tbody>
+			</table>
+		</div>
+	</div>
 	
 	<br>
 	<br>
@@ -186,6 +216,52 @@
 				});
 			}
 			return false;
+		}
+
+
+		var id_variable = 0;
+
+		function editarVariable(id){
+			id_variable = id;
+			input = document.createElement("div");
+			input.innerHTML = '<label class="label_alerta">Ingrese el nuevo valor para la variable:</label>';
+			input.append(document.createElement("br"));
+			valor = document.createElement("input");
+			valor.id = 'valor';
+			valor.className = 'form-control';
+			valor.type = 'text'
+			input.append(valor);
+			valor.placeholder = "valor.";
+
+			swal({
+				title: "Nuevo valor.",
+				content: input,
+				buttons: true                       
+			}).then((res)=>{
+				if(res){
+					valor = $('#valor');
+					console.log(id_variable);
+					$.ajax({
+						type: "POST",
+						url: "{{url('editarVariable')}}",
+						data: {
+							_token : csrf_token,
+							id : id_variable,
+							valor : valor.val()
+						},
+						dataType: "json",
+						success: function (res) {
+							if(res.res){
+								swal('Logrado!',res.msg,'success').then(res=>{
+									location.reload();
+								});
+							}else{
+								swal('Error',res.msg,'error');
+							}
+						}
+					});
+				}
+			});
 		}
 
 	</script>

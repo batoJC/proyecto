@@ -30,21 +30,21 @@ class LiquidadorController extends Controller
         }
     }
 
-    public function informacion()
+    public function informacion(EmpleadosConjunto $empleado)
     {
         $datos = array();
-        $datos['salario'] = 9000000;
-        $datos['horas_jornada'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['jornada_ordinaria'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['inicio_jornada'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['final_jornada'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['recargo_ordinario_nocturno'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['recargo_ordinario_diurno_festivo'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['recargo_ordinario_nocturno_festivo'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['hora_extra_ordinaria_diurna'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['hora_extra_ordinaria_nocturna'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['hora_extra_ordinaria_diurna_fesiva'] = Variable::where('name', 'horas_jornada')->first()->value;
-        $datos['hora_extra_ordinaria_nocturna_festiva'] = Variable::where('name', 'horas_jornada')->first()->value;
+        $datos['salario'] = $empleado->salario;
+        $datos['horas_jornada'] = Variable::find('horas_jornada')->value;
+        $datos['jornada_ordinaria'] = Variable::find('jornada_ordinaria')->value;
+        $datos['inicio_jornada'] = Variable::find('inicio_jornada')->value;
+        $datos['final_jornada'] = Variable::find('final_jornada')->value;
+        $datos['recargo_ordinario_nocturno'] = Variable::find('recargo_ordinario_nocturno')->value;
+        $datos['recargo_ordinario_diurno_festivo'] = Variable::find('recargo_ordinario_diurno_festivo')->value;
+        $datos['recargo_ordinario_nocturno_festivo'] = Variable::find('recargo_ordinario_nocturno_festivo')->value;
+        $datos['hora_extra_ordinaria_diurna'] = Variable::find('hora_extra_ordinaria_diurna')->value;
+        $datos['hora_extra_ordinaria_nocturna'] = Variable::find('hora_extra_ordinaria_nocturna')->value;
+        $datos['hora_extra_ordinaria_diurna_fesiva'] = Variable::find('hora_extra_ordinaria_diurna_fesiva')->value;
+        $datos['hora_extra_ordinaria_nocturna_festiva'] = Variable::find('hora_extra_ordinaria_nocturna_festiva')->value;
 
 
         return view('admin.liquidador.informacion')->with('datos', $datos);
@@ -58,6 +58,17 @@ class LiquidadorController extends Controller
         return view('admin.liquidador.generar')
             ->with('conjuntos', $conjunto)
             ->with('empleado', $empleado);
+    }
+
+    public function editarVariable(Request $request){
+        try {
+            $variable = Variable::find($request->id);
+            $variable->value = $request->valor;
+            $variable->save();
+            return ['res'=>1,'msg'=>'Valor de variable cambiada correctamente'];
+        } catch (\Throwable $th) {
+            return ['res'=>0,'msg'=>'Ocurrió un error al cambiar el valor'];
+        }
     }
 
 
@@ -133,7 +144,8 @@ class LiquidadorController extends Controller
     private function calcularHorasPorHorario($inicio, $fin, $continuo)
     {
         $interval = $inicio->diff($fin);
-        if ($interval->h <= 8 and $interval->d == 0) { //Horas ordinarias
+        $jornada_ordinaria = Variable::find('jornada_ordinaria')->value;
+        if ($interval->h <= $jornada_ordinaria and $interval->d == 0) { //Horas ordinarias
             //CONDICIONES PARA CALCULAR LAS HORAS DE CADA HORARIO
             $H = $this->calcularHoras($inicio, $fin, $continuo);
             return [
@@ -148,7 +160,7 @@ class LiquidadorController extends Controller
             ];
         } else { //Horas extra
             $fin_aux = clone ($inicio);
-            $HO = $this->calcularHoras($inicio, $fin_aux->add(date_interval_create_from_date_string("+8 hours")), $continuo);
+            $HO = $this->calcularHoras($inicio, $fin_aux->add(date_interval_create_from_date_string("+{$jornada_ordinaria} hours")), $continuo);
             $HE = $this->calcularHoras($fin_aux, $fin, $continuo);
 
             return [
@@ -183,7 +195,7 @@ class LiquidadorController extends Controller
                 if ($h == 0) {
                     $h = round(($inicio->diff($fin_aux)->i / 60), 1);
                 }
-                if ($inicio->format('H') >= 6 and $inicio->format('H') < 21) { //diurno
+                if ($inicio->format('H') >= date('H',strtotime(Variable::find('inicio_jornada')->value)) and $inicio->format('H') < date('H',strtotime(Variable::find('final_jornada')->value))) { //diurno
                     $HDF += $h;
                 } else { //nocturno
                     $HNF += $h;
@@ -204,7 +216,7 @@ class LiquidadorController extends Controller
                     $h = round(($inicio->diff($fin_aux)->i / 60), 1);
                 }
 
-                if ($inicio->format('H') >= 6 and $inicio->format('H') < 21) { //diurno
+                if ($inicio->format('H') >= date('H',strtotime(Variable::find('inicio_jornada')->value)) and $inicio->format('H') < date('H',strtotime(Variable::find('final_jornada')->value))) { //diurno
                     $HD += $h;
                 } else { //nocturno
                     $HN += $h;
