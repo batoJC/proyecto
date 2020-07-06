@@ -270,7 +270,7 @@ class exportarController extends Controller
             if ($propietario->pqr->count() > 0) {
                 mkdir(public_path($carpeta . '/archivos'));
                 foreach ($propietario->pqr as $pqr) {
-                    copy(public_path('quejas/' . $pqr->archivo), public_path($carpeta . '/archivos/archivo_' . $pqr->id . '.' . explode('.', $pqr->archivo)[1]));
+                    @copy(public_path('quejas/' . $pqr->archivo), public_path($carpeta . '/archivos/archivo_' . $pqr->id . '.' . explode('.', $pqr->archivo)[1]));
                 }
                 $pdf = PDF::loadView('admin.exportar.pqrs', [
                     'propietario' => $propietario
@@ -406,7 +406,7 @@ class exportarController extends Controller
             $fecha = date('d_m_Y', strtotime($mantenimiento->fecha));
             $nombre_archivo = "exports/{$conjunto->id}/mantenimientos/mantenimiento_{$mantenimiento->id}_fecha_{$fecha}.pdf";
             // echo $nombre_archivo;
-            copy(public_path("document/{$mantenimiento->archivo}"), $nombre_archivo);
+            @copy(public_path("document/{$mantenimiento->archivo}"), $nombre_archivo);
         }
     }
 
@@ -481,7 +481,7 @@ class exportarController extends Controller
             $n = 0;
             foreach ($data as $d ) {
                 $ext = explode('.',$d)[1];
-                copy(public_path("imgs/private_imgs/{$d}"),public_path($carpeta."/archivos/foto_{$articulo->id}{$n}.{$ext}"));
+                @copy(public_path("imgs/private_imgs/{$d}"),public_path($carpeta."/archivos/foto_{$articulo->id}{$n}.{$ext}"));
             }
         }
         $archivo = $pdf->stream();
