@@ -265,8 +265,8 @@ class Unidad extends Model
 
         $saldos = $this->hasMany(saldoInicial::class, 'unidad_id')->where('estado', 'No pago')->where('vigencia_inicio', '<=', $fecha)->get();
 
-        foreach ($saldos as $saldo) {
-            $saldo += $saldo->calcularValor();
+        foreach ($saldos as $saldoI) {
+            $saldo += $saldoI->calcularValor();
         }
 
         //cuotas administracion
