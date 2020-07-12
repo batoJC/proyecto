@@ -353,6 +353,38 @@
                     <button onclick="crearData('flujo_efectivo')" class="btn">Descargar <i class="fa fa-download"></i></button>
                 </label>
             </div>
+            <div class="col-12 col-md-4">
+                <label for="jornadas" class="tarjeta text-center" id="div_jornadas">
+                    <input onchange="seleccionar(this)" type="checkbox" name="jornadas" id="jornadas" value="1">
+                    <i
+                        data-placement="left" 
+                        title="Descripción" 
+                        data-toggle="dropdown" 
+                        type="button" 
+                        aria-expanded="false" 
+                        class="fa fa-info ayuda"></i>
+                    <br>
+                    <i class="fa fa-archive icon"></i>
+                    <h3 class="text-center">Jornadas</h3>
+                    <button onclick="crearData('jornadas')" class="btn">Descargar <i class="fa fa-download"></i></button>
+                </label>
+            </div>
+            <div class="col-12 col-md-4">
+                <label for="liquidaciones" class="tarjeta text-center" id="div_liquidaciones">
+                    <input onchange="seleccionar(this)" type="checkbox" name="liquidaciones" id="liquidaciones" value="1">
+                    <i
+                        data-placement="left" 
+                        title="Descripción" 
+                        data-toggle="dropdown" 
+                        type="button" 
+                        aria-expanded="false" 
+                        class="fa fa-info ayuda"></i>
+                    <br>
+                    <i class="fa fa-file-text icon"></i>
+                    <h3 class="text-center">Liquidaciones</h3>
+                    <button onclick="crearData('liquidaciones')" class="btn">Descargar <i class="fa fa-download"></i></button>
+                </label>
+            </div>
         </div>
     </div>
 </div>

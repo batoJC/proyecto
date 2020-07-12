@@ -190,7 +190,7 @@
                             <h2>
                                 ¡Hola! Somos 
                                 <span>
-                                    Gestión Copropietarios
+                                    Gestión Copropietario
                                 </span>
                             </h2>
                             <br>

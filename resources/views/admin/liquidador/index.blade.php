@@ -101,6 +101,8 @@
 </style>
 @section('content')
 
+@include('admin.liquidador.form-pdf')
+
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-11 col-md-11">
@@ -197,7 +199,7 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a class="tarjeta text-center">
+                <a href="{{ url('listaLiquidaciones',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 
@@ -225,6 +227,36 @@
                 </a>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <a onclick="modalJornadas();" class="tarjeta text-center">
+                    <i
+                        data-placement="left" 
+                        title="Descripción" 
+                        data-toggle="dropdown" 
+                        type="button" 
+                        aria-expanded="false" 
+                        class="fa fa-info ayuda"></i>
+                    <br>
+                    <i class="fa fa-download icon"></i>
+                    <h3 class="text-center">Descargar jornadas en pdf</h3>
+                </a>
+            </div>
+            <div class="col-12 col-md-4">
+                <a href="{{ url('liquidacionesDownload',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
+                    <i
+                        data-placement="left" 
+                        title="Descripción" 
+                        data-toggle="dropdown" 
+                        type="button" 
+                        aria-expanded="false" 
+                        class="fa fa-info ayuda"></i>
+                    <br>
+                    <i class="fa fa-download icon"></i>
+                    <h3 class="text-center">Descargar liquidaciones en pdf</h3>
+                </a>
+            </div>
+        </div>
     </div>
     <br>
     <br>
@@ -239,7 +271,9 @@
 
         var csrf_token = $('meta[name="csrf-token"]').attr('content');
 
-        
+        function modalJornadas(){
+            $('#modal-pdf').modal('show');
+        }
 
 
     </script>

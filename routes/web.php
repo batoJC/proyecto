@@ -390,6 +390,8 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::post('api.saldo_actual.admin', 'FlujoEfectivoController@saldoActual');
 	Route::get('api.descuentos.admin', 'DescuentoController@datatables');
 	Route::get('api.saldos.admin', 'SaldoInicialController@datatables');
+	Route::get('api.liquidaciones.admin/{empleado}', 'LiquidacionController@listar');
+
 
 	Route::get('api.intereses.admin', 'TablaInteresesController@datatables');
 
@@ -408,7 +410,13 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('informacionLiquidador/{empleado}','LiquidadorController@informacion');
 	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
 	Route::post('liquidadorJornadas','LiquidadorController@getJornadas');
+	Route::post('cargarLiquidacion','LiquidadorController@liquidacion');
 	Route::get('generarLiquidacion/{empleado}','LiquidadorController@vistaGenerar');
+
+	//Liquidacion
+	Route::resource('liquidacion','LiquidacionController');
+	Route::get('listaLiquidaciones/{empleado}','LiquidacionController@vistaListar');
+	Route::get('liquidacionesDownload/{empleado}','LiquidacionController@download');
 
 
 	Route::get('jornadas/{empleado}','JornadasController@index');
@@ -416,6 +424,8 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::post('deleteJornada','JornadasController@delete');
 	Route::get('jornada/{jornada}','JornadasController@show');
 	Route::post('updateJornada','JornadasController@update');
+	Route::post('pdfJornadas','JornadasController@pdf');
+	Route::get('jornadasZip/{empleado}','JornadasController@downloadZip');
 });
 
 // Middleware de autenticación para el dueño de apto del conjunto

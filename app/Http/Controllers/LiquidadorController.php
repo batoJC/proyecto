@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Conjunto;
+use App\Consecutivos;
 use App\EmpleadosConjunto;
 use App\Feriados;
 use App\Jornada;
@@ -54,10 +55,30 @@ class LiquidadorController extends Controller
     public function vistaGenerar(EmpleadosConjunto $empleado)
     {
         $conjunto = Conjunto::find(session('conjunto'));
+        $consecutivos = Consecutivos::where('conjunto_id',session('conjunto'))->get();
 
         return view('admin.liquidador.generar')
             ->with('conjuntos', $conjunto)
+            ->with('consecutivos', $consecutivos)
             ->with('empleado', $empleado);
+    }
+
+    public function liquidacion(Request $request){
+        $consecutivo = Consecutivos::find($request->consecutivo);
+        $empleado = EmpleadosConjunto::find($request->empleado);
+        $conjunto = Conjunto::find(session('conjunto'));
+        $jornadas = Jornada::where([
+            ['fecha', '>=',$request->fecha_inicio],
+            ['fecha', '<=',$request->fecha_fin],
+            ['empleado_conjunto_id',$request->empleado]
+        ])->get();
+        return view('admin.liquidador.liquidacion')
+            ->with('consecutivo',$consecutivo)
+            ->with('fecha_inicio',$request->fecha_inicio)
+            ->with('fecha_fin',$request->fecha_fin)
+            ->with('conjunto',$conjunto)
+            ->with('empleado',$empleado)
+            ->with('jornadas',$jornadas);
     }
 
     public function editarVariable(Request $request){

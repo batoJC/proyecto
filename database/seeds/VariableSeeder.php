@@ -79,6 +79,12 @@ class VariableSeeder extends Seeder
                 'descripcion' => 'Tariafa de la hora extra nocturna festiva.',
                 'modulo' => 'liquidacion',
                 'value' => 2.50
+            ],
+            [
+                'name' => 'subsidio_transporte',
+                'descripcion' => 'Es el valor del subsidio de transporte.',
+                'modulo' => 'liquidacion',
+                'value' => 102854
             ]
         ]);
     }

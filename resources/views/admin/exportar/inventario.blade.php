@@ -97,32 +97,6 @@
     </tbody>
 </table>
 
-{{-- @foreach ($inventario as $articulo)
-    <p>
-        <b>Nombre:</b> {{ $articulo->nombre }} <br>
-        <b>Ubicación:</b> {{ $articulo->ubicacion }} <br>
-        <b>Descripción:</b> {{ $articulo->descripcion }} <br>
-        <b>Condición:</b> {{ $articulo->condicion }} <br>
-        <b>Valor:</b> ${{ number_format($articulo->valor) }} <br>
-        <b>Fecha garantía:</b> {{ ($articulo->valido_hasta)? date('d-m-Y',strtotime($articulo->valido_hasta)) : 'No aplica' }} <br>
-        <b>Fecha compra:</b> {{ ($articulo->fecha_compra)? date('d-m-Y',strtotime($articulo->fecha_compra)) : 'No aplica' }} <br>
-        <b>Fabricante:</b> {{ $articulo->fabricante }} <br>
-        <b>Estilo:</b> {{ $articulo->estilo }} <br>
-        <b>Número de serie:</b> {{ $articulo->numero_serie }} <br>
-        <b>Observaciones:</b> {{ $articulo->observaciones }} <br>
-        @php
-            $fotos = explode(';',$articulo->foto);
-            @endphp
-        <div class="div_imagenes">
-            <b>Fotos:</b><br><br><br>
-            @foreach ($fotos as $foto)
-                <img class="imagen" src="{{ public_path("imgs/private_imgs/{$foto}") }}" alt="">
-            @endforeach
-        </div>
-    </p>
-    <hr>
-    <br>
-@endforeach --}}
 
 
 @endsection

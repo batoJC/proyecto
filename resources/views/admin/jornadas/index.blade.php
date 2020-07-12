@@ -133,7 +133,19 @@
             </div>
         </div>
         <br>
-        <button onclick="openCrearJornadaModal();" class="btn btn-success"><i class="fa fa-plus"></i> Agregar Jornada </button>
+        <div class="row">
+            <div class="col-md-2">
+                <button onclick="openCrearJornadaModal();" class="btn btn-success"><i class="fa fa-plus"></i> Agregar Jornada </button>
+            </div>
+            <div class="col-md-2">
+                <form target="_blank" method="POST" action="{{ url('pdfJornadas') }}">
+                    @csrf
+                    <input type="hidden" name="empleado" value="{{ $empleado->id }}">
+                    <input name="periodo" value="{{$year}}-{{$month}}" type="hidden">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-download"></i> Decargar pdf</button>
+                </form>
+            </div>
+        </div>
         <br>
 
         <h3 class="text-center">Jornadas registradas</h3>

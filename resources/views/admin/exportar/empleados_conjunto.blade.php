@@ -26,7 +26,7 @@
             @foreach ($empleados as $empleado)
                 <tr>
                     <td class="w-300p">
-                        <img class="imagen" src="{{ public_path("imgs/private_imgs/{$empleado->foto}") }}" alt="">
+                        <img class="imagen" src="@if ($empleado->foto){{ public_path("imgs/private_imgs/{$empleado->foto}") }}@endif" alt="Foto">
                     </td>
                     <td>
                         <b>Nombre completo: </b>{{ $empleado->nombre_completo }}<br>

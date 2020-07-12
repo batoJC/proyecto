@@ -8,6 +8,8 @@ use App\EmpleadosConjunto;
 use App\Evidencia;
 use App\FlujoEfectivo;
 use App\Inventario;
+use App\Jornada;
+use App\Liquidacion;
 use App\Mantenimiento;
 use App\NovedadesConjunto;
 use App\Reserva;
@@ -71,7 +73,7 @@ class exportarController extends Controller
         // ]);
 
         //inventario
-        $inventario = Inventario::where('conjunto_id',9)->get();
+        $inventario = Inventario::where('conjunto_id', 9)->get();
         $pdf = PDF::loadView('admin.exportar.inventario', [
             'inventario' => $inventario
         ]);
@@ -178,6 +180,12 @@ class exportarController extends Controller
                 break;
             case 'flujo_efectivo':
                 $this->flujo_efectivo();
+                break;
+            case 'jornadas':
+                $this->jornadas();
+                break;
+            case 'liquidaciones':
+                $this->liquidaciones();
                 break;
         }
     }
@@ -475,13 +483,13 @@ class exportarController extends Controller
         $pdf = PDF::loadView('admin.exportar.inventario', [
             'inventario' => $inventario
         ]);
-        mkdir(public_path($carpeta.'/archivos'));
+        mkdir(public_path($carpeta . '/archivos'));
         foreach ($inventario as $articulo) {
-            $data = explode(';',$articulo->foto);
+            $data = explode(';', $articulo->foto);
             $n = 0;
-            foreach ($data as $d ) {
-                $ext = explode('.',$d)[1];
-                @copy(public_path("imgs/private_imgs/{$d}"),public_path($carpeta."/archivos/foto_{$articulo->id}{$n}.{$ext}"));
+            foreach ($data as $d) {
+                $ext = explode('.', $d)[1];
+                @copy(public_path("imgs/private_imgs/{$d}"), public_path($carpeta . "/archivos/foto_{$articulo->id}{$n}.{$ext}"));
             }
         }
         $archivo = $pdf->stream();
@@ -520,7 +528,7 @@ class exportarController extends Controller
                             $cuentas[] = array(
                                 'id' => $propietario->numero_cedula,
                                 'propietario' => $propietario->nombre_completo,
-                                'unidad' => $unidad->tipo->nombre . ' '.$unidad->numero_letra,
+                                'unidad' => $unidad->tipo->nombre . ' ' . $unidad->numero_letra,
                                 'capital' => $unidad->total(),
                                 'interes' =>  $unidad->interes()
                             );
@@ -555,5 +563,75 @@ class exportarController extends Controller
         $archivo = $pdf->stream();
         $nombre_archivo = "exports/{$conjunto->id}/flujo_efectivo/info.pdf";
         file_put_contents(public_path($nombre_archivo), $archivo);
+    }
+
+    private function jornadas()
+    {
+        $conjunto = Conjunto::find(session('conjunto'));
+        $empleados = EmpleadosConjunto::where('conjunto_id', session('conjunto'))->get();
+        $carpeta = "exports/{$conjunto->id}/jornadas";
+        @mkdir(public_path($carpeta));
+        foreach ($empleados as $empleado) {
+            $jornada = Jornada::where('empleado_conjunto_id', $empleado->id)->orderBy('fecha', 'ASC')->first();
+
+            if ($jornada) {
+                $fecha_inicio = $jornada->fecha;
+                $fecha_fin = date('d-m-Y');
+                $nombre = $empleado->nombre_completo;
+                $nombre_carpeta = "{$carpeta}/{$nombre}";
+
+                @mkdir(public_path($nombre_carpeta));
+
+                while (strtotime($fecha_inicio) < strtotime($fecha_fin)) {
+                    $nombre_archivo = date('M Y', strtotime($fecha_inicio));
+                    $jornadas = Jornada::whereMonth('fecha', date('m', strtotime($fecha_inicio)))
+                        ->whereYear('fecha', date('Y', strtotime($fecha_inicio)))
+                        ->where('empleado_conjunto_id', $empleado->id)
+                        ->orderBy('fecha', 'ASC')
+                        ->get();
+
+                    if ($jornadas->count() > 0) {
+                        $pdf = PDF::loadView('admin.jornadas.pdf', [
+                            'periodo' => $nombre_archivo,
+                            'jornadas' => $jornadas,
+                            'empleado' => $empleado
+                        ]);
+                        $archivo = $pdf->stream();
+                        $nombre_archivo = "{$nombre_carpeta}/{$nombre_archivo}.pdf";
+                        file_put_contents(public_path($nombre_archivo), $archivo);
+                    }
+
+                    $fecha_inicio = date('d-m-Y', strtotime($fecha_inicio . ' + 1 month'));
+                }
+            }
+        }
+    }
+
+    private function liquidaciones()
+    {
+        $empleados = EmpleadosConjunto::where('conjunto_id', session('conjunto'))->get();
+        $conjunto = Conjunto::find(session('conjunto'));
+        $carpeta = "exports/{$conjunto->id}/liquidaciones";
+
+        @mkdir(public_path($carpeta));
+
+        foreach ($empleados as $empleado ) {
+            $liquidaciones = Liquidacion::where('empleado_conjunto_id', $empleado->id)->orderBy('fecha', 'ASC')->get();
+            if($liquidaciones->count() > 0){
+                $nombre = $empleado->nombre_completo;
+                @mkdir(public_path($carpeta."/{$nombre}"));
+                foreach ($liquidaciones as $liquidacion) {
+                    $pdf = PDF::loadView('admin.liquidaciones.pdf', [
+                        'liquidacion' => $liquidacion
+                    ]);
+                    $archivo = $pdf->stream();
+                    $nombre_archivo = $liquidacion->consecutivo;
+                    $nombre_archivo = "{$carpeta}/{$nombre}/{$nombre_archivo}.pdf";
+                    file_put_contents(public_path($nombre_archivo), $archivo);
+                }
+            }
+        }
+
+
     }
 }
