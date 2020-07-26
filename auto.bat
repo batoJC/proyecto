@@ -24,6 +24,7 @@ goto exit
     goto exit
 
 :commit
+    echo  Doing commit
     git add .
     git commit -m "%var2%"
     goto exit
