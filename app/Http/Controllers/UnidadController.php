@@ -120,7 +120,7 @@ class UnidadController extends Controller
             $usuario->nombre_completo = 'Juan Carlos '.date('d-m-Y H:i:s');
             $usuario->email = 'juacagiri@gmail.com';
             $correo = new CorreoController();
-            $salida = $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad',json_encode($request->all()));
+            $salida = $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad','Prueba');
 
             //code...
             $unidad = new Unidad();
