@@ -109,18 +109,19 @@ class UnidadController extends Controller
     {
         //
 
-        //para enviar desde el correo de la app
-        $conjunto = new Conjunto();
-        $conjunto->nombre = 'Gestión copropietario';
-        $conjunto->correo = 'gestioncopropietario@gmail.com';
-        $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
-        $usuario = new User();
-        $usuario->nombre_completo = 'Juan Carlos'.date('d-m-Y H:i:s');
-        $usuario->email = 'Juacagiri@gmail.com';
-        $correo = new CorreoController();
-        $correo->enviarEmail($conjunto,[$usuario],'Mantenimiento programado',json_encode($request->all()));
-
+        
         try {
+            //para enviar desde el correo de la app
+            $conjunto = new Conjunto();
+            $conjunto->nombre = 'Gestión copropietario';
+            $conjunto->correo = 'gestioncopropietario@gmail.com';
+            $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
+            $usuario = new User();
+            $usuario->nombre_completo = 'Juan Carlos '.date('d-m-Y H:i:s');
+            $usuario->email = 'juacagiri@gmail.com';
+            $correo = new CorreoController();
+            $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad',json_encode($request->all()));
+
             //code...
             $unidad = new Unidad();
             $unidad->numero_letra = $request->numero_letra;
