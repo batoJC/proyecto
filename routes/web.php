@@ -13,7 +13,7 @@
 
 // Rutas de autenticacion got it?
 Auth::routes();
-Route::get('/',function(){
+Route::get('/migrate',function(){
 	Artisan::call('migrate');
  	return "Migration";
 });
