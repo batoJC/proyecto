@@ -117,10 +117,10 @@ class UnidadController extends Controller
             $conjunto->correo = 'gestioncopropietario@gmail.com';
             $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
             $usuario = new User();
-            $usuario->nombre_completo = 'Juan Carlos';
+            $usuario->nombre_completo = 'Juan Carlos '.date('d-m-Y H:i:s');
             $usuario->email = 'juacagiri@gmail.com';
             $correo = new CorreoController();
-            $salida = $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad','Prueba');
+            $salida = $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad',json_encode($request->all()));
 
             //code...
             $unidad = new Unidad();
@@ -132,16 +132,16 @@ class UnidadController extends Controller
             $unidad->observaciones = $request->observaciones;
             $unidad->unidad_id = $request->unidad_id;
             $unidad->tipo_unidad_id = $request->tipo_unidad;
-            // $unidad->save();
+            $unidad->save();
 
             //si tiene un propietario para facturar
-            // if ($request->propietario) {
-            //     $propietario = User::find($request->propietario);
-            //     $propietario->unidades()->attach($unidad, ['fecha_ingreso' => date('Y-m-d')]);
-            // }
+            if ($request->propietario) {
+                $propietario = User::find($request->propietario);
+                $propietario->unidades()->attach($unidad, ['fecha_ingreso' => date('Y-m-d')]);
+            }
 
             return [
-                'res' => 0,
+                'res' => 1,
                 "msg" => "Unidad agregada correctamente esta el correo",
                 "data" => $unidad,
                 "salida" => $salida
