@@ -132,13 +132,13 @@ class UnidadController extends Controller
             $unidad->observaciones = $request->observaciones;
             $unidad->unidad_id = $request->unidad_id;
             $unidad->tipo_unidad_id = $request->tipo_unidad;
-            $unidad->save();
+            // $unidad->save();
 
             //si tiene un propietario para facturar
-            if ($request->propietario) {
-                $propietario = User::find($request->propietario);
-                $propietario->unidades()->attach($unidad, ['fecha_ingreso' => date('Y-m-d')]);
-            }
+            // if ($request->propietario) {
+            //     $propietario = User::find($request->propietario);
+            //     $propietario->unidades()->attach($unidad, ['fecha_ingreso' => date('Y-m-d')]);
+            // }
 
             return [
                 'res' => 0,
