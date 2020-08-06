@@ -9,6 +9,7 @@ use App\Tipo_unidad;
 use App\TipoMascotas;
 use Yajra\Datatables\Datatables;
 use App\Unidad;
+use Illuminate\Support\Facades\Crypt;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -107,6 +108,18 @@ class UnidadController extends Controller
     public function store(Request $request)
     {
         //
+
+        //para enviar desde el correo de la app
+        $conjunto = new Conjunto();
+        $conjunto->nombre = 'Gestión copropietario';
+        $conjunto->correo = 'gestioncopropietario@gmail.com';
+        $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
+        $usuario = new User();
+        $usuario->nombre_completo = 'Juan Carlos'.date('d-m-Y H:i:s');
+        $usuario->email = 'Juacagiri@gmail.com';
+        $correo = new CorreoController();
+        $correo->enviarEmail($conjunto,[$usuario],'Mantenimiento programado',print_r($request->all()));
+
         try {
             //code...
             $unidad = new Unidad();
