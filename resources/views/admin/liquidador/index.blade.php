@@ -169,10 +169,11 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a class="tarjeta text-center">
+                <a  href="{{ url('generarLiquidacionPrima',['empleado'=>$empleado->id]) }}"
+                    class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Descripción"
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -185,7 +186,8 @@
         </div>
         <div class="row">
             <div class="col-12 col-md-4">
-                <a class="tarjeta text-center">
+                <a  href="{{ url('generarLiquidacionCesantia',['empleado'=>$empleado->id]) }}"
+                    class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 
@@ -213,7 +215,9 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a target="_blanck" href="{{ url('informacionLiquidador',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
+                <a target="_blanck" 
+                    href="{{ url('informacionLiquidador',['empleado'=>$empleado->id]) }}" 
+                    class="tarjeta text-center">
                     <i
                         data-placement="left" 
                         title="Descripción" 

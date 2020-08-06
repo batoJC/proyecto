@@ -7,10 +7,12 @@ use App\Consecutivos;
 use App\EmpleadosConjunto;
 use App\Feriados;
 use App\Jornada;
+use App\Liquidacion;
 use App\Variable;
 use Illuminate\Http\Request;
 use DateTime;
 use Exception;
+use DB;
 
 class LiquidadorController extends Controller
 {
@@ -55,7 +57,7 @@ class LiquidadorController extends Controller
     public function vistaGenerar(EmpleadosConjunto $empleado)
     {
         $conjunto = Conjunto::find(session('conjunto'));
-        $consecutivos = Consecutivos::where('conjunto_id',session('conjunto'))->get();
+        $consecutivos = Consecutivos::where('conjunto_id', session('conjunto'))->get();
 
         return view('admin.liquidador.generar')
             ->with('conjuntos', $conjunto)
@@ -63,32 +65,131 @@ class LiquidadorController extends Controller
             ->with('empleado', $empleado);
     }
 
-    public function liquidacion(Request $request){
+    public function vistaPrima(EmpleadosConjunto $empleado)
+    {
+        $conjunto = Conjunto::find(session('conjunto'));
+        $consecutivos = Consecutivos::where('conjunto_id', session('conjunto'))->get();
+
+        return view('admin.liquidador.prima')
+            ->with('conjuntos', $conjunto)
+            ->with('consecutivos', $consecutivos)
+            ->with('empleado', $empleado);
+    }
+
+    public function vistaCesantia(EmpleadosConjunto $empleado)
+    {
+        $conjunto = Conjunto::find(session('conjunto'));
+        $consecutivos = Consecutivos::where('conjunto_id', session('conjunto'))->get();
+
+        return view('admin.liquidador.cesantia')
+            ->with('conjuntos', $conjunto)
+            ->with('consecutivos', $consecutivos)
+            ->with('empleado', $empleado);
+    }
+
+    public function liquidacion(Request $request)
+    {
         $consecutivo = Consecutivos::find($request->consecutivo);
         $empleado = EmpleadosConjunto::find($request->empleado);
         $conjunto = Conjunto::find(session('conjunto'));
         $jornadas = Jornada::where([
-            ['fecha', '>=',$request->fecha_inicio],
-            ['fecha', '<=',$request->fecha_fin],
-            ['empleado_conjunto_id',$request->empleado]
+            ['fecha', '>=', $request->fecha_inicio],
+            ['fecha', '<=', $request->fecha_fin],
+            ['empleado_conjunto_id', $request->empleado]
         ])->get();
         return view('admin.liquidador.liquidacion')
-            ->with('consecutivo',$consecutivo)
-            ->with('fecha_inicio',$request->fecha_inicio)
-            ->with('fecha_fin',$request->fecha_fin)
-            ->with('conjunto',$conjunto)
-            ->with('empleado',$empleado)
-            ->with('jornadas',$jornadas);
+            ->with('consecutivo', $consecutivo)
+            ->with('fecha_inicio', $request->fecha_inicio)
+            ->with('fecha_fin', $request->fecha_fin)
+            ->with('conjunto', $conjunto)
+            ->with('empleado', $empleado)
+            ->with('jornadas', $jornadas);
     }
 
-    public function editarVariable(Request $request){
+
+    private function calcularPromedioDiaYDiasTrabajados(EmpleadosConjunto $empleado, $fecha_inicio)
+    {
+        //sumar el valor de todas las liquidaciones hechas de esa fecha en adelante
+        //sacando las deducciones
+        $valor_devengado = 0;
+        $ultima_fecha = date('d-m-Y');
+        $aux_fecha = date('d/m/Y', strtotime($fecha_inicio));
+        $liquidaciones = Liquidacion::where([
+            ['empleado_conjunto_id', $empleado->id]
+        ])->select(DB::raw("STR_TO_DATE(REPLACE(SUBSTRING_INDEX( periodo, ' - ' , 1 ),'/','-'),'%d-%m-%Y') as dato,liquidaciones.*"))
+            ->whereRaw("STR_TO_DATE(REPLACE(SUBSTRING_INDEX( periodo, ' - ' , 1 ),'/','-'),'%d-%m-%Y') >= ?", $aux_fecha)
+            ->orderBy('dato', 'ASC')->get();
+
+        foreach ($liquidaciones as $liquidacion) {
+            $valor_devengado += $liquidacion->total();
+            $ultima_fecha = date('Y-m-d', strtotime(str_replace('/', '-', explode(' - ', $liquidacion->periodo)[1])));
+        }
+        //contar las fechas distintas registradas en jornadas
+        //funciona ya que los domingos así se registren como jornada ordinaria
+        //apareceran allí
+        $dias_trabajados = Jornada::where([
+            ['fecha', '>=', $fecha_inicio],
+            ['fecha', '<=', $ultima_fecha],
+            ['empleado_conjunto_id', $empleado->id]
+        ])->distinct('fecha')->count();
+
+
+
+        //sacar el promedio del día de trabajo
+        return ['promedio_dia' => $valor_devengado / $dias_trabajados,'dias_trabajados' => $dias_trabajados];
+    }
+
+    public function prima(Request $request)
+    {
+        // $consecutivo = Consecutivos::find($request->consecutivo);
+        $empleado = EmpleadosConjunto::find($request->empleado);
+        // $conjunto = Conjunto::find(session('conjunto'));
+        // return view('admin.liquidador.template_prima')
+        //     ->with('consecutivo',$consecutivo)
+        //     ->with('fecha_inicio',$request->fecha_inicio)
+        //     ->with('conjunto',$conjunto)
+        //     ->with('empleado',$empleado);
+
+        //calcular valor de la prima
+        $calculo = $this->calcularPromedioDiaYDiasTrabajados($empleado, $request->fecha_inicio);
+        $salarioMensualPromedio = $calculo['promedio_dia'] * 30;
+
+
+        $valorPrima = $salarioMensualPromedio * $calculo['dias_trabajados'] / 360;
+
+        return ['valor' => $valorPrima];
+    }
+
+    public function cesantia(Request $request)
+    {
+        // $consecutivo = Consecutivos::find($request->consecutivo);
+        $empleado = EmpleadosConjunto::find($request->empleado);
+        // $conjunto = Conjunto::find(session('conjunto'));
+        // return view('admin.liquidador.template_cesantia')
+        //     ->with('consecutivo',$consecutivo)
+        //     ->with('fecha_inicio',$request->fecha_inicio)
+        //     ->with('conjunto',$conjunto)
+        //     ->with('empleado',$empleado);
+
+        //calcular valor de la cesantía
+        $calculo = $this->calcularPromedioDiaYDiasTrabajados($empleado, $request->fecha_inicio);
+        $salarioMensualPromedio = $calculo['promedio_dia'] * 30;
+
+
+        $valorCesantia = $salarioMensualPromedio * $calculo['dias_trabajados'] / 360;
+
+        return ['valor' => $valorCesantia];
+    }
+
+    public function editarVariable(Request $request)
+    {
         try {
             $variable = Variable::find($request->id);
             $variable->value = $request->valor;
             $variable->save();
-            return ['res'=>1,'msg'=>'Valor de variable cambiada correctamente'];
+            return ['res' => 1, 'msg' => 'Valor de variable cambiada correctamente'];
         } catch (\Throwable $th) {
-            return ['res'=>0,'msg'=>'Ocurrió un error al cambiar el valor'];
+            return ['res' => 0, 'msg' => 'Ocurrió un error al cambiar el valor'];
         }
     }
 
@@ -216,7 +317,7 @@ class LiquidadorController extends Controller
                 if ($h == 0) {
                     $h = round(($inicio->diff($fin_aux)->i / 60), 1);
                 }
-                if ($inicio->format('H') >= date('H',strtotime(Variable::find('inicio_jornada')->value)) and $inicio->format('H') < date('H',strtotime(Variable::find('final_jornada')->value))) { //diurno
+                if ($inicio->format('H') >= date('H', strtotime(Variable::find('inicio_jornada')->value)) and $inicio->format('H') < date('H', strtotime(Variable::find('final_jornada')->value))) { //diurno
                     $HDF += $h;
                 } else { //nocturno
                     $HNF += $h;
@@ -237,7 +338,7 @@ class LiquidadorController extends Controller
                     $h = round(($inicio->diff($fin_aux)->i / 60), 1);
                 }
 
-                if ($inicio->format('H') >= date('H',strtotime(Variable::find('inicio_jornada')->value)) and $inicio->format('H') < date('H',strtotime(Variable::find('final_jornada')->value))) { //diurno
+                if ($inicio->format('H') >= date('H', strtotime(Variable::find('inicio_jornada')->value)) and $inicio->format('H') < date('H', strtotime(Variable::find('final_jornada')->value))) { //diurno
                     $HD += $h;
                 } else { //nocturno
                     $HN += $h;

@@ -11,38 +11,6 @@
 |
 */
 
-use App\Feriados;
-use App\Http\Controllers\LiquidadorController;
-use Illuminate\Support\Facades\Route;
-
-
-Route::get('prueba', function () {
-		// var_dump(Feriados::isFeriado(date('Y-m-d')));
-		// exit;
-
-	$datetime1 = '2020-06-25 02:00 PM';
-	$datetime2 = '2020-06-30 24:00:00';
-	// print_r($datetime2);
-	$liquidador = new LiquidadorController();
-
-	print_r($liquidador->crearJornadas($datetime1,$datetime2,false));
-	return;
-	// if($datetime1 == $datetime2){
-	// 	echo 'yes';
-	// }else{
-	// 	echo 'Not';
-	// }
-	// $interval = $datetime1->diff($datetime2);
-	// print_r($interval);
-	// throw new Exception("La fecha de inicio debe ser menor a la fecha de fin.");
-	// print_r($datetime1->add(date_interval_create_from_date_string(" +1 day +3 hours")));
-	// echo $interval->d;
-	// echo '<br>';
-	// echo $interval->h;
-	// echo $datetime2->format('D');
-});
-
-
 // Rutas de autenticacion got it?
 Auth::routes();
 
@@ -411,7 +379,11 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
 	Route::post('liquidadorJornadas','LiquidadorController@getJornadas');
 	Route::post('cargarLiquidacion','LiquidadorController@liquidacion');
+	Route::post('cargarPrima','LiquidadorController@prima');
+	Route::post('cargarCesantia','LiquidadorController@cesantia');
 	Route::get('generarLiquidacion/{empleado}','LiquidadorController@vistaGenerar');
+	Route::get('generarLiquidacionPrima/{empleado}','LiquidadorController@vistaPrima');
+	Route::get('generarLiquidacionCesantia/{empleado}','LiquidadorController@vistaCesantia');
 
 	//Liquidacion
 	Route::resource('liquidacion','LiquidacionController');

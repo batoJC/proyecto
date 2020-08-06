@@ -13,10 +13,9 @@ IF "%var1%"=="c" goto commit
 goto exit
 
 :init
-    \xampp\xampp_start.exe
     start php artisan serve
+    start http://127.0.0.1:8000
     code .
-    http://127.0.0.1:8000
     goto exit
 
 :push
@@ -31,6 +30,5 @@ goto exit
 
 
 :exit
-    pause
     cls
     auto.bat
