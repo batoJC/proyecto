@@ -141,7 +141,7 @@ class UnidadController extends Controller
             }
 
             return [
-                'res' => 1,
+                'res' => 0,
                 "msg" => "Unidad agregada correctamente esta el correo",
                 "data" => $unidad,
                 "salida" => $salida
