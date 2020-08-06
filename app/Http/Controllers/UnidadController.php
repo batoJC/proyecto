@@ -118,7 +118,7 @@ class UnidadController extends Controller
         $usuario->nombre_completo = 'Juan Carlos'.date('d-m-Y H:i:s');
         $usuario->email = 'Juacagiri@gmail.com';
         $correo = new CorreoController();
-        $correo->enviarEmail($conjunto,[$usuario],'Mantenimiento programado',print_r($request->all()));
+        $correo->enviarEmail($conjunto,[$usuario],'Mantenimiento programado',$request->all());
 
         try {
             //code...
@@ -141,11 +141,11 @@ class UnidadController extends Controller
 
             return [
                 'res' => 1,
-                "msg" => "Unidad agregada correctamente",
+                "msg" => "Unidad agregada correctamente esta el correo",
                 "data" => $unidad
             ];
         } catch (\Throwable $th) {
-            return ['res' => 0, "msg" => "Ocurrió un problema al guardar la unidad esta el correo", "e" => $th];
+            return ['res' => 0, "msg" => "Ocurrió un problema al guardar la unidad ", "e" => $th];
         }
         // return $request;
     }
