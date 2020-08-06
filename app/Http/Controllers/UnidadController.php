@@ -117,7 +117,7 @@ class UnidadController extends Controller
             $conjunto->correo = 'gestioncopropietario@gmail.com';
             $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
             $usuario = new User();
-            $usuario->nombre_completo = 'Juan Carlos '.date('d-m-Y H:i:s');
+            $usuario->nombre_completo = 'Juan Carlos ';
             $usuario->email = 'juacagiri@gmail.com';
             $correo = new CorreoController();
             $salida = $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad','Prueba');
