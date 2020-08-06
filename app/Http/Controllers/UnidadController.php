@@ -145,7 +145,7 @@ class UnidadController extends Controller
                 "data" => $unidad
             ];
         } catch (\Throwable $th) {
-            return ['res' => 0, "msg" => "Ocurrió un problema al guardar la unidad", "e" => $th];
+            return ['res' => 0, "msg" => "Ocurrió un problema al guardar la unidad esta el correo", "e" => $th];
         }
         // return $request;
     }
