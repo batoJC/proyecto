@@ -65,7 +65,7 @@ class CorreoController extends Controller
                 return true;
             }
         } catch (\Throwable $th) {
-            return false;
+            return $th;
         }
     }
 
