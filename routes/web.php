@@ -13,6 +13,11 @@
 
 // Rutas de autenticacion got it?
 Auth::routes();
+Route::get('/',function(){
+	Artisan::call('migrate');
+ 	return "Migration";
+});
+
 
 // Ruta para el Landing page
 Route::get('/', 'WelcomeController@welcome');
