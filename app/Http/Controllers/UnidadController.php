@@ -120,7 +120,7 @@ class UnidadController extends Controller
             $usuario->nombre_completo = 'Juan Carlos '.date('d-m-Y H:i:s');
             $usuario->email = 'juacagiri@gmail.com';
             $correo = new CorreoController();
-            $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad',json_encode($request->all()));
+            $salida = $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad',json_encode($request->all()));
 
             //code...
             $unidad = new Unidad();
@@ -143,7 +143,8 @@ class UnidadController extends Controller
             return [
                 'res' => 1,
                 "msg" => "Unidad agregada correctamente esta el correo",
-                "data" => $unidad
+                "data" => $unidad,
+                "salida" => $salida
             ];
         } catch (\Throwable $th) {
             return ['res' => 0, "msg" => "Ocurrió un problema al guardar la unidad ", "e" => $th];
