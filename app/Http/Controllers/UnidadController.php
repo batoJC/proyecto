@@ -118,7 +118,7 @@ class UnidadController extends Controller
         $usuario->nombre_completo = 'Juan Carlos'.date('d-m-Y H:i:s');
         $usuario->email = 'Juacagiri@gmail.com';
         $correo = new CorreoController();
-        $correo->enviarEmail($conjunto,[$usuario],'Mantenimiento programado',$request->all());
+        $correo->enviarEmail($conjunto,[$usuario],'Mantenimiento programado',json_encode($request->all()));
 
         try {
             //code...
