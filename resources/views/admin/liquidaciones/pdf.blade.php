@@ -143,7 +143,7 @@
                                 <thead>
                                     <tr>
                                         <th>Descripción</th>
-                                        <th>Cantidad</th>
+                                        <th>Valor porcentual</th>
                                         <th>Valor</th>
                                     </tr>
                                 </thead>
