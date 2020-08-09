@@ -325,7 +325,7 @@
                                 
                                 <!-- FINANZAS -->
                                 <li>
-                                    <a><i class="fa fa-calculator"></i> Modulo Financiero <span class="fa fa-chevron-down"></span></a>
+                                    <a><i class="fa fa-calculator"></i> Módulo Financiero <span class="fa fa-chevron-down"></span></a>
                                     <ul class="nav child_menu">              
 
                                         <li @if(session('section') == 'ejecucion_pre_total') class="current-page"@endif>
@@ -532,7 +532,7 @@
                                 @if(Auth::user()->habeas_data == 'Acepto')
                                     <li @if(session('section') == 'documentos') class="current-page"@endif>
                                         <a href="{{ url('documentos') }}">
-                                            <i class="fa fa-file-text-o"></i> Modulo Documental
+                                            <i class="fa fa-file-text-o"></i> Módulo Documental
                                         </a>
                                     </li>
                                 @endif

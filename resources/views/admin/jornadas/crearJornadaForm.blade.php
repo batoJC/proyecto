@@ -84,11 +84,12 @@
                     </div>
                     <hr>
 
-                    <div class="col- col-md-12">
+                    <div class="col- col-md-12 text-center">
                         <input id="continuo" type="checkbox" name="continuo">
-                        <label for="continuo">Continuo</label>
+                        <label for="continuo">Jornada continua</label>
                     </div>
-
+                    <br>
+                    <br>
                     <div class="row text-center">
                         <button type="button" onclick="generarJornadas();" class="btn bg-blue"><i class="fa fa-magic"></i> Generar jornadas</button>
                     </div>

@@ -169,24 +169,7 @@
                 </a>
             </div>
             <div class="col-12 col-md-4">
-                <a  href="{{ url('generarLiquidacionPrima',['empleado'=>$empleado->id]) }}"
-                    class="tarjeta text-center">
-                    <i
-                        data-placement="left" 
-                        title="Descripción"
-                        data-toggle="dropdown" 
-                        type="button" 
-                        aria-expanded="false" 
-                        class="fa fa-info ayuda"></i>
-                    <br>
-                    <i class="fa fa-gears icon"></i>
-                    <h3 class="text-center">Generar prima</h3>
-                </a>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12 col-md-4">
-                <a  href="{{ url('generarLiquidacionCesantia',['empleado'=>$empleado->id]) }}"
+                <a  href="{{ url('generarLiquidacionPrestaciones',['empleado'=>$empleado->id]) }}"
                     class="tarjeta text-center">
                     <i
                         data-placement="left" 
@@ -197,9 +180,11 @@
                         class="fa fa-info ayuda"></i>
                     <br>
                     <i class="fa fa-usd icon"></i>
-                    <h3 class="text-center">Generar cesantía</h3>
+                    <h3 class="text-center">Generar prestaciones</h3>
                 </a>
             </div>
+        </div>
+        <div class="row">
             <div class="col-12 col-md-4">
                 <a href="{{ url('listaLiquidaciones',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
@@ -230,8 +215,6 @@
                     <h3 class="text-center">Información de liquidador</h3>
                 </a>
             </div>
-        </div>
-        <div class="row">
             <div class="col-12 col-md-4">
                 <a onclick="modalJornadas();" class="tarjeta text-center">
                     <i
@@ -246,6 +229,8 @@
                     <h3 class="text-center">Descargar jornadas en pdf</h3>
                 </a>
             </div>
+        </div>
+        <div class="row">
             <div class="col-12 col-md-4">
                 <a href="{{ url('liquidacionesDownload',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i

@@ -23,7 +23,7 @@
 	
 					<button onclick="seleccionarCalculo(3);" data-toggle="tooltip" data-placement="top" title="Se da el mismo valor para todas las unidades privadas" class="btn btn-success">Por valor fijo</button>
 	
-					<button onclick="seleccionarCalculo(4);" data-toggle="tooltip" data-placement="top" title="Se incremeta o decrementa por un valor porcentual la cuota anterior de administración" class="btn btn-default">Ingrementar por porcentaje</button>
+					<button onclick="seleccionarCalculo(4);" data-toggle="tooltip" data-placement="top" title="Se incremeta o decrementa por un Porcentaje la cuota anterior de administración" class="btn btn-default">Ingrementar por porcentaje</button>
 	
 					<button onclick="seleccionarCalculo(5);" data-toggle="tooltip" data-placement="top" title="Se incremeta o decrementa por un valor fijo la cuota anterior de administración" class="btn btn-success">Ingrementar por valor</button>
 				</div>

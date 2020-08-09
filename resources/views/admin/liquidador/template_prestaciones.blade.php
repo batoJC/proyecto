@@ -97,126 +97,6 @@
 
         {{-- DEVENGOS --}}
         <div class="col-md-6" id="tabla_devengos">
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Descripción</div>
-                <div class="col-md-2 h-30 bloque">Horas</div>
-                <div class="col-md-3 h-30 bloque">Valor</div>
-            </div>
-            @php
-                $hora_basico = ($empleado->salario / App\Variable::find('horas_jornada')->value);
-                $total_horas = 0;
-                $total_valor_horas = 0;
-            @endphp
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Salario</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HOD') }}</div>
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HOD')*$hora_basico,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HOD');
-                    $total_valor_horas += $jornadas->sum('HOD')*$hora_basico;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Horas Ordinarias Nocturnas</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HON') }}</div>
-                @php
-                    $incrementar = App\Variable::find('recargo_ordinario_nocturno')->value + 1;
-                    $incrementar /= 100;
-                @endphp
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HON')*$hora_basico*$incrementar,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HON');
-                    $total_valor_horas += $jornadas->sum('HON')*$hora_basico*$incrementar;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Horas Ordinarias Diurnas Festivas</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HODF') }}</div>
-                @php
-                    $incrementar = App\Variable::find('recargo_ordinario_diurno_festivo')->value + 1;
-                    $incrementar /= 100;
-                @endphp
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HODF')*$hora_basico*$incrementar,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HODF');
-                    $total_valor_horas += $jornadas->sum('HODF')*$hora_basico*$incrementar;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Horas Ordinarias Nocturnas Festivas</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HONF') }}</div>
-                @php
-                    $incrementar = App\Variable::find('recargo_ordinario_nocturno_festivo')->value + 1;
-                    $incrementar /= 100;
-                @endphp
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HONF')*$hora_basico*$incrementar,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HONF');
-                    $total_valor_horas += $jornadas->sum('HONF')*$hora_basico*$incrementar;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Horas Extras Ordinarias Diurnas</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HEDO') }}</div>
-                @php
-                    $incrementar = App\Variable::find('hora_extra_ordinaria_diurna')->value;
-                @endphp
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HEDO')*$hora_basico*$incrementar,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HEDO');
-                    $total_valor_horas += $jornadas->sum('HEDO')*$hora_basico*$incrementar;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Horas Extras Ordinarias Nocturnas</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HENO') }}</div>
-                @php
-                    $incrementar = App\Variable::find('hora_extra_ordinaria_nocturna')->value;
-                @endphp
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HENO')*$hora_basico*$incrementar,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HENO');
-                    $total_valor_horas += $jornadas->sum('HENO')*$hora_basico*$incrementar;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Horas Extras Ordinarias Diurnas Festivas</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HEDF') }}</div>
-                @php
-                    $incrementar = App\Variable::find('hora_extra_ordinaria_diurna_fesiva')->value;
-                @endphp
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HEDF')*$hora_basico*$incrementar,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HEDF');
-                    $total_valor_horas += $jornadas->sum('HEDF')*$hora_basico*$incrementar;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque" style="font-size: 16px;">Horas Extras Ordinarias Nocturnas Festivos</div>
-                <div class="col-md-2 h-30 bloque">{{ $jornadas->sum('HENF') }}</div>
-                @php
-                    $incrementar = App\Variable::find('hora_extra_ordinaria_nocturna_festiva')->value;
-                @endphp
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($jornadas->sum('HENF')*$hora_basico*$incrementar,2) }}</div>
-                @php
-                    $total_horas += $jornadas->sum('HENF');
-                    $total_valor_horas += $jornadas->sum('HENF')*$hora_basico*$incrementar;
-                @endphp
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Total horas:</div>
-                <div class="col-md-2 h-30 bloque">{{ $total_horas }}</div>
-                <div class="col-md-3 h-30 bloque">$ {{ number_format($total_valor_horas,2) }}</div>
-            </div>
-            <div class="row">
-                <div class="col-md-7 h-30 bloque">Subsidio de transporte:</div>
-                <div class="col-md-2 h-30 bloque">
-                    <input onchange="actualizarValorTransporte()" value="30" style="text-align: right;" class="w-100" type="number" name="dias_transporte" id="dias_transporte">
-                </div>
-                <div class="col-md-3 h-30 bloque">
-                    <span id="valor_transporte">${{ number_format(App\Variable::find('subsidio_transporte')->value,2) }}</span>
-                </div>
-            </div>            
         </div>
 
         {{-- DEDUCCIONES --}}
@@ -229,7 +109,7 @@
             <div class="row">
                 <div class="col-md-8 h-30 bloque">Total devengado:</div>
                 <div class="col-md-4 h-30 bloque">
-                    <span id="total_devengado">${{ number_format((App\Variable::find('subsidio_transporte')->value) + $total_valor_horas ,2) }}</span>
+                    <span id="total_devengado">$ 0</span>
                 </div>
             </div>
         </div>
@@ -237,7 +117,7 @@
             <div class="row">
                 <div class="col-md-8 h-30 bloque">Total descuentos:</div>
                 <div class="col-md-4 h-30 bloque">
-                    <span id="total_descuentos">$ 0</span>
+                    <span id="span_total_descuentos">$ 0</span>
                 </div>
             </div>
         </div>
@@ -258,12 +138,6 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="row">
-                <div class="col-md-8 h-30 bloque">Subsidio de transporte:</div>
-                <div class="col-md-4 h-30 bloque">$ {{ number_format(App\Variable::find('subsidio_transporte')->value,2) }}</div>
-            </div>
-        </div>
     </div>
 </div>
 <br><br>
@@ -272,6 +146,7 @@
         <button onclick="guardar();" class="btn btn-success">Guardar <i class="fa fa-save"></i></button>
     </div>
 </div>
+
 <br>
 <br>
 <br>
@@ -282,30 +157,27 @@
         $('#valor_devengo_aux').maskMoney({precision:0});
         //agregar devengos TODO
         actualizarTotales();
-        let valor = total_con_recargo * (4/100);
-        let porcentaje = 4;
-        deducciones.data.push({
-            id: deducciones.id,
-            descripcion : 'Seguridad Social Salud',
-            porcentaje : porcentaje,
-            valor : valor
-        });
-        deducciones.id++;
-        deducciones.data.push({
-            id: deducciones.id,
-            descripcion : 'Seguridad Social Pension',
-            porcentaje : porcentaje,
-            valor : valor
-        });
-        deducciones.id++;
+        @php
+            $total_valor_devengos = 0;
+        @endphp
+        @foreach ($prestaciones as $name => $value)
+            devengos.add({
+                id:devengos.id,
+                descripcion : "{{ $name }}",
+                valor : parseInt('{{ $value }}'),
+                retencion : false
+            });
+            devengos.id++;
+            @php
+                $total_valor_devengos += $value;
+            @endphp    
+        @endforeach
         deducciones.pintar();
     });
 
 
-    var total_con_recargo = {{ $total_valor_horas }};
-    var total_sin_recargo = {{ App\Variable::find('subsidio_transporte')->value }};
-    var subsidio_transporte = total_sin_recargo;
-    var valor_subsidio_transporte = total_sin_recargo;
+    var total_con_recargo = 0;
+    var total_sin_recargo = 0;
     var total_descuentos = 0;
 
     function removeElement(arr,id){
@@ -323,33 +195,42 @@
     var devengos = {
         id : 1,
         data : new Array(),
+        add : (data) => {
+            devengos.data.push({
+                id: data.id,
+                descripcion : data.descripcion,
+                valor : data.valor,
+                retencion : data.retencion,
+            });
+            $('#tabla_devengos').append(`
+                <div id="devengo-${devengos.id}" class="row">
+                    <div class="col-md-9 h-30 bloque">
+                        ${data.descripcion}
+                        <i onclick="devengos.eliminar(${devengos.id})" class="fa fa-trash-o text-danger"></i>
+                    </div>
+                    <div class="col-md-3 h-30 bloque">${formatter.format(data.valor)}</div>
+                </div>
+            `);
+
+            //falta genera retención
+            devengos.id++;
+            if(data.retencion){
+                total_con_recargo += parseInt(data.valor);
+                deducciones.pintar();
+            }else{
+                total_sin_recargo += parseInt(data.valor);
+            }
+            actualizarTotales();
+        },
         agregar : () =>{
             if(verificarFormulario('data_devengo',2)){
-                devengos.data.push({
+                let data = {
                     id:devengos.id,
                     descripcion : descripcion_devengo.value,
                     valor : parseInt(valor_devengo.value),
                     retencion : retencion.checked
-                });
-                $('#tabla_devengos').append(`
-                    <div id="devengo-${devengos.id}" class="row">
-                        <div class="col-md-9 h-30 bloque">
-                            ${descripcion_devengo.value}
-                            <i onclick="devengos.eliminar(${devengos.id})" class="fa fa-trash-o text-danger"></i>
-                        </div>
-                        <div class="col-md-3 h-30 bloque">${formatter.format(valor_devengo.value)}</div>
-                    </div>
-                `);
-
-                //falta genera retención
-                devengos.id++;
-                if(retencion.checked){
-                    total_con_recargo += parseInt(valor_devengo.value);
-                    deducciones.pintar();
-                }else{
-                    total_sin_recargo += parseInt(valor_devengo.value);
                 }
-                actualizarTotales();
+                devengos.add(data);
                 $('#data_devengo').trigger('reset');
                 $('#modal-devengo').modal('hide');
             }
@@ -416,7 +297,7 @@
             $('#tabla_deducciones').html(`
                 <div class="row">
                     <div class="col-md-6 h-30 bloque">Descripción</div>
-                    <div class="col-md-2 h-30 bloque">Valor porcentual</div>
+                    <div class="col-md-2 h-30 bloque">Porcentaje</div>
                     <div class="col-md-4 h-30 bloque">Valor</div>
                 </div>`);
             deducciones.data.forEach(e => {
@@ -444,17 +325,13 @@
         $(`#form_${id}`).trigger('reset');
     }
 
-    function actualizarValorTransporte(){
-        total_sin_recargo -= valor_subsidio_transporte;
-        valor_subsidio_transporte = subsidio_transporte*dias_transporte.value/30;
-        total_sin_recargo += valor_subsidio_transporte;
-        valor_transporte.innerText = formatter.format(valor_subsidio_transporte);
-        actualizarTotales();
-    }
+    // function actualizarValorTransporte(){
+    //     actualizarTotales();
+    // }
 
     function actualizarTotales(){
         total_devengado.innerText = formatter.format(total_con_recargo + total_sin_recargo);
-        total_descuentos.innerText = formatter.format(total_descuentos);
+        span_total_descuentos.innerText = formatter.format(total_descuentos);
         neto_pagar.innerText = formatter.format(total_con_recargo + total_sin_recargo - total_descuentos);
     }
 
@@ -465,14 +342,13 @@
         data.append('consecutivo',consecutivo.value);
         data.append('empleado',empleado);
         data.append('fecha_inicio',fecha_inicio.value);
-        data.append('fecha_fin',fecha_fin.value);
-        data.append('dias_transporte',dias_transporte.value);
+        data.append('fecha_fin','{{ $fecha_fin }}');
         data.append('devengos',JSON.stringify(devengos.data));
         data.append('deducciones',JSON.stringify(deducciones.data));
 
         $.ajax({
             type: "POST",
-            url: "{{url('liquidacion')}}",
+            url: "{{url('guardarPrestaciones')}}",
             contentType : false,
             processData: false,
             data: data,

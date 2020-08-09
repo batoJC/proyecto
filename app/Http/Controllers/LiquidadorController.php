@@ -65,28 +65,6 @@ class LiquidadorController extends Controller
             ->with('empleado', $empleado);
     }
 
-    public function vistaPrima(EmpleadosConjunto $empleado)
-    {
-        $conjunto = Conjunto::find(session('conjunto'));
-        $consecutivos = Consecutivos::where('conjunto_id', session('conjunto'))->get();
-
-        return view('admin.liquidador.prima')
-            ->with('conjuntos', $conjunto)
-            ->with('consecutivos', $consecutivos)
-            ->with('empleado', $empleado);
-    }
-
-    public function vistaCesantia(EmpleadosConjunto $empleado)
-    {
-        $conjunto = Conjunto::find(session('conjunto'));
-        $consecutivos = Consecutivos::where('conjunto_id', session('conjunto'))->get();
-
-        return view('admin.liquidador.cesantia')
-            ->with('conjuntos', $conjunto)
-            ->with('consecutivos', $consecutivos)
-            ->with('empleado', $empleado);
-    }
-
     public function liquidacion(Request $request)
     {
         $consecutivo = Consecutivos::find($request->consecutivo);
@@ -115,7 +93,8 @@ class LiquidadorController extends Controller
         $ultima_fecha = date('d-m-Y');
         $aux_fecha = date('d/m/Y', strtotime($fecha_inicio));
         $liquidaciones = Liquidacion::where([
-            ['empleado_conjunto_id', $empleado->id]
+            ['empleado_conjunto_id', $empleado->id],
+            ['tipo','liquidacion']
         ])->select(DB::raw("STR_TO_DATE(REPLACE(SUBSTRING_INDEX( periodo, ' - ' , 1 ),'/','-'),'%d-%m-%Y') as dato,liquidaciones.*"))
             ->whereRaw("STR_TO_DATE(REPLACE(SUBSTRING_INDEX( periodo, ' - ' , 1 ),'/','-'),'%d-%m-%Y') >= ?", $aux_fecha)
             ->orderBy('dato', 'ASC')->get();
@@ -133,52 +112,59 @@ class LiquidadorController extends Controller
             ['empleado_conjunto_id', $empleado->id]
         ])->distinct('fecha')->count();
 
-
+        $aux = ($dias_trabajados == 0) ? 1 : $dias_trabajados;
 
         //sacar el promedio del día de trabajo
-        return ['promedio_dia' => $valor_devengado / $dias_trabajados,'dias_trabajados' => $dias_trabajados];
+        return [
+            'promedio_dia' => $valor_devengado / $aux,
+            'dias_trabajados' => $dias_trabajados,
+            'ultima_fecha' => $ultima_fecha
+        ];
     }
 
-    public function prima(Request $request)
+    public function vistaPrestaciones(EmpleadosConjunto $empleado)
     {
-        // $consecutivo = Consecutivos::find($request->consecutivo);
-        $empleado = EmpleadosConjunto::find($request->empleado);
-        // $conjunto = Conjunto::find(session('conjunto'));
-        // return view('admin.liquidador.template_prima')
-        //     ->with('consecutivo',$consecutivo)
-        //     ->with('fecha_inicio',$request->fecha_inicio)
-        //     ->with('conjunto',$conjunto)
-        //     ->with('empleado',$empleado);
+        $conjunto = Conjunto::find(session('conjunto'));
+        $consecutivos = Consecutivos::where('conjunto_id', session('conjunto'))->get();
 
-        //calcular valor de la prima
+        return view('admin.liquidador.prestaciones')
+            ->with('conjuntos', $conjunto)
+            ->with('consecutivos', $consecutivos)
+            ->with('empleado', $empleado);
+    }
+
+    public function prestaciones(Request $request)
+    {
+        $empleado = EmpleadosConjunto::find($request->empleado);
+
         $calculo = $this->calcularPromedioDiaYDiasTrabajados($empleado, $request->fecha_inicio);
         $salarioMensualPromedio = $calculo['promedio_dia'] * 30;
 
+        $primaServicios = ($salarioMensualPromedio / 12) * ($calculo['dias_trabajados'] / 30);
+        $auxilioCesantias = ($salarioMensualPromedio / 12) * ($calculo['dias_trabajados'] / 30);
+        $interesCesantias = $calculo['dias_trabajados'] * $auxilioCesantias * (0.12) / 360;
+        $vacaciones = $salarioMensualPromedio / 720;
 
-        $valorPrima = $salarioMensualPromedio * $calculo['dias_trabajados'] / 360;
+        $fecha_inicio = $request->fecha_inicio;
+        $fecha_fin = $calculo['ultima_fecha'];
 
-        return ['valor' => $valorPrima];
-    }
+        $prestaciones = array(
+            'Prima de servicios' => $primaServicios,
+            'Auxilio de cesantías' => $auxilioCesantias,
+            'Intereses sobre cesantías' => $interesCesantias,
+            'Vacaciones' => $vacaciones,
+        );
 
-    public function cesantia(Request $request)
-    {
-        // $consecutivo = Consecutivos::find($request->consecutivo);
-        $empleado = EmpleadosConjunto::find($request->empleado);
-        // $conjunto = Conjunto::find(session('conjunto'));
-        // return view('admin.liquidador.template_cesantia')
-        //     ->with('consecutivo',$consecutivo)
-        //     ->with('fecha_inicio',$request->fecha_inicio)
-        //     ->with('conjunto',$conjunto)
-        //     ->with('empleado',$empleado);
-
-        //calcular valor de la cesantía
-        $calculo = $this->calcularPromedioDiaYDiasTrabajados($empleado, $request->fecha_inicio);
-        $salarioMensualPromedio = $calculo['promedio_dia'] * 30;
-
-
-        $valorCesantia = $salarioMensualPromedio * $calculo['dias_trabajados'] / 360;
-
-        return ['valor' => $valorCesantia];
+        $consecutivo = Consecutivos::find($request->consecutivo);
+        $conjunto = Conjunto::find(session('conjunto'));
+        return view('admin.liquidador.template_prestaciones')
+            ->with('consecutivo', $consecutivo)
+            ->with('fecha_inicio', $fecha_inicio)
+            ->with('fecha_fin', $fecha_fin)
+            ->with('conjunto', $conjunto)
+            ->with('prestaciones', $prestaciones)
+            ->with('horas', 0)
+            ->with('empleado', $empleado);
     }
 
     public function editarVariable(Request $request)

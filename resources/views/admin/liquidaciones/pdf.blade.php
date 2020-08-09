@@ -103,9 +103,14 @@
                             <table cellpadding="0" cellspacing="0">
                                 <thead>
                                     <tr>
-                                        <th>Descripción</th>
-                                        <th>Horas</th>
-                                        <th>Valor</th>
+                                        @if ($liquidacion->tipo == 'liquidacion')
+                                            <th>Descripción</th>
+                                            <th>Horas</th>
+                                            <th>Valor</th>
+                                        @else
+                                            <th colspan="2">Descripción</th>
+                                            <th>Valor</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>{{-- con horas --}}
@@ -116,18 +121,21 @@
                                             <td>$ {{ number_format($devengo->valor,2) }}</td>
                                         </tr>
                                     @endforeach
+                                    @if ($liquidacion->tipo == 'liquidacion')
+                                        
                                     {{-- totales --}}
-                                        <tr>
-                                            <td>Total horas</td>
-                                            <td>{{ $liquidacion->devengos()->where('horas','!=',null)->sum('horas')  }}</td>
-                                            <td>$ {{ number_format($liquidacion->devengos()->where('horas','!=',null)->sum('valor'),2)  }}</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Subsidio transporte</td>
-                                            <td>{{ $liquidacion->dias_transporte }}</td>
-                                            <td>$ {{ number_format($liquidacion->dias_transporte*$liquidacion->subsidio_transporte/30,2) }}</td>
-                                        </tr>
+                                    <tr>
+                                        <td>Total horas</td>
+                                        <td>{{ $liquidacion->devengos()->where('horas','!=',null)->sum('horas')  }}</td>
+                                        <td>$ {{ number_format($liquidacion->devengos()->where('horas','!=',null)->sum('valor'),2)  }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Subsidio transporte</td>
+                                        <td>{{ $liquidacion->dias_transporte }}</td>
+                                        <td>$ {{ number_format($liquidacion->dias_transporte*$liquidacion->subsidio_transporte/30,2) }}</td>
+                                    </tr>
                                     {{-- sin horas --}}
+                                    @endif
                                     @foreach ($liquidacion->devengos()->where('horas','=',null)->get() as $devengo)
                                         <tr>
                                             <td colspan="2">{{ $devengo->descripcion }}</td>
@@ -143,7 +151,7 @@
                                 <thead>
                                     <tr>
                                         <th>Descripción</th>
-                                        <th>Valor porcentual</th>
+                                        <th>Porcentaje</th>
                                         <th>Valor</th>
                                     </tr>
                                 </thead>

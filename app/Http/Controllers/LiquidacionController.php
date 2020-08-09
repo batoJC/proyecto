@@ -183,6 +183,60 @@ class LiquidacionController extends Controller
         }
     }
 
+    public function prestaciones(Request $request){
+        //crear liquidacón
+        $liquidacion = new Liquidacion();
+        try {
+            $consecutivo = Consecutivos::find($request->consecutivo);
+            $empleado = EmpleadosConjunto::find($request->empleado);
+
+
+            $liquidacion->fecha = date('Y-m-d');
+            $liquidacion->consecutivo = $consecutivo->prefijo . '-' . $consecutivo->numero;
+            $liquidacion->periodo = date('d/m/Y', strtotime($request->fecha_inicio)) . ' - ' . date('d/m/Y', strtotime($request->fecha_fin));
+            $liquidacion->salario = $empleado->salario;
+            $liquidacion->subsidio_transporte = 0;
+            $liquidacion->dias_transporte = 0;
+            $liquidacion->empleado_conjunto_id = $empleado->id;
+            $liquidacion->tipo = 'prestaciones';
+
+            if ($liquidacion->save()) {
+                //agregar devengos
+                $devengos = json_decode($request->devengos);
+                foreach ($devengos as $data) {
+                    $devengo = new Devengo();
+                    $devengo->descripcion = $data->descripcion;
+                    $devengo->horas = null;
+                    $devengo->valor = $data->valor;
+                    $devengo->retencion = $data->retencion;
+                    $devengo->liquidacion_id = $liquidacion->id;
+                    $devengo->save();
+                }
+
+
+                //agregar deducciones
+                $deducciones = json_decode($request->deducciones);
+                foreach ($deducciones as $deduccion) {
+                    $aux = new Deduccion();
+                    $aux->descripcion = $deduccion->descripcion;
+                    $aux->descuento = $deduccion->porcentaje;
+                    $aux->valor = $deduccion->valor;
+                    $aux->liquidacion_id = $liquidacion->id;
+                    $aux->save();
+                }
+            }
+
+            $consecutivo->numero++;
+            $consecutivo->save();
+
+            return ['res' => 1, 'msg' => 'Liquidación de prestaciones guardada correctamente!', 'data' => $liquidacion];
+        } catch (\Throwable $th) {
+            $liquidacion->delete();
+            return ['res' => 0, 'msg' => 'Ocurrió un error al registrar la liquidación de prestaciones','th'=>$th];
+        }
+    }
+
+
     /**
      * Display the specified resource.
      *
@@ -191,11 +245,14 @@ class LiquidacionController extends Controller
      */
     public function show(Liquidacion $liquidacion)
     {
-        // $html =
-        $pdf = PDF::loadView('admin.liquidaciones.pdf', [
-            'liquidacion' => $liquidacion
-        ]);
-        return $pdf->stream();
+        if($liquidacion->empleado->conjunto_id == session('conjunto')){
+            $pdf = PDF::loadView('admin.liquidaciones.pdf', [
+                'liquidacion' => $liquidacion
+            ]);
+            return $pdf->stream();
+        }else{
+            return ['No tiene permiso para ver esta información'];
+        }
     }
 
     /**

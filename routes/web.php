@@ -385,11 +385,13 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
 	Route::post('liquidadorJornadas','LiquidadorController@getJornadas');
 	Route::post('cargarLiquidacion','LiquidadorController@liquidacion');
-	Route::post('cargarPrima','LiquidadorController@prima');
-	Route::post('cargarCesantia','LiquidadorController@cesantia');
+	// Route::post('cargarPrima','LiquidadorController@prima');
+	// Route::post('cargarCesantia','LiquidadorController@cesantia');
+	Route::post('cargarPrestaciones','LiquidadorController@prestaciones');
+	Route::post('guardarPrestaciones','LiquidacionController@prestaciones');
 	Route::get('generarLiquidacion/{empleado}','LiquidadorController@vistaGenerar');
-	Route::get('generarLiquidacionPrima/{empleado}','LiquidadorController@vistaPrima');
-	Route::get('generarLiquidacionCesantia/{empleado}','LiquidadorController@vistaCesantia');
+	Route::get('generarLiquidacionPrestaciones/{empleado}','LiquidadorController@vistaPrestaciones');
+	// Route::get('generarLiquidacionCesantia/{empleado}','LiquidadorController@vistaCesantia');
 
 	//Liquidacion
 	Route::resource('liquidacion','LiquidacionController');

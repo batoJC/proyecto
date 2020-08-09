@@ -416,7 +416,7 @@
             $('#tabla_deducciones').html(`
                 <div class="row">
                     <div class="col-md-6 h-30 bloque">Descripción</div>
-                    <div class="col-md-2 h-30 bloque">Valor porcentual</div>
+                    <div class="col-md-2 h-30 bloque">Porcentaje</div>
                     <div class="col-md-4 h-30 bloque">Valor</div>
                 </div>`);
             deducciones.data.forEach(e => {
