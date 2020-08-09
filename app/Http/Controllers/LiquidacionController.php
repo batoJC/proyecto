@@ -308,6 +308,12 @@ class LiquidacionController extends Controller
         return Datatables::of($liquidaciones)
             ->addColumn('fecha', function ($liquidacion) {
                 return date('d-m-Y', strtotime($liquidacion->fecha));
+            })->addColumn('tipo', function ($liquidacion) {
+                if($liquidacion->tipo == "liquidacion"){
+                    return "Liquidación";
+                }else{
+                    return "Prestaciones";
+                }
             })->addColumn('action', function ($liquidacion) {
                 $salida = '<a target="_blank" href="' . url('liquidacion', ['liquidacion' => $liquidacion->id]) . '" data-toggle="tooltip" data-placement="top" title="Mostrar" class="btn btn-default">
                                 <i class="fa fa-eye"></i>

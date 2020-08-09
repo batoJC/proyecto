@@ -48,6 +48,7 @@
                 <thead>
                     <tr>
                         <th>Fecha</th>
+                        <th>Tipo</th>
                         <th>Consecutivo</th>
                         <th>Periodo</th>
                         <th>Opciones</th>
@@ -90,6 +91,7 @@
           	ajax : actualizarTabla,
           	columns: [
           		{ data: 'fecha', name: 'fecha'},
+          		{ data: 'tipo', name: 'tipo'},
           		{ data: 'consecutivo', name: 'consecutivo'},
           		{ data: 'periodo', name: 'periodo'},
           		{ data: 'action', name: 'action', orderable: false, searchable: false},
