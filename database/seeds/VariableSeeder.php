@@ -13,6 +13,7 @@ class VariableSeeder extends Seeder
     public function run()
     {
         //
+        DB::table('variables')->truncate();
         DB::table('variables')->insert([
             [
                 'name' => 'horas_jornada',
@@ -85,6 +86,12 @@ class VariableSeeder extends Seeder
                 'descripcion' => 'Es el valor del subsidio de transporte.',
                 'modulo' => 'liquidacion',
                 'value' => 102854
+            ],
+            [
+                'name' => 'interes_cesantias',
+                'descripcion' => 'Es el valor sobre el que se calcula el interés a las cesantías.',
+                'modulo' => 'liquidacion',
+                'value' => 0.12
             ]
         ]);
     }

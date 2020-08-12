@@ -142,7 +142,7 @@ class LiquidadorController extends Controller
 
         $primaServicios = ($salarioMensualPromedio ) * ($calculo['dias_trabajados'] / 360);
         $auxilioCesantias = ($salarioMensualPromedio) * ($calculo['dias_trabajados'] / 360);
-        $interesCesantias = $calculo['dias_trabajados'] * $auxilioCesantias * (0.12) / 360;
+        $interesCesantias = $calculo['dias_trabajados'] * $auxilioCesantias * (Variable::find('interes_cesantias')->value) / 360;
         $vacaciones = $empleado->salario / 720;
 
         $fecha_inicio = $request->fecha_inicio;
@@ -163,7 +163,6 @@ class LiquidadorController extends Controller
             ->with('fecha_fin', $fecha_fin)
             ->with('conjunto', $conjunto)
             ->with('prestaciones', $prestaciones)
-            ->with('horas', 0)
             ->with('empleado', $empleado);
     }
 
