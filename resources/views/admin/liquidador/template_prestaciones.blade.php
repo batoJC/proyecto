@@ -165,7 +165,7 @@
                 id:devengos.id,
                 descripcion : "{{ $name }}",
                 valor : parseInt('{{ $value }}'),
-                retencion : false
+                retencion : {{ ($name == 'Vacaciones')? 'true' : 'false' }}
             });
             devengos.id++;
             @php

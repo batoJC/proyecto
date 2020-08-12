@@ -621,10 +621,8 @@ class exportarController extends Controller
                 $nombre = $empleado->nombre_completo;
                 @mkdir(public_path($carpeta."/{$nombre}"));
                 foreach ($liquidaciones as $liquidacion) {
-                    $pdf = PDF::loadView('admin.liquidaciones.pdf', [
-                        'liquidacion' => $liquidacion
-                    ]);
-                    $archivo = $pdf->stream();
+                    $liquidadcionController = new LiquidacionController();
+                    $archivo = $liquidadcionController->show($liquidacion);
                     $nombre_archivo = $liquidacion->consecutivo;
                     $nombre_archivo = "{$carpeta}/{$nombre}/{$nombre_archivo}.pdf";
                     file_put_contents(public_path($nombre_archivo), $archivo);

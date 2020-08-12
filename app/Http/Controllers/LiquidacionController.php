@@ -15,6 +15,7 @@ use App\Jornada;
 use App\Variable;
 use PDF;
 use ZIP;
+use QR;
 
 
 class LiquidacionController extends Controller
@@ -183,7 +184,8 @@ class LiquidacionController extends Controller
         }
     }
 
-    public function prestaciones(Request $request){
+    public function prestaciones(Request $request)
+    {
         //crear liquidacón
         $liquidacion = new Liquidacion();
         try {
@@ -232,7 +234,7 @@ class LiquidacionController extends Controller
             return ['res' => 1, 'msg' => 'Liquidación de prestaciones guardada correctamente!', 'data' => $liquidacion];
         } catch (\Throwable $th) {
             $liquidacion->delete();
-            return ['res' => 0, 'msg' => 'Ocurrió un error al registrar la liquidación de prestaciones','th'=>$th];
+            return ['res' => 0, 'msg' => 'Ocurrió un error al registrar la liquidación de prestaciones', 'th' => $th];
         }
     }
 
@@ -245,12 +247,28 @@ class LiquidacionController extends Controller
      */
     public function show(Liquidacion $liquidacion)
     {
-        if($liquidacion->empleado->conjunto_id == session('conjunto')){
+        if ($liquidacion->empleado->conjunto_id == session('conjunto')) {
+
+            $files = glob(public_path('qrcodes') . '/*');
+            foreach ($files as $file) {
+                if (is_file($file))
+                    unlink($file); //elimino el fichero
+            }
+
+            $pdf = null;
+
+            $text_qr = "Fecha: " . date('d-m-Y', strtotime($liquidacion->fecha));
+            $text_qr .= "\n\r Consecutivo: " . $liquidacion->consecutivo;
+            $text_qr .= "\n\r Empleado: " . $liquidacion->empleado->cedula;
+
+            QR::format('png')->size(180)->margin(10)->generate($text_qr, public_path('qrcodes/qrcode_liquidacion_' . $liquidacion->id . '.png'));
+
+
             $pdf = PDF::loadView('admin.liquidaciones.pdf', [
                 'liquidacion' => $liquidacion
             ]);
             return $pdf->stream();
-        }else{
+        } else {
             return ['No tiene permiso para ver esta información'];
         }
     }
@@ -309,9 +327,9 @@ class LiquidacionController extends Controller
             ->addColumn('fecha', function ($liquidacion) {
                 return date('d-m-Y', strtotime($liquidacion->fecha));
             })->addColumn('tipo', function ($liquidacion) {
-                if($liquidacion->tipo == "liquidacion"){
+                if ($liquidacion->tipo == "liquidacion") {
                     return "Liquidación";
-                }else{
+                } else {
                     return "Prestaciones";
                 }
             })->addColumn('action', function ($liquidacion) {
@@ -331,8 +349,13 @@ class LiquidacionController extends Controller
         if (session('conjunto') == $empleado->conjunto_id) {
             $conjunto = Conjunto::find(session('conjunto'));
             $liquidaciones = Liquidacion::where('empleado_conjunto_id', $empleado->id)->orderBy('fecha', 'ASC')->get();
-            $carpeta = "exports/{$conjunto->id}/liquidaciones";
+            $carpeta = "exports/{$conjunto->id}";
+            $this->eliminarCarpeta(public_path($carpeta));
             @mkdir(public_path($carpeta));
+            $carpeta .= "/liquidaciones";
+            @mkdir(public_path($carpeta));
+
+            
             foreach ($liquidaciones as $liquidacion) {
                 $archivo = $this->show($liquidacion);
                 $nombre_archivo = $liquidacion->consecutivo;
@@ -350,4 +373,18 @@ class LiquidacionController extends Controller
             return ['No tiene permiso para ver esta información'];
         }
     }
+
+    private function eliminarCarpeta($nombre)
+    {
+        foreach (glob($nombre . '/*') as $archivo) {
+            if (is_dir($archivo)) {
+                $data = explode($nombre, $archivo)[1];
+                $this->eliminarCarpeta($nombre . $data);
+            } else {
+                @unlink($archivo);
+            }
+        }
+        rmdir($nombre);
+    }
+
 }

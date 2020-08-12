@@ -140,10 +140,10 @@ class LiquidadorController extends Controller
         $calculo = $this->calcularPromedioDiaYDiasTrabajados($empleado, $request->fecha_inicio);
         $salarioMensualPromedio = $calculo['promedio_dia'] * 30;
 
-        $primaServicios = ($salarioMensualPromedio / 12) * ($calculo['dias_trabajados'] / 30);
-        $auxilioCesantias = ($salarioMensualPromedio / 12) * ($calculo['dias_trabajados'] / 30);
+        $primaServicios = ($salarioMensualPromedio ) * ($calculo['dias_trabajados'] / 360);
+        $auxilioCesantias = ($salarioMensualPromedio) * ($calculo['dias_trabajados'] / 360);
         $interesCesantias = $calculo['dias_trabajados'] * $auxilioCesantias * (0.12) / 360;
-        $vacaciones = $salarioMensualPromedio / 720;
+        $vacaciones = $empleado->salario / 720;
 
         $fecha_inicio = $request->fecha_inicio;
         $fecha_fin = $calculo['ultima_fecha'];

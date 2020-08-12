@@ -142,7 +142,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="unidades" id="unidades" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Todas las unidades con los listados de inquilinos, mascotas, etc." 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -158,7 +158,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="pqr" id="pqr" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Todas las PQR registradas" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -174,7 +174,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="novedades_conjunto" id="novedades_conjunto" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Novedades registradas sobre el conjunto" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -192,7 +192,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="evidencias" id="evidencias" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Todas las evidencias registradas" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -208,7 +208,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="novedades_unidades" id="novedades_unidades" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Novedades registradas, separadas por cada unidad" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -224,7 +224,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="ingresos_y_retiros" id="ingresos_y_retiros" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Todas las cartas generadas separadas por cada unidad" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -242,7 +242,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="empleados" id="empleados" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Lista de los empleados del conjunto" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -258,7 +258,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="mantenimientos" id="mantenimientos" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Descargue todos los soportes de mantenimientos" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -274,7 +274,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="zonas_sociales" id="zonas_sociales" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Listado de las zonas sociales y su valor de uso" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -292,7 +292,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="reservas" id="reservas" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Listado de las reservas pendientes y aceptadas" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -308,7 +308,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="inventario" id="inventario" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Inventario del conjunto" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -324,7 +324,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="deudas" id="deudas" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Listado de las deudas que se tienen" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -342,7 +342,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="flujo_efectivo" id="flujo_efectivo" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Reporte del flujo de efectivo" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -358,7 +358,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="jornadas" id="jornadas" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Las jornadas registradas por cada empleado" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -374,7 +374,7 @@
                     <input onchange="seleccionar(this)" type="checkbox" name="liquidaciones" id="liquidaciones" value="1">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Listado de las liquidaciones separadas por cada empleado" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 

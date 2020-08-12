@@ -22,15 +22,15 @@
                 border: 1px solid black;
                 font-family: sans-serif;
                 font-weight: normal !important;
-                margin: 0px;
-                padding: 0 !important;
+                margin: 2px;
+                padding: 3px !important;
                 margin: 0px;
 
             }
 
             td{
                 text-align: center;
-                border: 1px solid black;
+                /* border: 1px solid black; */
                 font-family: sans-serif;
                 margin: 0px;
                 padding: 0 !important;
@@ -64,9 +64,20 @@
                 margin-top: 2px;
             }
 
+            .text-left{
+                text-align: left !important;
+                padding-left: 5px !important;
+                /* border-left: 1px solid black; */
+            }
+
+            .text-right{
+                text-align: right !important;
+                /* border-right: 1px solid black; */
+
+            }
         </style>
         <main>
-            <table cellpadding="0" cellspacing="0">
+                <table cellpadding="0" cellspacing="0" style="border-bottom: 1px solid black;">
                 <thead>
                     <tr>
                         <th colspan="1">
@@ -76,7 +87,7 @@
                             {{ $liquidacion->empleado->conjunto->nombre }} - {{ $liquidacion->empleado->conjunto->nit }}
                         </th>
                         <th colspan="1">
-                            {{ date('d/m/Y',strtotime($liquidacion->fecha)) }}
+                            <img class="qr_img" src="{{public_path() }}/qrcodes/qrcode_liquidacion_{{$liquidacion->id}}.png" alt="QR">
                         </th>
                     </tr>
                     <tr>
@@ -116,7 +127,7 @@
                                 <tbody>{{-- con horas --}}
                                     @foreach ($liquidacion->devengos()->where('horas','!=',null)->get() as $devengo)
                                         <tr>
-                                            <td>{{ $devengo->descripcion }}</td>
+                                            <td class="text-left">{{ $devengo->descripcion }}</td>
                                             <td>{{ $devengo->horas }}</td>
                                             <td>$ {{ number_format($devengo->valor,2) }}</td>
                                         </tr>
@@ -125,12 +136,12 @@
                                         
                                     {{-- totales --}}
                                     <tr>
-                                        <td>Total horas</td>
+                                        <td class="text-left">Total horas</td>
                                         <td>{{ $liquidacion->devengos()->where('horas','!=',null)->sum('horas')  }}</td>
                                         <td>$ {{ number_format($liquidacion->devengos()->where('horas','!=',null)->sum('valor'),2)  }}</td>
                                     </tr>
                                     <tr>
-                                        <td>Subsidio transporte</td>
+                                        <td class="text-left">Subsidio transporte</td>
                                         <td>{{ $liquidacion->dias_transporte }}</td>
                                         <td>$ {{ number_format($liquidacion->dias_transporte*$liquidacion->subsidio_transporte/30,2) }}</td>
                                     </tr>
@@ -138,7 +149,7 @@
                                     @endif
                                     @foreach ($liquidacion->devengos()->where('horas','=',null)->get() as $devengo)
                                         <tr>
-                                            <td colspan="2">{{ $devengo->descripcion }}</td>
+                                            <td class="text-left" colspan="2">{{ $devengo->descripcion }}</td>
                                             <td>$ {{ number_format($devengo->valor,2) }}</td>
                                         </tr>
                                     @endforeach
@@ -158,7 +169,7 @@
                                 <tbody>
                                     @foreach ($liquidacion->deducciones as $deduccion)
                                         <tr>
-                                            <td>{{ $deduccion->descripcion }}</td>
+                                            <td class="text-left" >{{ $deduccion->descripcion }}</td>
                                             <td>{{ $deduccion->descuento }} % </td>
                                             <td>$ {{ number_format($deduccion->valor,2) }}</td>
                                         </tr>
@@ -168,24 +179,16 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Total devengado: </td>
-                        <td colspan="2">$ {{ number_format($liquidacion->total_devengos(),2) }}</td>
-                        <td colspan="2">Total descuentos: </td>
-                        <td>$ {{ number_format($liquidacion->total_deducciones(),2) }}</td>
+                        <td style="border-top: 1px solid black !important;" class="text-left">Total devengado: </td>
+                        <td style="border-top: 1px solid black !important;padding-right:25px !important;" class="text-right" colspan="2">$ {{ number_format($liquidacion->total_devengos(),2) }}</td>
+                        <td style="border-top: 1px solid black !important;" class="text-left" colspan="2">Total descuentos: </td>
+                        <td style="border-top: 1px solid black !important;padding-right:25px !important;" class="text-right">$ {{ number_format($liquidacion->total_deducciones(),2) }}</td>
                     </tr>
                     <tr>
-                        <td>Salario básico: </td>
-                        <td colspan="2">$ {{ number_format($liquidacion->salario,2) }}</td>
-                        <td  colspan="2">Neto a pagar: </td>
-                        <td>$ {{ number_format($liquidacion->total(),2) }}</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td class="text-left">Salario básico: </td>
+                        <td style="padding-right:25px !important;" class="text-right" colspan="2">$ {{ number_format($liquidacion->salario,2) }}</td>
+                        <td class="text-left"  colspan="2">Neto a pagar: </td>
+                        <td style="padding-right:25px !important;" class="text-right">$ {{ number_format($liquidacion->total(),2) }}</td>
                     </tr>
                 </tbody>
             </table>

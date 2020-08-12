@@ -144,21 +144,21 @@
                 <a href="{{ url('jornadas',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Podrá registrar y consultar las jornadas de trabajo" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
                         class="fa fa-info ayuda"></i>
                     <br>
                     <i class="fa fa-pencil icon"></i>
-                    <h3 class="text-center">Registrar jornada.</h3>
+                    <h3 class="text-center">Registrar jornada</h3>
                 </a>
             </div>
             <div class="col-12 col-md-4">
                 <a href="{{ url('generarLiquidacion',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Genere una liquidación de acuerdo con las jornadas registradas" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -173,7 +173,7 @@
                     class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Genere prima, cesantías y vacaciones" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -189,7 +189,7 @@
                 <a href="{{ url('listaLiquidaciones',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Consulte la lista de todas las liquidaciones generadas" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -205,7 +205,8 @@
                     class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Aquí encontrara una descripción detallada de 
+                        la manera en que se calcula las liquidaciones" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -219,7 +220,7 @@
                 <a onclick="modalJornadas();" class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Descargue todas las jornadas en un rango de fecha" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
@@ -235,7 +236,7 @@
                 <a href="{{ url('liquidacionesDownload',['empleado'=>$empleado->id]) }}" class="tarjeta text-center">
                     <i
                         data-placement="left" 
-                        title="Descripción" 
+                        title="Descargue todas las liquidaciones generadas para este empleado" 
                         data-toggle="dropdown" 
                         type="button" 
                         aria-expanded="false" 
