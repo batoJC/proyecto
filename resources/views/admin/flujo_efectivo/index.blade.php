@@ -254,7 +254,7 @@
             $('#fecha').val(data.fecha);
             $('#concepto').val(data.concepto);
             $('#recibo').val(data.recibo);
-            $('#valor_aux').val(Math.round(data.valor));
+            $('#valor_aux').val(Math.round(data.valor)).change();
             $('#modal-form').modal('show');
         });
     }

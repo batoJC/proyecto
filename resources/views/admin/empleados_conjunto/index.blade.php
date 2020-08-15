@@ -178,7 +178,7 @@
 					$('#nombre_completo').val(data.nombre_completo);
 					$('#cedula').val(data.cedula);
 					$('#direccion').val(data.direccion);
-					$('#salario_aux').val(data.salario);
+					$('#salario_aux').val(data.salario).change();
 					$('#cargo').val(data.cargo);
 				}
 			});

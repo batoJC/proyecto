@@ -18,12 +18,20 @@ class LiquidadorController extends Controller
 {
     //
 
+    /**
+     * Método para mostrar la interfaz del liquidador
+     */
     public function index(EmpleadosConjunto $empleado)
     {
         $conjunto = Conjunto::find(session('conjunto'));
         return view('admin.liquidador.index')->with('empleado', $empleado)->with('conjuntos', $conjunto);
     }
 
+    /**
+     * Método para obtener la lista de jornadas automatica según
+     * La fecha de inicio, Fecha de fin y si esta esta en jornada continua o
+     * se dio en jornadas día a día
+     */
     public function getJornadas(Request $request)
     {
         try {
@@ -33,6 +41,9 @@ class LiquidadorController extends Controller
         }
     }
 
+    /**
+     * Muestra la información sobre el liquidador
+     */
     public function informacion(EmpleadosConjunto $empleado)
     {
         $datos = array();
@@ -54,6 +65,10 @@ class LiquidadorController extends Controller
     }
 
 
+    /**
+     * Muestra la vista en la cúal se puede  generar una 
+     * liquidación
+     */
     public function vistaGenerar(EmpleadosConjunto $empleado)
     {
         $conjunto = Conjunto::find(session('conjunto'));
@@ -65,6 +80,10 @@ class LiquidadorController extends Controller
             ->with('empleado', $empleado);
     }
 
+    /**
+     * Devuelve una previsualización de lo que sería una liquidación al 
+     * guardar
+     */
     public function liquidacion(Request $request)
     {
         $consecutivo = Consecutivos::find($request->consecutivo);
@@ -85,6 +104,12 @@ class LiquidadorController extends Controller
     }
 
 
+    /**
+     * Se calcula el salario diario promedio
+     * Teniendo en cuenta la fecha de inico ingresada hasta la fecha final del periodo de la última liquidación
+     * Se cuentas los días registrados en jornadas y se divide entre el salario total (restando las deducciones) 
+     * recibido por esos días 
+     */
     private function calcularPromedioDiaYDiasTrabajados(EmpleadosConjunto $empleado, $fecha_inicio)
     {
         //sumar el valor de todas las liquidaciones hechas de esa fecha en adelante
@@ -122,6 +147,9 @@ class LiquidadorController extends Controller
         ];
     }
 
+    /**
+     * Se muestra la vista para generar una prestación
+     */
     public function vistaPrestaciones(EmpleadosConjunto $empleado)
     {
         $conjunto = Conjunto::find(session('conjunto'));
@@ -133,6 +161,9 @@ class LiquidadorController extends Controller
             ->with('empleado', $empleado);
     }
 
+    /**
+     * Se devuelve la previzualización de una prestación
+     */
     public function prestaciones(Request $request)
     {
         $empleado = EmpleadosConjunto::find($request->empleado);
@@ -166,6 +197,9 @@ class LiquidadorController extends Controller
             ->with('empleado', $empleado);
     }
 
+    /**
+     * Se edita el valor de una variable del liquidador
+     */
     public function editarVariable(Request $request)
     {
         try {
@@ -179,6 +213,10 @@ class LiquidadorController extends Controller
     }
 
 
+    /**
+     * Se generan los valores para las jornadas según los parametros
+     * incresados
+     */
     private function crearJornadas($inicio, $fin, $continuo = true)
     {
         $jornadas = array();
@@ -248,6 +286,9 @@ class LiquidadorController extends Controller
         return $jornadas;
     }
 
+    /**
+     * Calcula las horas por cada horario
+     */
     private function calcularHorasPorHorario($inicio, $fin, $continuo)
     {
         $interval = $inicio->diff($fin);
@@ -283,6 +324,9 @@ class LiquidadorController extends Controller
         }
     }
 
+    /**
+     * Calcula la cantidad de horas por cada tipo de jornada
+     */
     private function calcularHoras($inicio, $fin, $continuo)
     {
         $fecha = $inicio;

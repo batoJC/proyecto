@@ -230,7 +230,7 @@
 				data:{_token:csrf_token},
 				success: function (response) {
 					addForm();
-					$('#total_aux').val(response);
+					$('#total_aux').val(response).change();
 				}
 			});
 		}

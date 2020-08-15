@@ -173,7 +173,7 @@
 					$('#id').val(data.id);
 					$('#nombre').val(data.nombre);
 					$('#descripcion').val(data.descripcion);
-					$('#valor').val(data.valor);
+					$('#valor').val(data.valor).change();
 					$('#estado').val(data.estado);
 					$('#id_acta').val(data.id_acta);
 				},

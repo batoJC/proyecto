@@ -13,7 +13,7 @@ class VariableSeeder extends Seeder
     public function run()
     {
         //
-        DB::table('variables')->truncate();
+        DB::table('variables')->truncate();//delete all register old
         DB::table('variables')->insert([
             [
                 'name' => 'horas_jornada',

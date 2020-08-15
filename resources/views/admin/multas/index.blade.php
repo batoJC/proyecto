@@ -267,7 +267,7 @@
                 dataType: "json"
             }).done((data)=>{
 				// console.log(data);
-                $('#valor').val(data.valor);
+                $('#valor_aux').val(data.valor).change();
                 $('#vigencia_inicio').val(data.vigencia_inicio);
                 $('#vigencia_fin').val(data.vigencia_fin);
                 $('#presupuesto_cargar_id').val(data.presupuesto_cargar_id);

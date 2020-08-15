@@ -126,7 +126,7 @@
 					$('#modal-form').modal('show');
 					// Datos
 					$('#nombre').val(data.nombre);
-					$('#valor_uso_aux').val(data.valor_uso);
+					$('#valor_uso_aux').val(data.valor_uso).change();
 					$('#numero').val(data.numero);
 					$('#tipo').val(data.tipo);
 				},
@@ -168,7 +168,7 @@
 					// Datos
 					$('#id').val(data.id);
 					$('#nombre').val(data.nombre);
-					$('#valor_uso_aux').val(data.valor_uso);
+					$('#valor_uso_aux').val(data.valor_uso).change();
 					$('#numero').val(data.numero);
 					$('#tipo').val(data.tipo);
 				},

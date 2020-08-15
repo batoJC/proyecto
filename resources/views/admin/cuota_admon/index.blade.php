@@ -215,6 +215,8 @@
         function agregarCuota(){
             action = 'add';
 			$('input[name="_method"]').val('POST');
+            $('#valor_fijo_aux').chage();
+            $('#incremento_valor_fijo_aux').chage();
             seleccionarCalculo(1);
             $('#title_cuotas_admon').text('Agregar cuota administrativa');
             $('#cuotas_admon').modal('show');
@@ -300,7 +302,7 @@
             $('#title_cuotas_admon').text('Editar cuota administrativa');
             $('#cuotas_admon').modal('show');
             //ocultar select de unidad,campo_valor
-            $('#campo_valor').fadeIn(200);
+            $('#campo_valor').fadeIn(200).change();
             $('#campo_unidad').fadeIn(200);
             $('#campo_select_unidad').fadeOut(200);
 
