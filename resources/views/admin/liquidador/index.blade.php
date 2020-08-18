@@ -127,7 +127,12 @@
 				</i>
 				<ul role="menu" class="dropdown-menu pull-right">
 					<li>
-						<a target="_blanck" href="#">Video 1</a>
+						<a target="_blanck" href="https://youtu.be/Q3MDF4KDyF0">¿Cómo registrar jornadas?</a>
+						<a target="_blanck" href="https://youtu.be/FOsuqtXVyoc">¿Como generar prestaciones?</a>
+						<a target="_blanck" href="https://youtu.be/Ql4ndQJ5d0U">Otras funciones</a>
+						<a target="_blanck" href="https://youtu.be/CkV-gX_sur4">Liquidador</a>
+						<a target="_blanck" href="https://youtu.be/0iCC_P5gIoE">¿Cómo generar liquidación?</a>
+						<a target="_blanck" href="https://youtu.be/PJ89tL-71cA">¿Cómo descargar jornadas?</a>
 					</li>
 				</ul>
 			</div>

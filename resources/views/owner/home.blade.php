@@ -17,7 +17,8 @@
                     </i>
                     <ul role="menu" class="dropdown-menu pull-right">
                         <li>
-                            <a target="_blanck" href="https://youtu.be/6Gxt2GJLYmM">Primeros pasos</a>
+							<a target="_blanck" href="https://youtu.be/6Gxt2GJLYmM">Primeros pasos</a>
+							<a target="_blanck" href="https://youtu.be/-2kx2r66Ofw">¿Cómo cambiar valor de variables del liquidador?</a>
                         </li>
                     </ul>
                 </div>

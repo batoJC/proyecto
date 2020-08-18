@@ -237,7 +237,7 @@
             <div class="row">
                 <div class="col-md-8 h-30 bloque">Total descuentos:</div>
                 <div class="col-md-4 h-30 bloque">
-                    <span id="total_descuentos">$ 0</span>
+                    <span id="total_descuentos_span">$ 0</span>
                 </div>
             </div>
         </div>
@@ -454,7 +454,7 @@
 
     function actualizarTotales(){
         total_devengado.innerText = formatter.format(total_con_recargo + total_sin_recargo);
-        total_descuentos.innerText = formatter.format(total_descuentos);
+        total_descuentos_span.innerText = formatter.format(total_descuentos);
         neto_pagar.innerText = formatter.format(total_con_recargo + total_sin_recargo - total_descuentos);
     }
 

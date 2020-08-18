@@ -11,22 +11,6 @@
                   <li>Tipos de unidad</li>
             </ul>
         </div>
-        <div class="col-1 col md-1 text-right">
-            <div class="btn-group">
-                <i  data-placement="left" 
-                    title="Ayuda" 
-                    data-toggle="dropdown" 
-                    type="button" 
-                    aria-expanded="false"
-                    class="fa blue fa-question-circle-o ayuda">
-                </i>
-                <ul role="menu" class="dropdown-menu pull-right">
-                    <li>
-                        <a target="_blanck" href="#">Video 1</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
     </div>
     <h1 class="text-center">Listado de los tipos de unidad</h1>
     <div class="alert alert-success-original alert-dismissible" role="alert">

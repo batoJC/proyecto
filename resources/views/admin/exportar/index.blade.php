@@ -109,22 +109,6 @@
 				  <li>Exportar</li>
 			</ul>
 		</div>
-		<div class="col-1 col md-1 text-right">
-			<div class="btn-group">
-				<i  data-placement="left" 
-					title="Ayuda" 
-					data-toggle="dropdown" 
-					type="button" 
-					aria-expanded="false"
-					class="fa blue fa-question-circle-o ayuda">
-				</i>
-				<ul role="menu" class="dropdown-menu pull-right">
-					<li>
-						<a target="_blanck" href="#">Video 1</a>
-					</li>
-				</ul>
-			</div>
-		</div>
 	</div>
 	<div class="container-fluid bg-white p-30">
         <br>
