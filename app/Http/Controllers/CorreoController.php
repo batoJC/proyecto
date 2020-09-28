@@ -20,7 +20,7 @@ class CorreoController extends Controller
 
     /**
      * try send email
-     * 
+     *
      * @param $conjunto Conjunto where the mail is sent from
      * @param $users users for send email
      * @param $subject subject of email
@@ -70,7 +70,8 @@ class CorreoController extends Controller
     }
 
 
-    public function enviarEmailPrueba($email){
+    public function enviarEmailPrueba($email)
+    {
         try {
             $conjunto = Conjunto::find(session('conjunto'));
             //settigs for send mail
@@ -84,12 +85,12 @@ class CorreoController extends Controller
             //data of conjunto
             $mail->Username = $conjunto->correo;
             $mail->Password = Crypt::decrypt($conjunto->password);
-            
+
             $mail->setFrom($conjunto->correo, utf8_decode($conjunto->nombre));
 
             //mail data
             $mail->Subject = 'Correo de prueba';
-            $mail->msgHTML(view('emails.plantilla')->with('contenido', 'Correo de prueba de '.$conjunto->nombre));
+            $mail->msgHTML(view('emails.plantilla')->with('contenido', 'Correo de prueba de ' . $conjunto->nombre));
 
             $mail->addAddress($email, 'Nombre del usuario');
 
@@ -107,7 +108,7 @@ class CorreoController extends Controller
 
     /**
      * send emails saved in the DB and delete from BD
-     * 
+     *
      */
     public function sendsEmailSaved()
     {
@@ -117,12 +118,12 @@ class CorreoController extends Controller
             $data = json_decode($email->users);
             foreach ($data as $key) {
                 $user = User::find($key);
-                if($user != null){
+                if ($user != null) {
                     $users[] = $user;
                 }
             }
             //send email
-            if($this->enviarEmail($email->conjunto,$users,$email->subject,$email->content,$email->file)){
+            if ($this->enviarEmail($email->conjunto, $users, $email->subject, $email->content, $email->file)) {
                 $email->delete();
             }
         }

@@ -104,8 +104,8 @@ class UsuariosController extends Controller
         } else {
             $user->id_conjunto   = $request->id_conjunto;
         }
-        if($user->save()){
-            $this->enviarEmail($user,$request->password);
+        if ($user->save()) {
+            $this->enviarEmail($user, $request->password);
         }
     }
 
@@ -198,7 +198,7 @@ class UsuariosController extends Controller
         $user->save();
     }
 
-    // Custom method for download .txt 
+    // Custom method for download .txt
     // *******************************
 
     public function download()
@@ -266,8 +266,8 @@ class UsuariosController extends Controller
                         $user->id_conjunto       = session('conjunto');
                         $last_name = $value->nombre_completo;
                         $last_cc = $value->numero_de_documento;
-                        if($user->save()){
-                            $this->enviarEmail($user,$value->password);
+                        if ($user->save()) {
+                            $this->enviarEmail($user, $value->password);
                         }
                     }
                     return redirect('usuarios')
@@ -292,17 +292,20 @@ class UsuariosController extends Controller
         $user->save();
     }
 
-    // Enviar email de registro 
+    // Enviar email de registro
     // ************************
-    private function enviarEmail(User $usuario,$password)
+    private function enviarEmail(User $usuario, $password)
     {
         $email = new CorreoController();
+        $conjunto = Conjunto::find(session('conjunto'));
+        if ($conjunto == null) {
+            //para enviar desde el correo de la app
+            $conjunto = new Conjunto();
+            $conjunto->nombre = 'Gestión copropietario';
+            $conjunto->correo = 'gestioncopropietario@gmail.com';
+            $conjunto->password = Crypt::encrypt(env("MAIL_PASSWORD"));
+        }
 
-        //para enviar desde el correo de la app
-        $conjunto = new Conjunto();
-        $conjunto->nombre = 'Gestión copropietario';
-        $conjunto->correo = 'gestioncopropietario@gmail.com';
-        $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
 
         $tipo = '';
 
@@ -319,11 +322,11 @@ class UsuariosController extends Controller
         }
 
 
-        $contenido = "Ha sido registrado como {$tipo} en la página <a href='".url('login')."' >gestioncopropietario.com</a><br> 
+        $contenido = "Ha sido registrado como {$tipo} en la página <a href='" . url('login') . "' >gestioncopropietario.com</a><br>
                                 <b>Correo Electrónico:</b> {$usuario->email} <br>
                                 <b>Contraseña:</b> {$password} <br>
                     Requerde que puede cambiar esta contraseña pulsando en olvide mi contraseña.";
-        $email->enviarEmail(Conjunto::find(session('conjunto')), [$usuario], 'Registro', $contenido);
+        $email->enviarEmail($conjunto, [$usuario], 'Registro', $contenido);
     }
 
 
