@@ -23,10 +23,10 @@
         </div>
         <div class="col-1 col md-1 text-right">
             <div class="btn-group">
-                <i  data-placement="left" 
-                    title="Ayuda" 
-                    data-toggle="dropdown" 
-                    type="button" 
+                <i  data-placement="left"
+                    title="Ayuda"
+                    data-toggle="dropdown"
+                    type="button"
                     aria-expanded="false"
                     class="fa blue fa-question-circle-o ayuda">
                 </i>
@@ -39,10 +39,10 @@
         </div>
     </div>
     @include('admin.cuota_admon.form')
-    
+
     <button class="btn btn-success" onclick="agregarCuota()">
         <i class="fa fa-plus"></i> Agregar cuota administrativa</button>
-    
+
     <button id="btn_eliminar" class="btn" disabled href="#" onclick="eliminarSeleccion()"><i class="fa fa-trash"></i> Eliminar seleccionadas</button>
 
     <table id="administrativas-table" class="table">
@@ -81,11 +81,11 @@
                     $('[data-toggle="tooltip"]').tooltip({
                         container: 'body'
                     });
-                    
+
                 }
             });
         }
-        
+
         $('#administrativas-table tbody').on( 'click', 'tr', function () {
             $(this).toggleClass('selected');
             btn_eliminar.disabled = table.rows('.selected').data().length == 0;
@@ -201,7 +201,7 @@
                 dropdownParent: $('#dataCuota'),
             });
 
-            
+
 
         });
 
@@ -215,8 +215,8 @@
         function agregarCuota(){
             action = 'add';
 			$('input[name="_method"]').val('POST');
-            $('#valor_fijo_aux').chage();
-            $('#incremento_valor_fijo_aux').chage();
+            $('#valor_fijo_aux').change();
+            $('#incremento_valor_fijo_aux').change();
             seleccionarCalculo(1);
             $('#title_cuotas_admon').text('Agregar cuota administrativa');
             $('#cuotas_admon').modal('show');
@@ -249,7 +249,7 @@
 			});
 		}
 
-        //seleccionar el tipo de calculo para 
+        //seleccionar el tipo de calculo para
         //la cuota de administración
         function seleccionarCalculo(tipo){
             $('#tipo_calculo').val(tipo);
@@ -315,8 +315,8 @@
                 if($('#tipo_calculo').val() == 0){
                     swal('Error!','Debe de seleccionar el tipo de calculo.','error');
                     return;
-                }  
-                 
+                }
+
                 //mandar a agregar una cuota administrativa
                 if(action == 'add'){
                     $.ajax({

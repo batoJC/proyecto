@@ -296,37 +296,42 @@ class UsuariosController extends Controller
     // ************************
     private function enviarEmail(User $usuario, $password)
     {
-        $email = new CorreoController();
-        $conjunto = Conjunto::find(session('conjunto'));
-        if ($conjunto == null) {
-            //para enviar desde el correo de la app
-            $conjunto = new Conjunto();
-            $conjunto->nombre = 'Gestión copropietario';
-            $conjunto->correo = 'gestioncopropietario@gmail.com';
-            $conjunto->password = Crypt::encrypt(env("MAIL_PASSWORD"));
-        }
+        try {
+            $email = new CorreoController();
+            $conjunto = Conjunto::find(session('conjunto'));
+            if ($conjunto == null) {
+                //para enviar desde el correo de la app
+                $conjunto = new Conjunto();
+                $conjunto->nombre = 'Gestión copropietario';
+                $conjunto->correo = 'gestioncopropietario@gmail.com';
+                $conjunto->password = Crypt::encrypt(env("MAIL_PASSWORD"));
+            }
 
 
-        $tipo = '';
+            $tipo = '';
 
-        switch ($usuario->id_rol) {
-            case 2:
-                $tipo = 'Administrador';
-                break;
-            case 3:
-                $tipo = 'Propietario';
-                break;
-            case 4:
-                $tipo = 'Portero';
-                break;
-        }
+            switch ($usuario->id_rol) {
+                case 2:
+                    $tipo = 'Administrador';
+                    break;
+                case 3:
+                    $tipo = 'Propietario';
+                    break;
+                case 4:
+                    $tipo = 'Portero';
+                    break;
+            }
 
 
-        $contenido = "Ha sido registrado como {$tipo} en la página <a href='" . url('login') . "' >gestioncopropietario.com</a><br>
+            $contenido = "Ha sido registrado como {$tipo} en la página <a href='" . url('login') . "' >gestioncopropietario.com</a><br>
                                 <b>Correo Electrónico:</b> {$usuario->email} <br>
                                 <b>Contraseña:</b> {$password} <br>
                     Requerde que puede cambiar esta contraseña pulsando en olvide mi contraseña.";
-        $email->enviarEmail($conjunto, [$usuario], 'Registro', $contenido);
+            $email->enviarEmail($conjunto, [$usuario], 'Registro', $contenido);
+        } catch (\Throwable $th) {
+            return array("err"=>$th)
+        }
+
     }
 
 
