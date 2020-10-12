@@ -13,10 +13,10 @@
 
 // Rutas de autenticacion got it?
 Auth::routes();
-Route::get('/migrate',function(){
+Route::get('/migrate', function () {
 	Artisan::call('migrate');
-	Artisan::call('db:seed');
- 	return "Migration";
+	// Artisan::call('db:seed');
+	return "Migration";
 });
 
 
@@ -52,19 +52,19 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('proveedores', 'ProveedorController');
 	// Novedades para unidad
 	Route::resource('novedades', 'NovedadController');
-	// Cuotas administrativas 
+	// Cuotas administrativas
 	// ************************************************************
 	// Cuotas extraodinarias
 	Route::resource('cuota_ext_ord', 'CuotaExtOrdinariaController');
 	// Tabla de intereses
 	Route::resource('tabla_intereses', 'TablaInteresesController');
-	// Multas 
+	// Multas
 	Route::resource('multas', 'MultasController');
 	// Otros cobros
 	Route::resource('otros_cobros', 'OtrosCobrosController');
 	// Ejecucion presupuestal total
 	Route::resource('ejecucion_pre_total', 'EjecucionPreTotalController');
-	// Tipos de ejecucion presupuestal 
+	// Tipos de ejecucion presupuestal
 	Route::resource('tipo_ejecucion_pre', 'TipoEjecucionPreController');
 	// Ejecucion presupuestal individual
 	Route::resource('ejecucion_pre_individual', 'EjecucionPreIndividual');
@@ -136,8 +136,7 @@ Route::group(['middleware' => ['owner']], function () {
 	Route::post('reglamento.owner.edit/{reglamento}', 'ReglamentoController@update');
 
 	//Liquidador
-	Route::post('editarVariable','LiquidadorController@editarVariable');
-
+	Route::post('editarVariable', 'LiquidadorController@editarVariable');
 });
 
 // Middleware de autenticación para el admin del conjunto
@@ -381,31 +380,31 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//Liquidador de Nómina
 	/*****************************************/
-	Route::get('informacionLiquidador/{empleado}','LiquidadorController@informacion');
+	Route::get('informacionLiquidador/{empleado}', 'LiquidadorController@informacion');
 	Route::get('liquidador/{empleado}', 'LiquidadorController@index');
-	Route::post('liquidadorJornadas','LiquidadorController@getJornadas');
-	Route::post('cargarLiquidacion','LiquidadorController@liquidacion');
+	Route::post('liquidadorJornadas', 'LiquidadorController@getJornadas');
+	Route::post('cargarLiquidacion', 'LiquidadorController@liquidacion');
 	// Route::post('cargarPrima','LiquidadorController@prima');
 	// Route::post('cargarCesantia','LiquidadorController@cesantia');
-	Route::post('cargarPrestaciones','LiquidadorController@prestaciones');
-	Route::post('guardarPrestaciones','LiquidacionController@prestaciones');
-	Route::get('generarLiquidacion/{empleado}','LiquidadorController@vistaGenerar');
-	Route::get('generarLiquidacionPrestaciones/{empleado}','LiquidadorController@vistaPrestaciones');
+	Route::post('cargarPrestaciones', 'LiquidadorController@prestaciones');
+	Route::post('guardarPrestaciones', 'LiquidacionController@prestaciones');
+	Route::get('generarLiquidacion/{empleado}', 'LiquidadorController@vistaGenerar');
+	Route::get('generarLiquidacionPrestaciones/{empleado}', 'LiquidadorController@vistaPrestaciones');
 	// Route::get('generarLiquidacionCesantia/{empleado}','LiquidadorController@vistaCesantia');
 
 	//Liquidacion
-	Route::resource('liquidacion','LiquidacionController');
-	Route::get('listaLiquidaciones/{empleado}','LiquidacionController@vistaListar');
-	Route::get('liquidacionesDownload/{empleado}','LiquidacionController@download');
+	Route::resource('liquidacion', 'LiquidacionController');
+	Route::get('listaLiquidaciones/{empleado}', 'LiquidacionController@vistaListar');
+	Route::get('liquidacionesDownload/{empleado}', 'LiquidacionController@download');
 
 
-	Route::get('jornadas/{empleado}','JornadasController@index');
-	Route::post('jornadasStore','JornadasController@store');
-	Route::post('deleteJornada','JornadasController@delete');
-	Route::get('jornada/{jornada}','JornadasController@show');
-	Route::post('updateJornada','JornadasController@update');
-	Route::post('pdfJornadas','JornadasController@pdf');
-	Route::get('jornadasZip/{empleado}','JornadasController@downloadZip');
+	Route::get('jornadas/{empleado}', 'JornadasController@index');
+	Route::post('jornadasStore', 'JornadasController@store');
+	Route::post('deleteJornada', 'JornadasController@delete');
+	Route::get('jornada/{jornada}', 'JornadasController@show');
+	Route::post('updateJornada', 'JornadasController@update');
+	Route::post('pdfJornadas', 'JornadasController@pdf');
+	Route::get('jornadasZip/{empleado}', 'JornadasController@downloadZip');
 });
 
 // Middleware de autenticación para el dueño de apto del conjunto
