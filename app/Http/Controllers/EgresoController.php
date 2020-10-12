@@ -26,8 +26,8 @@ class EgresoController extends Controller
     {
         session(['section' => 'egresos']);
 
-        $fecha_inicio = DB::table('egresos')->where('conjunto_id',session('conjunto'))->min('fecha');
-        $fecha_fin = DB::table('egresos')->where('conjunto_id',session('conjunto'))->max('fecha');
+        $fecha_inicio = DB::table('egresos')->where('conjunto_id', session('conjunto'))->min('fecha');
+        $fecha_fin = DB::table('egresos')->where('conjunto_id', session('conjunto'))->max('fecha');
 
         $conjuntos = Conjunto::find(session('conjunto'));
         $egresos = Egreso::where('conjunto_id', session('conjunto'))->get();
@@ -65,6 +65,7 @@ class EgresoController extends Controller
         $egreso->numero = $consecutivo->numero;
         $egreso->fecha = $request->fecha;
         $egreso->factura = $request->nro_factura;
+        $egreso->retencion = $request->retencion;
         $egreso->soporte = '';
 
         //guardar imagen

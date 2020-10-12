@@ -50,13 +50,13 @@
         }
 
     </style>
-    
+
 @endsection
 
 @section('contenido')
 
     <div>
-        
+
         @if ($egreso->anulado)
             <h1 class="red text-center">Anulado</h1>
             <h3 class="red">{{ $egreso->detalle }}</h3>
@@ -76,7 +76,7 @@
             <thead>
                 <tr class="text-center">
                     <th>Código</th>
-                    <th>Concepto</th> 
+                    <th>Concepto</th>
                     <th>Valor</th>
                 </tr>
             </thead>
@@ -91,17 +91,34 @@
             </tbody>
         </table>
         <br>
+        <h3 class="text-left">Retención: $ {{ number_format($egreso->retencion) }}</h3>
         <h3 class="text-left">Valor total: $ {{ number_format($egreso->valorTotal()) }}</h3>
         <br>
+
+        <table>
+            <tr>
+                <td colspan="3" style="text-align: left">Cheque N°</td>
+                <td style="text-align: left">Efectivo</td>
+                <td style="width: 200px">Firma y sello</td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: left">BANCO</td>
+                <td style="width: 200px; border-bottom: none"></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: left">DEBITESE A:</td>
+                <td style="width: 200px; border-top: none"></td>
+            </tr>
+            <tr>
+                <td style="height: 60px; vertical-align: text-bottom">PREPARADO:</td>
+                <td style="height: 60px; vertical-align: text-bottom">REVISADO:</td>
+                <td style="height: 60px; vertical-align: text-bottom">APROBADO:</td>
+                <td style="height: 60px; vertical-align: text-bottom">CONTABILIZADO:</td>
+                <td style="height: 60px; vertical-align: text-bottom">C.C. o NIT.</td>
+            </tr>
+        </table>
     </div>
 <br><br><br>
-@php
-    $usuario = Auth::user();
-@endphp
-@for ($i = 0; $i < strlen($usuario->nombre_completo)*1.5; $i++){{'_'}}@endfor
-<h3>{{ mb_strtoupper($usuario->nombre_completo,'UTF-8') }}</h3>
-<h3>C.c. {{ $usuario->numero_cedula }}</h3>
-<h4>Administrador</h4>
-    
+
 @endsection
 

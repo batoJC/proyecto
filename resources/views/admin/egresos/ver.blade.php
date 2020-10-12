@@ -8,7 +8,7 @@
 </style>
 
 <div class="container-fluid borde">
-    
+
     @if ($egreso->anulado)
         <h1 class="red text-center">Anulado</h1>
         <h3><b>Motivo: </b>{{ $egreso->detalle }}</h3>
@@ -51,6 +51,7 @@
             @endforeach
         </tbody>
     </table>
+    <h3>Retención: $ {{ number_format($egreso->retencion) }}</h3>
     <h3>Valor total: $ {{ number_format($egreso->valorTotal()) }}</h3>
     <br>
     <div class="row">
@@ -88,7 +89,7 @@
         swal({
             title: "Ingrese el motivo.",
             content: input,
-            buttons: true                       
+            buttons: true
         }).then((res)=>{
             detalle = $('#detalle');
             console.log(detalle.val());
@@ -120,7 +121,7 @@
                             });
                         });
                     }else{
-                        swal('Error!',res.msg,'error');	
+                        swal('Error!',res.msg,'error');
                     }
                 }).fail((res)=>{
                     console.log(res);

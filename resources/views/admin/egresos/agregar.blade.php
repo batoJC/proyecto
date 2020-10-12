@@ -78,15 +78,33 @@
             </tr>
         </thead>
         <tbody id="listaDetalles">
-            
+
         </tbody>
     </table>
     <br>
+    <div class="row">
+        <div class="col-6 col-md-6">
+            <div class="col-md-4 text-center validate-label-3">
+                <i class="fa fa-usd"></i>
+                <label class="margin-top">
+                    Retención
+                </label>
+            </div>
+            <div class="col-md-8">
+                <input class="form-control text-right validate-input-2" onchange="changeValor(this,'retencion');" type="text"  id="retencion_aux" name="retencion_aux">
+                <input value="0" class="form-control" type="hidden"  id="retencion" name="retencion">
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-6 col-md-6">
+            <h5>Soporte</h5>
+            <label class="btn btn-default" for="soporte">Seleccione un soporte</label>
+            <input style="display:none;" type="file" name="soporte" id="soporte"><h4 class="red" id="name_soporte">Nombre archivo:</h4>
+        </div>
+    </div>
 
-    <h5>Soporte</h5>
-    <label class="btn btn-default" for="soporte">Seleccione un soporte</label>
-    <input style="display:none;" type="file" name="soporte" id="soporte"><h4 class="red" id="name_soporte">Nombre archivo:</h4>
-    
     <br>
     <div class="row">
         <div class="col text-center">
@@ -101,7 +119,7 @@
 <div id="detalles" class="modal fade" style="overflow:auto;" tabindex="-1" role="dialog" aria-hidden="true">
 	<div class="modal-dialog modal-md">
 		<div class="modal-content">
-	
+
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span>
 			</button>
@@ -109,8 +127,8 @@
 		</div>
 		<div class="modal-body">
 			<form id="detallesForm" class="container-fluid">
-				@csrf			
-				
+				@csrf
+
 				<div class="row">
 					<div class="col-12 col-md-12">
 						<label for="codigo">Código</label>
@@ -152,16 +170,17 @@
 				</div>
 
 			</form>
-	
+
 		</div>
-	
+
 		</div>
 	</div>
 </div>
 <script src="{{ asset('js/jquery.maskMoney.min.js') }}"></script>
 <script>
-        
+
     $('#valor_aux').maskMoney({precision:0});
+    $('#retencion_aux').maskMoney({precision:0});
     $('.select-2').select2();
     $('#presupuesto').select2({
         dropdownParent: $('#detallesForm')
@@ -169,21 +188,21 @@
 
     $(function() {
         $('#soporte').change(function(e) {
-            addImage(e); 
+            addImage(e);
         });
 
         function addImage(e){
             var file = e.target.files[0],
             imageType = /image.*/;
-        
+
             // if (!file.type.match(imageType))
             // return;
-        
+
             var reader = new FileReader();
             reader.onload = fileOnload;
             reader.readAsDataURL(file);
         }
-        
+
         function fileOnload(e) {
             name_soporte.innerText = `Nombre archivo: ${soporte.files[0].name}`;
             var result = e.target.result;
@@ -237,7 +256,7 @@
     function guardar(){
         if(verificarFormulario('dataEgreso',4)){
             btn_guardar.disabled = true;
-            let i = 1; 
+            let i = 1;
             let data = new FormData(dataEgreso);
             dataDetalles.forEach(element => {
                 data.append('detalle_'+i,element);
@@ -248,7 +267,7 @@
 
             if (i == 1) {
                 swal('Error!','Debes de agregar al menos un detalle','error');
-                return;                
+                return;
             }else{
                 $.ajax({
                     type: "POST",
@@ -273,7 +292,7 @@
                             });
                         });
                     }else{
-                        swal('Error!',res.msg,'error');	
+                        swal('Error!',res.msg,'error');
                         btn_guardar.disabled = false;
                     }
                 }).fail((res)=>{
