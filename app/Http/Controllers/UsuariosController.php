@@ -329,9 +329,8 @@ class UsuariosController extends Controller
                     Requerde que puede cambiar esta contraseña pulsando en olvide mi contraseña.";
             $email->enviarEmail($conjunto, [$usuario], 'Registro', $contenido);
         } catch (\Throwable $th) {
-            return array("err"=>$th)
+            return array("err" => $th);
         }
-
     }
 
 
