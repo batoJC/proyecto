@@ -26,10 +26,10 @@
                             <div class="col-11 col-md-11"></div>
                             <div class="col-1 col md-1 text-right">
                                 <div class="btn-group">
-                                    <i  data-placement="left" 
-                                        title="Ayuda" 
-                                        data-toggle="dropdown" 
-                                        type="button" 
+                                    <i  data-placement="left"
+                                        title="Ayuda"
+                                        data-toggle="dropdown"
+                                        type="button"
                                         aria-expanded="false"
                                         class="fa blue fa-question-circle-o ayuda">
                                     </i>
@@ -55,8 +55,8 @@
                             @endif
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
-                                <input type="text" value="{{ old('email') }}" placeholder="Correo Electrónico:" name="email" autocomplete="off">
-                                <input type="password" placeholder="Contraseña:" name="password" autocomplete="off">
+                                <input type="text" value="{{ old('email') }}" placeholder="Correo Electrónico: " name="email" autocomplete="off">
+                                <input type="password" placeholder="Contraseña: " name="password" autocomplete="off">
                                 <div class="row">
                                     <div class="col-12 text-center">
                                         <a class="btn btn-link" href="{{ route('password.request') }}">
