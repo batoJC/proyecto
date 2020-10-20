@@ -5,7 +5,7 @@
     }
 </style>
 @section('content')
-    
+
 	<ul class="breadcrumb">
 		<li>
 			<a href="{{ url('home') }}">Inicio</a>
@@ -47,13 +47,13 @@
                                 </select>
                             </div>
                         </div>
-                        <br><br>                    
-            
+                        <br><br>
+
                         @if (in_array('coeficiente', $atributos))
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Coeficiente (%)</label>
                                 <div class="col-md-9 col-sm-9 col-xs-12">
-                                    <input name="coeficiente" id="coeficiente" type="text" class="form-control" placeholder="Ingrese el coeficiente de la unidad">
+                                    <input name="coeficiente" id="coeficiente" type="text" class="form-control" placeholder="Ingrese el coeficiente de la unidad, se debe usar coma en lugar de punto.">
                                 </div>
                             </div>
                             <br><br>
@@ -78,7 +78,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <br><br> 
+                            <br><br>
                         @endif
 
                         {{-- seleccione el propietario a quien se le factura --}}
@@ -94,9 +94,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <br><br> 
+                            <br><br>
                         @endif
-                        
+
                         @if (in_array('observaciones', $atributos))
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Observaciones</label>
@@ -106,7 +106,7 @@
                             </div>
                             <br><br>
                         @endif
-                        
+
                     </div>
                 </div>
             </form>
@@ -143,7 +143,7 @@
                 <div class="col-xs-4"></div>
                 <div class="col-xs-4">
                     <button class="btn btn-success" onclick="guardar('{{ json_encode($atributos) }}')">
-                        <i class="fa fa-send"></i> 
+                        <i class="fa fa-send"></i>
                         Guardar {{ strtolower($tipo->nombre) }}
                     </button>
                 </div>
@@ -226,7 +226,7 @@
                                             type: "POST",
                                             url: "{{url('residentes')}}",
                                             contentType: false,
-                                            dataType: "json",                                        
+                                            dataType: "json",
                                             cache: false,
                                             processData: false,
                                             data: data,
@@ -261,7 +261,7 @@
                                             type: "POST",
                                             url: "{{url('mascotas')}}",
                                             contentType: false,
-                                            dataType: "json",                                        
+                                            dataType: "json",
                                             cache: false,
                                             processData: false,
                                             data: data,
@@ -297,7 +297,7 @@
                                             type: "POST",
                                             url: "{{url('vehiculos')}}",
                                             contentType: false,
-                                            dataType: "json",                              
+                                            dataType: "json",
                                             cache: false,
                                             processData: false,
                                             data: data,
@@ -329,7 +329,7 @@
                                             type: "POST",
                                             url: "{{url('empleados')}}",
                                             contentType: false,
-                                            dataType: "json",                              
+                                            dataType: "json",
                                             cache: false,
                                             processData: false,
                                             data: data,
@@ -338,7 +338,7 @@
                                         }).fail((data)=>{
                                             estado--;
                                         });
-                                        
+
                                     });
                                 }
 
@@ -358,7 +358,7 @@
                                             type: "POST",
                                             url: "{{url('visitantes')}}",
                                             contentType: false,
-                                            dataType: "json",                              
+                                            dataType: "json",
                                             cache: false,
                                             processData: false,
                                             data: data,
@@ -402,7 +402,7 @@
                         input.focus();
                     });
                     return false;
-                }               
+                }
             }
             return true;
         }
@@ -443,8 +443,8 @@
                         visible: true,
                         className: "",
                         closeModal: true
-                    }      
-                }         
+                    }
+                }
             }).then((res1)=>{
                 encabezado = $('#encabezado');
                 if (res1) {
@@ -481,7 +481,7 @@
                     var res = {data:{id:''}};
                     fnc(res);
                 }
-            }); 
+            });
         }
 
     </script>
