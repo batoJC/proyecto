@@ -56,8 +56,8 @@
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
                                 <input type="text" value="{{ old('email') }}" placeholder="Correo Electrónico:" name="email" autocomplete="off">
-                                <input type="password" placeholder="Contraseña:" id="password" name="password" autocomplete="off">
                                 <div>
+                                <input type="password" placeholder="Contraseña:" id="password" name="password" autocomplete="off">
                                     <i title="Mostrar contraseña" onclick="showPass(this);" class="fa fa-eye show_pass"></i>
                                 </div>
                                 <div class="row">
