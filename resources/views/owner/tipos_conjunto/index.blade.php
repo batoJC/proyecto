@@ -96,7 +96,7 @@
                 "infoPostFix": "",
                 "loadingRecords": "Cargando...",
                 "zeroRecords": "Ningún registro coincide con la búsqueda",
-                "emptyTable": "Brak danych",
+                "emptyTable": "No hay registros",
                 "paginate": {
                     "first": "Primero",
                     "previous": "Anterior",
