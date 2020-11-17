@@ -610,6 +610,7 @@ class ComposerStaticInit9e2b5a0a24084850f7a95517c6858a00
         'App\\Http\\Requests\\IngresosMasivoRequest' => __DIR__ . '/../..' . '/app/Http/Requests/IngresosMasivoRequest.php',
         'App\\Http\\Requests\\MasivoRequest' => __DIR__ . '/../..' . '/app/Http/Requests/MasivoRequest.php',
         'App\\Inventario' => __DIR__ . '/../..' . '/app/Inventario.php',
+        'App\\Item' => __DIR__ . '/../..' . '/app/Item.php',
         'App\\Jornada' => __DIR__ . '/../..' . '/app/Jornada.php',
         'App\\Liquidacion' => __DIR__ . '/../..' . '/app/Liquidacion.php',
         'App\\Mantenimiento' => __DIR__ . '/../..' . '/app/Mantenimiento.php',

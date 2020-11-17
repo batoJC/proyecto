@@ -75,8 +75,8 @@
                                         Contacto
                                     </a>
                                 </li>
-                                <li @if(session('section') == 'items') class="current-page"@endif>
-                                    <a href="{{ url('items') }}">
+                                <li @if(session('section') == 'item') class="current-page"@endif>
+                                    <a href="{{ url('item') }}">
                                         <i class="fa fa-sitemap"></i> 
                                         Item
                                     </a>

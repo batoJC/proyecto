@@ -119,6 +119,7 @@ return array(
     'App\\Http\\Requests\\IngresosMasivoRequest' => $baseDir . '/app/Http/Requests/IngresosMasivoRequest.php',
     'App\\Http\\Requests\\MasivoRequest' => $baseDir . '/app/Http/Requests/MasivoRequest.php',
     'App\\Inventario' => $baseDir . '/app/Inventario.php',
+    'App\\Item' => $baseDir . '/app/Item.php',
     'App\\Jornada' => $baseDir . '/app/Jornada.php',
     'App\\Liquidacion' => $baseDir . '/app/Liquidacion.php',
     'App\\Mantenimiento' => $baseDir . '/app/Mantenimiento.php',
