@@ -15,7 +15,8 @@ class ItemController extends Controller
      */
     public function index()
     {
-        //
+        session(['section' => 'items']);
+        return view('owner.items.index');
     }
 
     /**

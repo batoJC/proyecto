@@ -120,6 +120,9 @@ Route::group(['middleware' => ['owner']], function () {
 	Route::get('contactos', 'ContactoController@index');
 	Route::post('contacto/{id}', 'ContactoController@destroy');
 	Route::get('contactos/{id}', 'ContactoController@show');
+
+	//Item contactos
+	Route::get('items', 'ItemController@index');
 	// Tipos de conjuntos
 	Route::resource('tipo_conjunto', 'TipoConjuntoController');
 	Route::get('api.tipo_conjunto', 'TipoConjuntoController@reload')->name('api.tipo_conjunto');
