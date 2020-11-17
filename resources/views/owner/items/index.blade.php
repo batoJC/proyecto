@@ -13,6 +13,12 @@
 					</li>
 				  	<li>Items</li>
 				</ul>
+
+				<a class="btn btn-success mb-4" onclick="addForm()">
+					<i class="fa fa-plus"></i>
+					Agregar
+				</a>
+
 			</div>
 			<div class="col-1 col md-1 text-right">
 				<div class="btn-group">
@@ -30,26 +36,20 @@
 					</ul>
 				</div>
 			</div>
-            <div class="col-md-12">
-            	
-				<div class="alert alert-success-original alert-dismissible" role="alert">
-					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-						<span aria-hidden="true">x</span>
-					</button>
-					<h1 class="text-center">Responder contactos</h1>
-					<h4>
-						-Para responder a algún contacto que llegue a este apartado se debe hacer desde el correo electrónico gestioncopropietario@gmail.com
-					</h4>
-				</div>
 
+			
 
-				@include('owner.contactos.form')
-				<table id="contactos-table" class="table table-striped">
+            <div class="col-md-12">		
+
+				@include('owner.items.form')
+				<table id="items-table" class="table table-striped">
 					<thead>
-						<th>Correo</th>
-						<th>Mensaje</th>
-						<th>Fecha de envio</th>
-						<th>Acciones</th>
+						<th>Cédula</th>
+						<th>Nombre</th>
+						<th>Apellidos</th>
+						<th>Télefono</th>
+						<th>Dirección</th>
+						<th>País</th>
 					</thead>
 					<tbody>
 					</tbody>
@@ -79,7 +79,7 @@
 
 		// Listar los registros
 		// *************************************
-		var table  = $('#contactos-table').DataTable({
+		var table  = $('#items-table').DataTable({
 			processing: true,
           	serverSide: true,
           	ajax : actualizarTabla,
