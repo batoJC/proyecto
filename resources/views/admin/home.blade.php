@@ -58,13 +58,15 @@
 							<h4 class="text-center terminos-title">
 								Gestion Copropietarios
 							</h4>
-							{{ $reglamento->descripcion }}
-							<br>
-							<a href="{{ asset('reglamentos/'.$reglamento->archivo) }}" target="_blank" class="link">
-								Leer Articulo Completo 
-								<i class="fa fa-eye"></i>
-							</a>
-							<br><br>
+							@if($reglamento) 
+								{{ $reglamento->descripcion }}
+								<br>
+								<a href="{{ asset('reglamentos/'.$reglamento->archivo) }}" target="_blank" class="link">
+									Leer Articulo Completo 
+									<i class="fa fa-eye"></i>
+								</a>
+								<br><br>
+							@endif
 						</div>
 						<form method="POST" id="terminos-form">
 							@csrf

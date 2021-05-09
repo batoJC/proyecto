@@ -46,7 +46,7 @@ class ReglamentoController extends Controller
 
     public function update(Reglamento $reglamento, Request $request)
     {
-        if($reglamento->conjunto_id != session('conjunto') || Auth::user()->id_rol != 1){
+        if($reglamento->conjunto_id != session('conjunto') && Auth::user()->id_rol != 1){
             return ['res'=>0,'msg'=>'No tiene permiso para esta acción'];
         }
         try {
