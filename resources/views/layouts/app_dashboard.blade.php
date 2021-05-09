@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <title>Gestion Copropietarios</title>
-    
+
     <link rel="icon" type="image/png" href="{{ asset('imgs/favicon.png') }}">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
@@ -20,6 +20,11 @@
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/master.css') }}" rel="stylesheet">
+    <style>
+        .table{
+            width: 100% !important;
+        }
+    </style>
 </head>
 
 <body class="nav-md">
@@ -29,7 +34,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="{{ url('/owner') }}" class="site_title">
-                            <i class="fa fa-globe"></i> 
+                            <i class="fa fa-globe"></i>
                             <span>Usuario Raíz</span>
                         </a>
                     </div>
@@ -41,43 +46,43 @@
                             <ul class="nav side-menu">
                                 <li @if(session('section') == 'home') class="current-page"@endif>
                                     <a href="{{ url('owner') }}">
-                                        <i class="fa fa-home"></i> 
+                                        <i class="fa fa-home"></i>
                                         Inicio
                                     </a>
                                 </li>
                                 <li @if(session('section') == 'tipo_conjunto') class="current-page"@endif>
                                     <a href="{{ url('tipo_conjunto') }}">
-                                        <i class="fa fa-cog"></i> 
+                                        <i class="fa fa-cog"></i>
                                         Tipo de Conjunto
                                     </a>
                                 </li>
                                 <li @if(session('section') == 'conjuntos') class="current-page"@endif>
                                     <a href="{{ url('conjuntos') }}">
-                                        <i class="fa fa-university"></i> 
+                                        <i class="fa fa-university"></i>
                                         Conjuntos
                                     </a>
                                 </li>
                                 <li @if(session('section') == 'usuarios') class="current-page"@endif>
                                     <a href="{{ url('usuarios') }}">
-                                        <i class="fa fa-user"></i> 
+                                        <i class="fa fa-user"></i>
                                         Administradores
                                     </a>
                                 </li>
                                 <li @if(session('section') == 'tabla_intereses') class="current-page"@endif>
                                     <a href="{{ url('tabla_intereses') }}">
-                                        <i class="fa fa-balance-scale"></i> 
+                                        <i class="fa fa-balance-scale"></i>
                                         Tabla de intereses
                                     </a>
                                 </li>
                                 <li @if(session('section') == 'contactos') class="current-page"@endif>
                                     <a href="{{ url('contactos') }}">
-                                        <i class="fa fa-envelope-open-o"></i> 
+                                        <i class="fa fa-envelope-open-o"></i>
                                         Contacto
                                     </a>
                                 </li>
                                 {{-- <li @if(session('section') == 'ingresos_oficina') class="current-page"@endif>
                                     <a href="{{ url('ingresos_oficina') }}">
-                                        <i class="fa fa-money"></i> 
+                                        <i class="fa fa-money"></i>
                                         Ingresos (Dinero)
                                     </a>
                                 </li> --}}

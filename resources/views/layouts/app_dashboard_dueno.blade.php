@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <title>Gestion Copropietarios</title>
-    
+
     <link rel="icon" type="image/png" href="{{ asset('imgs/favicon.png') }}">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
@@ -24,66 +24,70 @@
                 overflow: hidden;
                 height: 100%;
             }
-    
+
             .main_container{
                 height: 100%;
             }
-    
+
             .left_col{
                 height: 100%;
             }
-    
+
             .scroll-view{
                 overflow: auto;
                 overflow-x: hidden;
             }
-    
+
             .scroll-view::-webkit-scrollbar {
                 width: 8px;
             }
             .scroll-view::-webkit-scrollbar-track {
-                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
                 border-radius: 8px;
             }
             .scroll-view::-webkit-scrollbar-thumb {
                 border-radius: 8px;
                 -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
             }
-    
+
             .right_col{
                 height: 90vh;
                 overflow-x: hidden;
             }
 
-            
+
             #cerrar_img{
                 font-size: 28px !important;
             }
-        
+
             .contenido {
                 height: 90vh;
                 overflow: auto;
             }
-            
+
             .contenido::-webkit-scrollbar {
                 width: 8px;
             }
-    
+
             .contenido::-webkit-scrollbar-thumb {
                 background: #1ABB9C;
             }
-    
+
             .foto{
                 height: 50px;
                 cursor: pointer;
             }
-        
+
             th,td{
                 text-align: center;
                 font-size: 16px;
             }
-    
-        </style> 
+
+            .table{
+                width: 100% !important;
+            }
+
+        </style>
 </head>
 
 <body class="nav-md">
@@ -98,7 +102,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="{{ url('/') }}" class="site_title">
-                            <i class="fa fa-user"></i> 
+                            <i class="fa fa-user"></i>
                             <span>{{ Auth::user()->nombre_completo }}
                             </span>
                         </a>
@@ -111,14 +115,14 @@
                             <ul class="nav side-menu">
                                 <li @if(session('section') == 'home') class="current-page"@endif>
                                     <a href="{{ url('dueno') }}">
-                                        <i class="fa fa-home"></i> 
+                                        <i class="fa fa-home"></i>
                                         Inicio
                                     </a>
                                 </li>
                                 {{-- <li @if(session('section') == 'notas') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('notas/'.$admin->id) }}">
-                                            <i class="fa fa-history"></i> 
+                                            <i class="fa fa-history"></i>
                                             Historico de Mensajes
                                         </a>
                                     @endif
@@ -126,7 +130,7 @@
                                 <li @if(session('section') == 'quejas_reclamos') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('quejas_reclamos') }}">
-                                            <i class="fa fa-commenting-o"></i> 
+                                            <i class="fa fa-commenting-o"></i>
                                             PQR
                                         </a>
                                     @endif
@@ -134,7 +138,7 @@
                                 {{-- <li @if(session('section') == 'mascotas') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('mascotas') }}">
-                                            <i class="fa fa-paw"></i> 
+                                            <i class="fa fa-paw"></i>
                                             Mis mascotas
                                         </a>
                                     @endif
@@ -142,7 +146,7 @@
                                 <li @if(session('section') == 'unidades') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('misUnidades') }}">
-                                            <i class="fa fa-braille"></i> 
+                                            <i class="fa fa-braille"></i>
                                             Mis unidades
                                         </a>
                                     @endif
@@ -150,7 +154,7 @@
                                 {{-- <li @if(session('section') == 'encomientas') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('encomientas') }}">
-                                            <i class="fa fa-inbox"></i> 
+                                            <i class="fa fa-inbox"></i>
                                             Mis encomiendas
                                         </a>
                                     @endif
@@ -158,7 +162,7 @@
                                 <li @if(session('section') == 'zonas_comunes') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('zonas_comunes') }}">
-                                            <i class="fa fa-calendar"></i> 
+                                            <i class="fa fa-calendar"></i>
                                             Reservas de Zonas sociales
                                         </a>
                                     @endif
@@ -166,15 +170,15 @@
                                 {{-- <li @if(session('section') == 'saldo_favor') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('saldo_favor') }}">
-                                            <i class="fa fa-credit-card"></i> 
+                                            <i class="fa fa-credit-card"></i>
                                             Mis Saldos a Favor
                                         </a>
-                                    @endif                             
+                                    @endif
                                 </li> --}}
                                 <li @if(session('section') == 'multas') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('multas') }}">
-                                            <i class="fa fa-legal"></i> 
+                                            <i class="fa fa-legal"></i>
                                             Multas
                                         </a>
                                     @endif
@@ -182,7 +186,7 @@
                                 <li @if(session('section') == 'tabla_intereses') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('tabla_intereses') }}">
-                                            <i class="fa fa-balance-scale"></i> 
+                                            <i class="fa fa-balance-scale"></i>
                                             Tasas de Interés
                                         </a>
                                     @endif
@@ -190,7 +194,7 @@
                                 <li @if(session('section') == 'miCartera') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('miCartera') }}">
-                                            <i class="fa fa-book"></i> 
+                                            <i class="fa fa-book"></i>
                                             Mi cartera
                                         </a>
                                     @endif
@@ -198,7 +202,7 @@
                                 <li @if(session('section') == 'listaCuentasCobroDueno') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('listaCuentasCobroDueno') }}">
-                                            <i class="fa fa-calculator"></i> 
+                                            <i class="fa fa-calculator"></i>
                                             Mis cuentas de cobro
                                         </a>
                                     @endif
@@ -206,7 +210,7 @@
                                 <li @if(session('section') == 'recaudos') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('misRecaudos') }}">
-                                            <i class="fa fa-credit-card"></i> 
+                                            <i class="fa fa-credit-card"></i>
                                             Mis recibos de pago
                                         </a>
                                     @endif
@@ -214,7 +218,7 @@
                                 <li @if(session('section') == 'cartas') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('cartas') }}">
-                                            <i class="fa fa-envelope"></i> 
+                                            <i class="fa fa-envelope"></i>
                                             Mis cartas
                                         </a>
                                     @endif
@@ -223,7 +227,7 @@
                                 <li @if(session('section') == 'documentos') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('documentos') }}">
-                                            <i class="fa fa-file-text-o"></i> 
+                                            <i class="fa fa-file-text-o"></i>
                                             Documentos conjunto
                                         </a>
                                     @endif
@@ -232,7 +236,7 @@
                                 <li @if(session('section') == 'evidencias') class="current-page"@endif>
                                     @if(Auth::user()->habeas_data == 'Acepto')
                                         <a href="{{ url('evidencias') }}">
-                                            <i class="fa fa-shield"></i> 
+                                            <i class="fa fa-shield"></i>
                                             Evidencias
                                         </a>
                                     @endif
