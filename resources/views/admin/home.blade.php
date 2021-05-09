@@ -62,7 +62,7 @@
 								{{ $reglamento->descripcion }}
 								<br>
 								<a href="{{ asset('reglamentos/'.$reglamento->archivo) }}" target="_blank" class="link">
-									Leer Articulo Completo 
+									Leer Artículo Completo 
 									<i class="fa fa-eye"></i>
 								</a>
 								<br><br>
