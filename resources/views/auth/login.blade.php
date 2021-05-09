@@ -55,8 +55,11 @@
                             @endif
                             <form method="POST" action="{{ route('login') }}">
                                 @csrf
-                                <input type="text" value="{{ old('email') }}" placeholder="Correo Electrónico: " name="email" autocomplete="off">
-                                <input type="password" placeholder="Contraseña: " name="password" autocomplete="off">
+                                <input type="text" value="{{ old('email') }}" placeholder="Correo Electrónico:" name="email" autocomplete="off">
+                                <div>
+                                <input type="password" placeholder="Contraseña:" id="password" name="password" autocomplete="off">
+                                    <i title="Mostrar contraseña" onclick="showPass(this);" class="fa fa-eye show_pass"></i>
+                                </div>
                                 <div class="row">
                                     <div class="col-12 text-center">
                                         <a class="btn btn-link" href="{{ route('password.request') }}">
@@ -80,5 +83,20 @@
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('js/mainCustom.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script>
+        function showPass(e){
+            if(password.type == 'password'){
+                $(e).removeClass('fa-eye');
+                $(e).addClass('fa-eye-slash');
+                $(e).attr('title','Ocultar contraseña');
+                password.type = 'text';
+            }else{
+                $(e).addClass('fa-eye');
+                $(e).removeClass('fa-eye-slash');
+                $(e).attr('title','Mostrar contraseña');
+                password.type = 'password';
+            }
+        }
+    </script>
 </body>
 </html>

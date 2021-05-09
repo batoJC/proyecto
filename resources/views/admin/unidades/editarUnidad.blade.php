@@ -11,7 +11,7 @@
 
 </style>
 @section('content')
-    
+
 	<ul class="breadcrumb">
 		<li>
 			<a href="{{ url('home') }}">Inicio</a>
@@ -58,13 +58,13 @@
                                 </select>
                             </div>
                         </div>
-                        <br><br>                    
-            
+                        <br><br>
+
                         @if (in_array('coeficiente', $atributos))
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Coeficiente (%)</label>
                                 <div class="col-md-9 col-sm-9 col-xs-12">
-                                    <input name="coeficiente" id="coeficiente" type="text" class="form-control" placeholder="Ingrese el coeficiente de la unidad" value="{{ $unidad->coeficiente }}" >
+                                    <input name="coeficiente" id="coeficiente" type="text" class="form-control" placeholder="Ingrese el coeficiente de la unidad, se debe usar coma en lugar de punto." value="{{ $unidad->coeficiente }}" >
                                 </div>
                             </div>
                             <br><br>
@@ -93,7 +93,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <br><br> 
+                            <br><br>
                         @endif
 
                         {{-- seleccione el propietario a quien se le factura --}}
@@ -113,9 +113,9 @@
                                     </select>
                                 </div>
                             </div>
-                            <br><br> 
+                            <br><br>
                         @endif
-                        
+
                         @if (in_array('observaciones', $atributos))
                             <div class="form-group">
                                 <label class="control-label col-md-3 col-sm-3 col-xs-12">Observaciones</label>
@@ -125,7 +125,7 @@
                             </div>
                             <br><br>
                         @endif
-                        
+
                     </div>
                 </div>
             </form>
@@ -162,7 +162,7 @@
                 <div class="col-xs-4"></div>
                 <div class="col-xs-4">
                     <button class="btn btn-success" onclick="guardar('{{ json_encode($atributos) }}')">
-                        <i class="fa fa-send"></i> 
+                        <i class="fa fa-send"></i>
                         Guardar cambios del {{ strtolower($tipo->nombre) }}
                     </button>
                 </div>
@@ -224,7 +224,7 @@
                         dataType: "json"
                     }).done((e)=>{
                         if(e.res){
-                            
+
                             var csrf_token = $('meta[name="csrf-token"]').attr('content');
                             if(retiro || ingreso){//crear carta de retiro
 
@@ -263,8 +263,8 @@
                                                 visible: true,
                                                 className: "",
                                                 closeModal: true
-                                            }  
-                                        }                       
+                                            }
+                                        }
                                     }).then((res1)=>{
                                         encabezado = $('#encabezado');
                                     if (res1) {
@@ -287,7 +287,7 @@
                                             data: data,
                                         }).done((res)=>{
                                             //retirar los registros con la carta creada
-                                            
+
                                             //guardar lista de residentes
                                             if(atributos.indexOf('lista_residentes') != -1){
                                                 listaResidentes.forEach(residente => {
@@ -337,7 +337,7 @@
                                                             type: "POST",
                                                             url: "{{url('residentes')}}",
                                                             contentType: false,
-                                                            dataType: "json",                              
+                                                            dataType: "json",
                                                             cache: false,
                                                             processData: false,
                                                             data: data,
@@ -401,7 +401,7 @@
                                                             type: "POST",
                                                             url: "{{url('mascotas')}}",
                                                             contentType: false,
-                                                            dataType: "json",                              
+                                                            dataType: "json",
                                                             cache: false,
                                                             processData: false,
                                                             data: data,
@@ -416,7 +416,7 @@
                                                         });
                                                     }
 
-                                                }); 
+                                                });
                                             }
 
                                             //guardar lista de vehículos
@@ -468,7 +468,7 @@
                                                             type: "POST",
                                                             url: "{{url('vehiculos')}}",
                                                             contentType: false,
-                                                            dataType: "json",                              
+                                                            dataType: "json",
                                                             cache: false,
                                                             processData: false,
                                                             data: data,
@@ -488,7 +488,7 @@
                                         });
                                     }
                                     estado--;
-                                }); 
+                                });
                                 input.focus();
                             }
 
@@ -555,7 +555,7 @@
                                             type: "POST",
                                             url: "{{url('mascotas')}}",
                                             contentType: false,
-                                            dataType: "json",                              
+                                            dataType: "json",
                                             cache: false,
                                             processData: false,
                                             data: data,
@@ -569,7 +569,7 @@
                                             estado--;
                                         });
                                     }
-                                }); 
+                                });
                             }
 
                             //guardar lista de vehículos
@@ -595,7 +595,7 @@
                                             type: "POST",
                                             url: "{{url('vehiculos')}}/"+vehiculo.id,
                                             contentType: false,
-                                            dataType: "json",                              
+                                            dataType: "json",
                                             cache: false,
                                             processData: false,
                                             data: data,
@@ -634,7 +634,7 @@
                                                 type: "POST",
                                                 url: "{{url('empleados')}}/"+empleado.id,
                                                 contentType: false,
-                                                dataType: "json",                              
+                                                dataType: "json",
                                                 cache: false,
                                                 processData: false,
                                                 data: data,
@@ -660,7 +660,7 @@
                                                 type: "POST",
                                                 url: "{{url('empleados')}}",
                                                 contentType: false,
-                                                dataType: "json",                              
+                                                dataType: "json",
                                                 cache: false,
                                                 processData: false,
                                                 data: data,
@@ -680,7 +680,7 @@
                                                 type: "POST",
                                                 url: "{{ url('empleados') }}/inactivar/"+empleado.id,
                                                 contentType: false,
-                                                dataType: "json",                              
+                                                dataType: "json",
                                                 cache: false,
                                                 processData: false,
                                                 data: data,
@@ -695,7 +695,7 @@
                                             break;
                                     }
 
-                                    
+
                                 });
                             }
 
@@ -707,7 +707,7 @@
                                     data.append('_token',csrf_token);
 
                                     switch (visitante.action) {
-                                        case 'editar': 
+                                        case 'editar':
                                             data.append('nombre',visitante.nombre);
                                             data.append('identificacion',visitante.identificacion);
                                             data.append('parentesco',visitante.parentesco);
@@ -741,7 +741,7 @@
                                                 type: "POST",
                                                 url: "{{url('visitantes')}}",
                                                 contentType: false,
-                                                dataType: "json",                              
+                                                dataType: "json",
                                                 cache: false,
                                                 processData: false,
                                                 data: data,
@@ -774,7 +774,7 @@
                                             });
                                             break;
                                     }
-                                    
+
                                 });
                             }
 
@@ -810,7 +810,7 @@
                         input.focus();
                     });
                     return false;
-                }               
+                }
             }
             return true;
         }
