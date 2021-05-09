@@ -18,8 +18,6 @@ class UnidadController extends Controller
 {
     public function __construct()
     {
-        // $this->middleware('admin');
-        // dd('hola');
         $this->middleware('admin', ['only' => ['store', 'edit', 'update', 'destroy']]);
     }
 
@@ -38,8 +36,6 @@ class UnidadController extends Controller
 
         $user = Auth::user();
 
-        // dd($user);
-
         if ($user->id_rol == 2) {
             return view('admin.unidades.index')
                 ->with('conjuntos', $conjuntos)
@@ -52,15 +48,6 @@ class UnidadController extends Controller
             return view('dueno.unidades.index')
                 ->with('conjuntos', $conjuntos);
         }
-
-        /*$unidades  = Unidad::join('unidads_users', 'unidads.id', '=', 'unidads_users.unidad_id')
-            ->where([
-                ['unidads.conjunto_id', session('conjunto')],
-                ['unidads_users.user_id', $user->id],
-                ['unidads_users.estado','Activo']
-            ]) 
-            ->select('unidads.*')
-            ->get();*/
     }
 
 
@@ -107,21 +94,7 @@ class UnidadController extends Controller
      */
     public function store(Request $request)
     {
-        //
-
-        
         try {
-            //para enviar desde el correo de la app
-            $conjunto = new Conjunto();
-            $conjunto->nombre = 'Gestión copropietario';
-            $conjunto->correo = 'gestioncopropietario@gmail.com';
-            $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
-            $usuario = new User();
-            $usuario->nombre_completo = 'Juan Carlos '.date('d-m-Y H:i:s');
-            $usuario->email = 'juacagiri@gmail.com';
-            $correo = new CorreoController();
-            $salida = $correo->enviarEmail($conjunto,[$usuario],'Se esta creando una unidad',json_encode($request->all()));
-
             //code...
             $unidad = new Unidad();
             $unidad->numero_letra = $request->numero_letra;
@@ -143,13 +116,11 @@ class UnidadController extends Controller
             return [
                 'res' => 1,
                 "msg" => "Unidad agregada correctamente esta el correo",
-                "data" => $unidad,
-                "salida" => $salida
+                "data" => $unidad
             ];
         } catch (\Throwable $th) {
             return ['res' => 0, "msg" => "Ocurrió un problema al guardar la unidad ", "e" => $th];
         }
-        // return $request;
     }
 
     /**
@@ -342,9 +313,9 @@ class UnidadController extends Controller
     /**
      * Metodo para cargar la vista según el tipo de unidad
      * que se desea agregar
-     * 
+     *
      * @param  \App\Tipo  $tipo
-     * 
+     *
      */
     public function loadAddForTipo(Tipo_unidad $tipo)
     {
@@ -449,24 +420,24 @@ class UnidadController extends Controller
                     })->addColumn('observaciones', function ($unidad) {
                         return ($unidad->observaciones) ? $unidad->observaciones : 'No aplica';
                     })->addColumn('action', function ($unidad) {
-                        return '<a data-toggle="tooltip" data-placement="top" 
-                                    title="Mostrar la información de la unidad" class="btn btn-default" 
+                        return '<a data-toggle="tooltip" data-placement="top"
+                                    title="Mostrar la información de la unidad" class="btn btn-default"
                                     onclick="loadData(' . $unidad->id . ')">
                                     <i class="fa fa-search"></i>
                                 </a>
-                                <a data-toggle="tooltip" data-placement="top" 
+                                <a data-toggle="tooltip" data-placement="top"
                                     title="Editar la unidad" href="' . route('unidades.edit', ['unidade' => $unidad->id]) . '" class="btn btn-default">
                                     <i class="fa fa-pencil"></i>
                                 </a>
-                                <a data-toggle="tooltip" data-placement="top" 
+                                <a data-toggle="tooltip" data-placement="top"
                                     title="Eliminar esta unidad" class="btn btn-default" onclick="deleteData(' . $unidad->id . ')">
                                     <i class="fa fa-trash"></i>
                                 </a>
-                                <a data-toggle="tooltip" data-placement="top" 
+                                <a data-toggle="tooltip" data-placement="top"
                                     title="Ejecutar un retiro total" class="btn btn-default" onclick="retiroTotal(' . $unidad->id . ')">
                                     <i class="fa fa-close"></i>
                                 </a>
-                                <a data-toggle="tooltip" data-placement="top" 
+                                <a data-toggle="tooltip" data-placement="top"
                                     title="Registrar una novedad" class="btn btn-default" onclick="registrarNovedad(' . $unidad->id . ')">
                                     <i class="fa fa-plus-square"></i>
                                 </a>';
