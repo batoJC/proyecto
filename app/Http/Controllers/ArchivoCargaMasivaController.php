@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\ArchivoCargaMasiva;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Tipo_unidad;
+use App\Conjunto;
 
 class ArchivoCargaMasivaController extends Controller
 {
@@ -16,9 +18,11 @@ class ArchivoCargaMasivaController extends Controller
      */
 
     public function index(Tipo_unidad $tipo)
-    {
-        //dd($tipoUnidad);
-        return 'hola mundo' + $tipo;
+    {        
+        $conjuntos = Conjunto::where('id', session('conjunto'))->first();
+
+        return view('admin.tipo_unidad.carga_masiva.index')
+     //   ->with('conjuntos',$conjuntos);        
     }
 
     /**
@@ -87,16 +91,7 @@ class ArchivoCargaMasivaController extends Controller
         //
     }
 
-    /**
-     * Metodo para cargar la vista según el tipo de unidad
-     * que se desea agregar
-     *
-     * @param  \App\Tipo  $tipo
-     *
-     */
-    public function loadAddForTipo(Tipo_unidad $tipo){
-        return dd($tipo);
-    }
+    
 
     
 
