@@ -18,8 +18,8 @@ class CreateArchivoCargaMasivasTable extends Migration
             $table->string('ruta');
             $table->string('nombre_archivo');
             $table->integer('fila');
-            $table->string('fallos');
-            $table->string('procesados');
+            $table->integer('fallos');
+            $table->integer('procesados');
             $table->enum('estado',['subido','en progreso','terminado','eliminado']); 
             $table->integer('tipo_unidad')->unsigned();
             $table->integer('conjunto_id')->unsigned();
