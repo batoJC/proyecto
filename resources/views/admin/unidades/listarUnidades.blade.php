@@ -43,6 +43,7 @@
     @include('admin.unidades.modalInfo')
     
     <a class="btn btn-success" href="{{ url('addUnidad', ['tipo'=> $tipo->id]) }}">Agregar {{ strtolower($tipo->nombre) }}</a>
+    <a class="btn btn-success" href="{{ url('cargaMasivaUnidad', ['tipo'=> $tipo->id]) }}">Carga Masiva {{ strtolower($tipo->nombre) }}</a>
     
     <div class="container-fluid">
         <br><br>

@@ -12,10 +12,13 @@ class ArchivoCargaMasivaController extends Controller
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
+     * @param  \App\Tipo  $tipo
      */
-    public function index()
+
+    public function index(Tipo_unidad $tipo)
     {
-        //
+        //dd($tipoUnidad);
+        return 'hola mundo' + $tipo;
     }
 
     /**
@@ -83,4 +86,18 @@ class ArchivoCargaMasivaController extends Controller
     {
         //
     }
+
+    /**
+     * Metodo para cargar la vista según el tipo de unidad
+     * que se desea agregar
+     *
+     * @param  \App\Tipo  $tipo
+     *
+     */
+    public function loadAddForTipo(Tipo_unidad $tipo){
+        return dd($tipo);
+    }
+
+    
+
 }
