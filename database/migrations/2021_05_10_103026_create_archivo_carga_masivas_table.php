@@ -21,7 +21,7 @@ class CreateArchivoCargaMasivasTable extends Migration
             $table->integer('fallos');
             $table->integer('procesados');
             $table->enum('estado',['subido','en progreso','terminado','eliminado']); 
-            $table->integer('tipo_unidad')->unsigned();
+            $table->integer('tipo_unidad_id')->unsigned();
             $table->integer('conjunto_id')->unsigned();
                         
             $table->timestamps();
@@ -29,7 +29,7 @@ class CreateArchivoCargaMasivasTable extends Migration
             //llaves foraneas config
             $table->unique(array('nombre_archivo', 'conjunto_id'));
             $table->foreign('conjunto_id')->references('id')->on('conjuntos')->onDelete('cascade');
-            $table->foreign('tipo_unidad')->references('id')->on('tipo_unidad')->onDelete('cascade');
+            $table->foreign('tipo_unidad_id')->references('id')->on('tipo_unidad')->onDelete('cascade');
         });
     }
 

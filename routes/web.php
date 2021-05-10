@@ -354,6 +354,7 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('api.mantenimientos', 'MantenimientoController@datatables');
 	Route::get('api.zonas_comunes.admin', 'ZonasComunesController@datatables');
 	Route::get('api.inventarios', 'InventarioController@datatables');
+	Route::get('api.archivos_masivos/{tipo}', 'ArchivoCargaMasivaController@datatables');
 	//módulo financiero
 	Route::get('api.presupuesto_total.admin', 'EjecucionPreTotalController@datatables');
 	Route::get('api.tipo_presupuesto.admin', 'TipoEjecucionPreController@datatables');

@@ -32,15 +32,19 @@
 	</div>
 	<a class="btn btn-success" onclick="addForm()">
 		<i class="fa fa-plus"></i>
-		Agregar Plantilla
+		Agregar Archivo
+	</a>
+    <a class="btn btn-success" onclick="addForm()">
+		<i class="fa fa-download"></i>
+		Descargar Plantilla
 	</a>
 	@include('admin.tipo_unidad.form')
 	@include('admin.tipo_unidad.formResidentes')
 	<br><br>
-	<table id="tipo_unidad-table" class="table table-stripped">
+	<table id="archivos-table" class="table table-stripped">
 		<thead>				
             <th>Nombre Archivo</th>
-            <th>Fila</th>
+            <th>Ultimo Registro</th>
             <th>Fallos</th>
             <th>Procesados</th>
             <th>Estado</th>
@@ -60,7 +64,7 @@
 		var actualizarTabla = (data,callback,settings) => {
             $.ajax({
                 type: "GET",
-                url: "{{ url('api.tipos_unidad') }}",
+                url: "{{ url('api.archivos_masivos')}}/{{$tipo_unidad->id}}",
                 data: data,
                 dataType: "json",
                 success: function (response) {
@@ -76,12 +80,16 @@
         
         // Listar los registros
 		// *************************************
-		var table  = $('#tipo_unidad-table').DataTable({
+		var table  = $('#archivos-table').DataTable({
 			processing: true,
           	serverSide: true,
           	ajax : actualizarTabla,
           	columns: [
           		{ data: 'nombre', name: 'nombre'},
+                { data: 'ultimoRegistro', name: 'ultimoRegistro'},
+                { data: 'fallos', name: 'fallos'},
+                { data: 'procesados', name: 'procesados'},
+                { data: 'estado', name: 'estado'},
           		{ data: 'action', name: 'action', orderable: false, searchable: false},
           	],
 			language: {
