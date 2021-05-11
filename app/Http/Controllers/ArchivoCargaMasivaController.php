@@ -15,12 +15,14 @@ use Excel;
 class ArchivoCargaMasivaController extends Controller
 {
 
-    private $_ATRIBUTOS_POR_LISTA = array(
-        "lista_mascotas" => array("nombre","código"),
-        "lista_vehiculos" => array("foto vehículo","foto tarjeta propiedad cara 1","foto tarjeta propiedad cara 2"),
-        "lista_residentes" => array(),
-        "lista_visitantes" => array(),
-        "lista_empleados" => array()
+    private static $_ATRIBUTOS_POR_LISTA = array(
+        "lista_mascotas" => array("código","nombre","raza","fecha naciemiento (MM-DD-AAAA)","descripcion","foto (base64)", "unidad","tipo mascota"),
+        "lista_vehiculos" => array("foto vehículo (base64)","foto tarjeta propiedad cara 1 (base64)","foto tarjeta propiedad cara 2 (base64)", "Propietario","tipo", "marca", "color", "placa", "unidad"),
+        "lista_residentes" => array("tipo residente","nombre","apellido", "profesion", "ocupacion", "direccion", "email", "genero", "documento", "unidad", "tipo documento"),
+        "lista_visitantes" => array("dicumento","nombre","parentesco, unidad"),
+        "lista_empleados" => array("nombre", "apellido", "genero", "documento", "unidad", "tipo documento"),
+        "lista_unidades" => null
+
     );
 
     /**
@@ -188,7 +190,7 @@ class ArchivoCargaMasivaController extends Controller
     public function downloadExcel(Tipo_unidad $tipoUnidad){
 
         $listas = [];
-        $propiedades = ["Número o letra","Referencia","Coeficiente","división","Propietario"];
+        $propiedades = ["Número o letra","Referencia","división"];
         $aux = $tipoUnidad->atributos;
         foreach ($aux as $value) {
             if (str_contains($value->nombre,"lista")){
@@ -197,6 +199,7 @@ class ArchivoCargaMasivaController extends Controller
             }
 
             $propiedades[] = $value->nombre;
+            
         }
 
         $tipoUnidadLabel = strtolower($tipoUnidad->nombre);
@@ -208,10 +211,13 @@ class ArchivoCargaMasivaController extends Controller
             });
 
             foreach ($listas as $key => $value) {
-                $data = $this::$_ATRIBUTOS_POR_LISTA[$value];
-                $excel->sheet(str_replace("_", " ", $value), function ($sheet) use ($data) {
+                $encabezados_hoja = $this::$_ATRIBUTOS_POR_LISTA[$value];
+                if (!$encabezados_hoja){
+                    continue;
+                }
+                $excel->sheet(str_replace("_", " ", $value), function ($sheet) use ($encabezados_hoja) {
                     $sheet->setOrientation('landscape');
-                    $sheet->fromArray($data, NULL, 'A1');
+                    $sheet->fromArray($encabezados_hoja, NULL, 'A1');
                 });
             }
 
