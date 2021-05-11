@@ -11,6 +11,7 @@ use App\Conjunto;
 use Illuminate\Support\Facades\Auth;
 use Excel;
 
+
 class ArchivoCargaMasivaController extends Controller
 {
 
@@ -125,7 +126,17 @@ class ArchivoCargaMasivaController extends Controller
      */
     public function destroy(ArchivoCargaMasiva $archivoCargaMasiva)
     {
-        //
+        //dd($archivoCargaMasiva);        
+        try {            
+            if ($archivoCargaMasiva->ruta != '') {
+                // Elimina el archivo
+                @unlink(public_path('archivos_masivos/' . $archivoCargaMasiva->ruta));
+            }
+            $archivoCargaMasiva->delete();
+            return ['res' => 1, 'msg' => 'Registro eliminado correctamente'];
+        } catch (\Throwable $th) {
+            return ['res' => 0, 'msg' => 'Ocurrió un error al tratar de eliminar el registro'];
+        }
     }
 
     // para listar por datatables
@@ -159,7 +170,12 @@ class ArchivoCargaMasivaController extends Controller
                                 <a data-toggle="tooltip" data-placement="top"
                                     title="Ver resultados del proceso" href="" class="btn btn-default">
                                     <i class="fa fa-list-ol"></i>
-                                </a>';
+                                </a>
+                                <a data-toggle="tooltip" data-placement="top"
+                                    title="Eliminar este archivo" class="btn btn-default" onclick="deleteData(' . $archivo->id . ')">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                                ';
                     })->make(true);
 
             default:
