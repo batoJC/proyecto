@@ -10,14 +10,14 @@
         <div class="col-md-6">
             <h4>
                 División: {{ $unidad->division->tipo_division->division }} {{ $unidad->division->numero_letra }}
-            </h4>                   
+            </h4>
 
             @if (in_array('coeficiente', $atributos) and Auth::user()->id_rol == 2)
                 <h4>
                     Coeficiente(%): {{ $unidad->coeficiente }}
                 </h4>
             @endif
-            
+
             @if (Auth::user()->id_rol == 2)
                 <h4>
                     Referencia de pago: {{ ($unidad->referencia )? $unidad->referencia : 'No aplica' }}
@@ -25,8 +25,8 @@
             @endif
 
             @if (in_array('unidad_id', $atributos))
-                
-            @endif                                           
+
+            @endif
             @if (in_array('observaciones', $atributos))
                 <h4>Observaciones:</h4>
                 <h5>{{ $unidad->observaciones }}</h5>
@@ -48,7 +48,7 @@
 
 
 <div class="row">
-    <div class="x_content">    
+    <div class="x_content">
         <div class="" role="tabpanel" data-example-id="togglable-tabs">
           <ul id="myTab1" class="nav nav-tabs bar_tabs right" role="tablist">
             <li role="presentation" class="active"><a href="#activos" id="home-tabb" role="tab" data-toggle="tab" aria-controls="home" aria-expanded="false">Activos</a>
@@ -74,37 +74,6 @@
                             </div>
                         </div>
                     </div>
-                @endif
-                {{-- lista de unidades enlazadas--}}
-                @if (in_array('lista_unidades', $atributos) and $unidad->unidades->count() > 0)
-                    <h3>Listado de unidades</h3>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Número / Letra</th>
-                                <th>Tipo unidad</th>
-                                <th>División</th>
-                                <th>Observaciones</th>
-                                <th>Mostrar</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($unidad->unidades as $uni)
-                                <tr>
-                                    <td>{{ $uni->numero_letra }}</td>
-                                    <td>{{ $uni->tipo->nombre }}</td>
-                                    <td>{{ $uni->division->tipo_division->division }} {{ $uni->division->numero_letra }}</td>
-                                    <td>{{ $uni->observaciones }}</td>
-                                    <td>
-                                        <a data-toggle="tooltip" data-placement="top" title="" class="btn btn-default" onclick="loadData({{ $uni->id }})" data-original-title="Mostrar la información de la unidad">
-                                            <i class="fa fa-search"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    <br>
                 @endif
                 {{-- lista de residentes si tiene estado --}}
                 @if (in_array('lista_residentes', $atributos) and $unidad->residentes()->where('estado','Activo')->count() > 0)
@@ -341,6 +310,8 @@
                               <th>Tipo</th>
                               <th>Raza</th>
                               <th>Descripcion</th>
+                              <th>Fecha ingreso</th>
+                              <th>Fecha retiro</th>
                           </tr>
                       </thead>
                       <tbody>
@@ -353,6 +324,8 @@
                                   <td>{{ $mascota->tipo->tipo }}</td>
                                   <td>{{ $mascota->raza }}</td>
                                   <td>{{ $mascota->descripcion }}</td>
+                                  <td>{{  date('d-m-Y',strtotime($mascota->fecha_ingreso))  }}</td>
+                                  <td>{{  date('d-m-Y',strtotime($mascota->fecha_retiro))  }}</td>
                               </tr>
                           @endforeach
                       </tbody>
@@ -373,6 +346,8 @@
                             <th>Tipo</th>
                             <th>Marca</th>
                             <th>Color</th>
+                            <th>Fecha ingreso</th>
+                            <th>Fecha retiro</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -385,6 +360,8 @@
                                 <td>{{ $vehiculo->tipo }}</td>
                                 <td>{{ $vehiculo->marca }}</td>
                                 <td>{{ $vehiculo->color }}</td>
+                                <td>{{  date('d-m-Y',strtotime($vehiculo->fecha_ingreso))  }}</td>
+                                <td>{{  date('d-m-Y',strtotime($vehiculo->fecha_retiro))  }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -490,27 +467,13 @@
                                 </tr>
                             @endforeach
                         </tbody>
-                        {{-- <thead>
-                            <tr>
-                                <th rowspan="1" colspan="20">Fecha</th>
-                                <th rowspan="1" colspan="10">Novedad</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($unidad->novedades as $novedad)
-                                <tr>
-                                    <td rowspan="1" colspan="20">{{ $novedad->fecha }}</td>
-                                    <td rowspan="1" colspan="10">{{ $novedad->contenido }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody> --}}
                     </table>
 
                 </div>
-                    
+
             @endif
 
-        </div>    
+        </div>
     </div>
 </div>
 <div style="display:none;" id="auxData"></div>
@@ -625,7 +588,7 @@
                 doc.text(15,40,'Histórico '+$('#name_unidad').text());
 
                 var csrf_token = $('meta[name="csrf-token"]').attr('content');
-                $('#auxData').html(''); 
+                $('#auxData').html('');
                 //insertar las tablas de la consulta
                 $.ajax({
                     type: "POST",
@@ -643,7 +606,7 @@
                             }
 
                             doc.autoTable({ startY: alto, html: '#'+tablas[i].id });
-                            
+
                         }
                         doc.save(`historico.pdf`);
                     }
@@ -696,7 +659,7 @@
                 logo.src = '{{asset('imgs/logos_conjuntos/'.$conjunto->logo)}}';
             @else
                 swal('Error!','Debe de asignar primero un logo para el conjunto','error');
-            @endif        
+            @endif
 
         }
 

@@ -32,6 +32,7 @@ class CreateUnidadsTable extends Migration
             $table->integer('conjunto_id')->unsigned()->nullable();
             $table->foreign('conjunto_id')->references('id')->on('conjuntos')->onDelete('set null');
             //unidad a al que pertenece si aplica
+            //DEPRECATED: este campo fue deprecado ya que no es necesario
             $table->integer('unidad_id')->unsigned()->nullable();
             $table->foreign('unidad_id')->references('id')->on('unidads')->onDelete('cascade');
             //tipo de unidad
