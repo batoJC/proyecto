@@ -1,7 +1,7 @@
 @extends('../layouts.app_dashboard_admin')
 
 @section('title', 'Tipo de Unidad')
-	
+
 @section('content')
 <div class="container-fluid">
 	<div class="row">
@@ -10,15 +10,15 @@
 				<li>
 					<a href="{{ asset('admin') }}">Inicio</a>
 				</li>
-				  <li>Carga masiva unidad</li>
+				  <li>Carga masiva {{  ucfirst(strtolower($tipo_unidad->nombre)) }}</li>
 			</ul>
 		</div>
 		<div class="col-1 col md-1 text-right">
 			<div class="btn-group">
-				<i  data-placement="left" 
-					title="Ayuda" 
-					data-toggle="dropdown" 
-					type="button" 
+				<i  data-placement="left"
+					title="Ayuda"
+					data-toggle="dropdown"
+					type="button"
 					aria-expanded="false"
 					class="fa blue fa-question-circle-o ayuda">
 				</i>
@@ -34,20 +34,23 @@
 		<i class="fa fa-plus"></i>
 		Agregar Archivo
 	</a>
-    <a class="btn btn-success" onclick="">
+  <a data-placement="top"
+	title="Descarga archivo excel para una carga masiva de {{ ucfirst(strtolower($tipo_unidad->nombre)) }}"
+	data-toggle="tooltip"  class="btn btn-warning"
+	href="{{ url('generarPlantillaMasivoUnidades',['tipo'=>$tipo_unidad->id]) }}" target="_blank">
 		<i class="fa fa-download"></i>
-		Descargar Plantilla
-	</a>
+		&nbsp; Descargar plantilla
+</a>
 	@include('admin.tipo_unidad.carga_masiva.form')
 	<br><br>
 	<table id="archivos-table" class="table table-stripped">
-		<thead>				
+		<thead>
             <th>Nombre Archivo</th>
             <th>Ultimo Registro</th>
             <th>Fallos</th>
             <th>Procesados</th>
             <th>Estado</th>
-            <th>Acciones</th>                    
+            <th>Acciones</th>
 		</thead>
 		<tbody>
 		</tbody>
@@ -55,7 +58,7 @@
 </div>
 
 
-					
+
 @endsection
 @section('ajax_crud')
 	<script>
@@ -76,7 +79,7 @@
                 }
             });
         }
-        
+
         // Listar los registros
 		// *************************************
 		var table  = $('#archivos-table').DataTable({
@@ -115,7 +118,7 @@
             }
 		});
 
-		
+
 		$('.select-2').select2({
 			// Este es el id de la ventana modal #modal-form
 			dropdownParent: $('#modal-form')
@@ -158,8 +161,8 @@
 		// Agregar registro
 		// ****************
 
-		function addForm(){  
-            console.log('dentro')          
+		function addForm(){
+            console.log('dentro')
 			$('#archivos').modal('show');
 			$('#dataArchivo').trigger('reset');
 		}
@@ -208,7 +211,7 @@
 		}
 
 
-        //Enviar al servidor para guardar 
+        //Enviar al servidor para guardar
 		/*******************************/
 		function guardarArchivo(){
 			if(verificarFormulario('dataArchivo',1)){
@@ -216,7 +219,7 @@
 
 				let data = new FormData();
 				data.append('nombre_archivo',fileName.value);
-                data.append('tipo_unidad',tipo_unidad.value);                			                			
+                data.append('tipo_unidad',tipo_unidad.value);
 				data.append('archivo',file.files[0]);
 				data.append('_token',csrf_token);
 
@@ -234,7 +237,7 @@
 							$('#archivos').modal('hide');
 						});
 					}else{
-						swal('Error!',res.msg,'error');	
+						swal('Error!',res.msg,'error');
 					}
 				}).fail((res)=>{
 					swal('Error!','Ocurrió un error en el servidor','error');
@@ -242,9 +245,9 @@
 			}
 		}
 
-		
 
-		
+
+
 
 	</script>
 @endsection

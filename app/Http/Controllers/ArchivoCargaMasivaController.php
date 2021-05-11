@@ -9,9 +9,19 @@ use Yajra\Datatables\Datatables;
 use App\Tipo_unidad;
 use App\Conjunto;
 use Illuminate\Support\Facades\Auth;
+use Excel;
 
 class ArchivoCargaMasivaController extends Controller
 {
+
+    private $_ATRIBUTOS_POR_LISTA = array(
+        "lista_mascotas" => array("nombre","código"),
+        "lista_vehiculos" => array("foto vehículo","foto tarjeta propiedad cara 1","foto tarjeta propiedad cara 2"),
+        "lista_residentes" => array(),
+        "lista_visitantes" => array(),
+        "lista_empleados" => array()
+    );
+
     /**
      * Display a listing of the resource.
      *
@@ -156,4 +166,40 @@ class ArchivoCargaMasivaController extends Controller
                 return [];
         }
     }
+
+    // Generar un excel de acuerdo al tipo de unidad y los datos requeridos
+    // para una carga masiva
+    public function downloadExcel(Tipo_unidad $tipoUnidad){
+
+        $listas = [];
+        $propiedades = ["Número o letra","Referencia","Coeficiente","división","Propietario"];
+        $aux = $tipoUnidad->atributos;
+        foreach ($aux as $value) {
+            if (str_contains($value->nombre,"lista")){
+                $listas[] = $value->nombre;
+                continue;
+            }
+
+            $propiedades[] = $value->nombre;
+        }
+
+        $tipoUnidadLabel = strtolower($tipoUnidad->nombre);
+
+        Excel::create('plantilla '.ucfirst($tipoUnidadLabel), function($excel) use($tipoUnidadLabel,$propiedades,$listas){
+
+            $excel->sheet("attributos ".$tipoUnidadLabel, function ($sheet) use ($propiedades) {
+                $sheet->fromArray($propiedades, NULL, 'A1');
+            });
+
+            foreach ($listas as $key => $value) {
+                $data = $this::$_ATRIBUTOS_POR_LISTA[$value];
+                $excel->sheet(str_replace("_", " ", $value), function ($sheet) use ($data) {
+                    $sheet->setOrientation('landscape');
+                    $sheet->fromArray($data, NULL, 'A1');
+                });
+            }
+
+        })->download('xlsx');
+    }
+
 }

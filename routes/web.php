@@ -159,13 +159,13 @@ Route::group(['middleware' => ['admin']], function () {
 	// unidades
 	Route::resource('unidades', 'UnidadController');
 	Route::get('unidadestipo/{tipo}', 'UnidadController@indexTipo');
-	Route::get('addUnidad/{tipo}', 'UnidadController@loadAddForTipo');	
+	Route::get('addUnidad/{tipo}', 'UnidadController@loadAddForTipo');
 	Route::get('asignarPropietario/{unidad}/{id}', 'UnidadController@setPropietario');
 
 	//carga masiva unidades
 	Route::get('cargaMasivaUnidad/{tipo}', 'ArchivoCargaMasivaController@index');
-	
-	
+	Route::get('generarPlantillaMasivoUnidades/{tipoUnidad}', 'ArchivoCargaMasivaController@downloadExcel');
+
 	// Ruta para el dashboard
 	Route::get('admin', 'HomeController@admin');
 	// Cambio de conjunto
