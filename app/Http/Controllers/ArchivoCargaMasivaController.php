@@ -20,12 +20,12 @@ class ArchivoCargaMasivaController extends Controller
      */
 
     public function index(Tipo_unidad $tipo)
-    {        
+    {
         $conjuntos = Conjunto::where('id', session('conjunto'))->first();
 
         return view('admin.tipo_unidad.carga_masiva.index')
-        ->with('tipo_unidad',$tipo)
-        ->with('conjuntos',$conjuntos);        
+            ->with('tipo_unidad', $tipo)
+            ->with('conjuntos', $conjuntos);
     }
 
     /**
@@ -46,7 +46,31 @@ class ArchivoCargaMasivaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $archivoCargaMasiva = new ArchivoCargaMasiva();
+            $archivoCargaMasiva->nombre_archivo = $request->nombre_archivo;
+            $archivoCargaMasiva->estado = 'subido';
+            $archivoCargaMasiva->fila=0;
+            $archivoCargaMasiva->procesados=0;
+            $archivoCargaMasiva->fallos=0;
+            $archivoCargaMasiva->tipo_unidad_id = $request->tipo_unidad;
+            $archivoCargaMasiva->conjunto_id = session('conjunto');
+            if ($request->file('archivo')) {
+                $file = time() . '.' . $request->archivo->getClientOriginalExtension();
+                $request->archivo->move(\public_path('archivos_masivos/'), $file);
+                //ruta archivo
+                $archivoCargaMasiva->ruta = $file;
+
+                //dd($archivoCargaMasiva);
+
+                $archivoCargaMasiva->save();
+                return array('res' => 1, 'msg' => 'Archivo subido correctamente.');
+            } else {
+                return array('res' => 0, 'msg' => 'Error, por favor selecciona un archivo');
+            }
+        } catch (\Trowable $th) {
+            return array('res' => 0, 'msg' => 'Ocurrió un error al registrar la mascota.');
+        }
     }
 
     /**
@@ -97,7 +121,7 @@ class ArchivoCargaMasivaController extends Controller
     // para listar por datatables
     // ****************************
     public function datatables($tipo)
-    {   
+    {
         switch (Auth::user()->id_rol) {
             case 2:
                 $archivos = ArchivoCargaMasiva::where([
@@ -115,7 +139,7 @@ class ArchivoCargaMasivaController extends Controller
                     })->addColumn('procesados', function ($archivo) {
                         return $archivo->procesados;
                     })->addColumn('estado', function ($archivo) {
-                        return $archivo->estado;                    
+                        return $archivo->estado;
                     })->addColumn('action', function ($archivo) {
                         return '<a data-toggle="tooltip" data-placement="top"
                                     title="Procesar el archivo" class="btn btn-default"
@@ -126,15 +150,10 @@ class ArchivoCargaMasivaController extends Controller
                                     title="Ver resultados del proceso" href="" class="btn btn-default">
                                     <i class="fa fa-list-ol"></i>
                                 </a>';
-                    })->make(true);            
+                    })->make(true);
 
             default:
                 return [];
         }
     }
-
-    
-
-    
-
 }

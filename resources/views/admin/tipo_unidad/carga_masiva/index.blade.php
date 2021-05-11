@@ -34,12 +34,11 @@
 		<i class="fa fa-plus"></i>
 		Agregar Archivo
 	</a>
-    <a class="btn btn-success" onclick="addForm()">
+    <a class="btn btn-success" onclick="">
 		<i class="fa fa-download"></i>
 		Descargar Plantilla
 	</a>
-	@include('admin.tipo_unidad.form')
-	@include('admin.tipo_unidad.formResidentes')
+	@include('admin.tipo_unidad.carga_masiva.form')
 	<br><br>
 	<table id="archivos-table" class="table table-stripped">
 		<thead>				
@@ -159,19 +158,10 @@
 		// Agregar registro
 		// ****************
 
-		function addForm(){
-			save_method = "add";
-			$('input[name="_method"]').val('POST');
-			$('#modal-form').modal('show');
-			$('#modal-form form').trigger('reset');
-			$('.check span').remove()
-			var elem = document.querySelectorAll('.js-switch');
-			elem.forEach((e)=>{
-				new Switchery(e,{color:'#169F85'});
-			});
-			$('.modal-title').text('Agregar tipo de unidad');
-			$('#send_form').attr('type', 'button');
-			$('#send_form').show();
+		function addForm(){  
+            console.log('dentro')          
+			$('#archivos').modal('show');
+			$('#dataArchivo').trigger('reset');
 		}
 
 		// Editar Registro
@@ -211,87 +201,50 @@
 			});
 		}
 
-		// Eliminar Registro
-		// *****************
-
-		function deleteData(id){
-			var csrf_token = $('meta[name="csrf-token"]').attr('content');
-			swal({
-              title: "¿Estás seguro?",
-              text: "Ten en cuenta que este procedimiento es irreversible. ¿Deseas eliminar este apartamento?",
-              icon: "warning",
-              buttons: true,
-              dangerMode: true,
-            })
-            .then((willDelete) => {
-              if (willDelete) {
-          		$.ajax({
-					url : "{{ url('tipo_unidad') }}" + "/" + id,
-					type: "POST",
-					data: {
-						'_method': 'DELETE',
-						'_token' : csrf_token,
-					},
-					success: function(){
-						swal("Operación Exitosa", "El procedimiento se ha llevado acabo con éxito", "success")
-							.then((value) => {
-								table.ajax.reload();
-								$('#modal-form').modal('hide');
-						});
-					},
-					error: function(){
-						swal("¡Opps! Ocurrió un error", {
-		                      icon: "error",
-		                    });
-					}
-				});
-              } else {
-                swal("Operación cancelada", "Lo sentimos, vuelve a intentarlo", "error");
-              }
-            });
-
+        //mostrar el nombre de la imagen seleccionada
+		function changeFile(){
+			let label = document.querySelector('#file');
+			label.innerHTML = 'Nombre del archivo: ' + document.querySelector('#file').files[0].name;
 		}
 
-		// evento para guardar el tipo de unidad
-        // ----------------------------------------------
-		$('#modal-form form').on('submit', function(e){
-			e.preventDefault();
-			console.log($('#modal-form form').serialize());
-			let coeficiente = $('input[name="coeficiente"]').prop('checked');
-			let propietarios = $('input[name="propietario"]').prop('checked');
-			if(coeficiente){
-				if(!propietarios){
-					swal('Error!','Si el tipo de unidad tiene un coeficiente debe de incluirse los propietarios.','error');
-					return;
-				}
-			}else if(propietarios){
-				swal('Error!','Si el tipo de unidad tiene una lista de propietarios debe de incluirse el coeficiente.','error');
-				return;
-			}
 
-			id = $('#id').val();
-			if(save_method == "add") url = "{{ url('tipo_unidad') }}";
-			else url = "{{ url('tipo_unidad') }}" + "/" + id;
+        //Enviar al servidor para guardar 
+		/*******************************/
+		function guardarArchivo(){
+			if(verificarFormulario('dataArchivo',1)){
+				var csrf_token = $('meta[name="csrf-token"]').attr('content');
 
-			$.ajax({
-				url: url,
-				type: 'POST',
-				data: $('#modal-form form').serialize(),
-				success: function(data){
-					console.log(data);
-					$('#modal-form').modal('hide');
-					swal("Operación Exitosa", "El procedimiento se ha llevado acabo con éxito", "success")
-						.then((value) => {
+				let data = new FormData();
+				data.append('nombre_archivo',fileName.value);
+                data.append('tipo_unidad',tipo_unidad.value);                			                			
+				data.append('archivo',file.files[0]);
+				data.append('_token',csrf_token);
+
+				$.ajax({
+					type: "POST",
+					url: "{{url('archivos')}}",
+					data: data,
+					dataType: "json",
+					contentType: false,
+					processData: false
+				}).done((res)=>{
+					if(res.res){
+						swal('Logrado!',res.msg,'success').then(()=>{
 							table.ajax.reload();
-					});
-				},
-				error: function(data){
-					console.log(data);
-					swal("Ocurrió un error", "Lo sentimos, vuelve a intentarlo", "error");
-				}
-			});
+							$('#archivos').modal('hide');
+						});
+					}else{
+						swal('Error!',res.msg,'error');	
+					}
+				}).fail((res)=>{
+					swal('Error!','Ocurrió un error en el servidor','error');
+				});
+			}
+		}
 
-		});
+		
+
+		
 
 	</script>
 @endsection

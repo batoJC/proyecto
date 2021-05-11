@@ -48,6 +48,8 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('respuesta/{id}', 'QuejasReclamosController@respuesta');
 	// Mascotas Ruta
 	Route::resource('mascotas', 'MascotasController');
+	//Carga archivos
+	Route::post('archivos', 'ArchivoCargaMasivaController@store');
 	// Proveedores
 	Route::resource('proveedores', 'ProveedorController');
 	// Novedades para unidad
@@ -162,6 +164,7 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//carga masiva unidades
 	Route::get('cargaMasivaUnidad/{tipo}', 'ArchivoCargaMasivaController@index');
+	
 	
 	// Ruta para el dashboard
 	Route::get('admin', 'HomeController@admin');
