@@ -50,6 +50,7 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::resource('mascotas', 'MascotasController');
 	//Carga archivos
 	Route::post('archivos', 'ArchivoCargaMasivaController@store');
+	Route::delete('archivos/{archivoCargaMasiva}', 'ArchivoCargaMasivaController@destroy');
 	// Proveedores
 	Route::resource('proveedores', 'ProveedorController');
 	// Novedades para unidad
