@@ -75,7 +75,7 @@ class ArchivoCargaMasivaController extends Controller
             $archivoCargaMasiva->conjunto_id = session('conjunto');
             if ($request->file('archivo')) {
                 $file = time() . '.' . $request->archivo->getClientOriginalExtension();
-                $request->archivo->move(\public_path('archivos_masivos/'), $file);
+                $request->archivo->move(public_path('archivos_masivos/'), $file);
                 //ruta archivo
                 $archivoCargaMasiva->ruta = $file;
 
@@ -133,7 +133,7 @@ class ArchivoCargaMasivaController extends Controller
      */
     public function destroy(ArchivoCargaMasiva $archivoCargaMasiva)
     {
-        //dd($archivoCargaMasiva);        
+        //dd($archivoCargaMasiva);
         try {
             if ($archivoCargaMasiva->ruta != '') {
                 // Elimina el archivo
@@ -247,65 +247,125 @@ class ArchivoCargaMasivaController extends Controller
         $archivo = ArchivoCargaMasiva::find($request->id);
         $tipoUnidad = $archivo->tipoUnidad;
 
-
-        if ($archivo != null) {
-            $path = 'public/archivos_masivos/' . $archivo->ruta;
+        if ($archivo != null && $archivo->conjunto_id == session("conjunto")) {
+            $path = public_path('archivos_masivos/' . $archivo->ruta);
             $data = Excel::load($path, function ($reader) {
             })->get();
 
 
             // Validador si el arreglo está vacío
-            // **********************************   
-
-            // dd($data->getTitle());
-
-            echo ('');
-
+            // **********************************
             if (!empty($data) && $data->count() > 0) {
-                try {
+                // try {
+                    $indexLista = array(
+                        "lista mascotas" => 0,
+                        "lista vehiculos" => 0,
+                        "lista residentes" => 0,
+                        "lista visitantes" => 0,
+                        "lista empleados" => 0
+                    );
 
-
-                    for ($i = 0; $i < $data[0]->count(); $i++) {                        
+                    for ($i = 0; $i < $data[0]->count(); $i++) {
+                        //hay que eliminar la unidad y todo lo que se creo si es que
+                        //llega a fallar el proceso de acá en adelante
                         $unidad = $this->crearUnidad($data[0][$i], $tipoUnidad);
-                    }
-                    
-                    for ($i = 1; $i < $data->count(); $i++) {
-                        echo ($data[$i]->getTitle());
-                    }
-                    //$this->crearResidentesUnidad();
+                        $unidad->id = 1; //for have a id aunque ese metodo no este implentado
 
+                        $saltarRegistros = $unidad->id == 0;
+                        $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros);
+                        $indexLista = $result["index"];
 
-                    $listas = [];
-                    $propiedades = ["numero_letra" => "Número o letra", "referencia" => "Referencia", "división_id" => "division", "tipo_unidad_id" => "tipo_division"];
-                    $aux = $tipoUnidad->atributos;
-                    foreach ($aux as $value) {
-                        if (str_contains($value->nombre, "lista")) {
-                            $listas[] = $value->nombre;
-                            continue;
+                        if ($result["error"]) {
+                            $unidad->delete();
                         }
-
-                        $propiedades[] = $value->nombre;
                     }
 
+                    var_dump($indexLista);
 
-
-                    // return redirect('cargaMasivaUnidad/{id}')
-                    //     ->with('status', 'Se insertó correctamente')
-                    //     ->with('last', "El último registro fue '$last_name' cc: '$last_cc'");
-                } catch (\Throwable $th) {
-                    // return redirect('usuarios')
-                    //     ->with('error', 'Ocurrió un error al registrar el último registro, verifique que no se encuentre ya registrado.')
-                    //     ->with('last', "El último registro fue '$last_name' cc: '$last_cc'");
-                }
+                    //when finished and all is good
+                    return array('res' => 1, 'msg' => 'Carga masiva terminada.');
+                // } catch (\Throwable $th) {
+                //     return array('res' => 0, 'msg' => 'Error en la carga masiva.');
+                // }
             }
         } else {
-            //swal('Error!', 'Ocurrió un error en el servidor, no se ingresó archivo', 'error');
+            return array('res' => 0, 'msg' => 'Ese archivo no existe');
         }
+    }
+
+    private function agregarListasPorUnidad($hojasExcel, $unidad, $indexLista, $saltarRegistros)
+    {
+        $error = false;
+        for ($i = 1; $i < $hojasExcel->count(); $i++) {
+            // echo ($hojasExcel[$i]->getTitle());
+            // $indexLista["lista mascotas"]++;
+            $nombreHoja = $hojasExcel[$i]->getTitle();
+            switch ($nombreHoja) {
+                case  "lista mascotas":
+                    $result = $this->crearListaMascotas($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $saltarRegistros = $result["error"];
+                    $indexLista[$nombreHoja] = $result["index"];
+
+                    break;
+                case "lista vehiculos":
+                    $indexLista[$nombreHoja]++;
+
+                    break;
+                case "lista residentes":
+                    $indexLista[$nombreHoja]++;
+
+                    break;
+                case "lista visitantes":
+                    $indexLista[$nombreHoja]++;
+
+                    break;
+                case "lista empleados":
+                    $indexLista[$nombreHoja]++;
+
+                    break;
+            }
+        }
+
+        return array("index" => $indexLista, "error" => $error);
+    }
+
+    private function crearListaMascotas($index, $data, $unidad, $saltarRegistros)
+    {
+        while ($index < $data->count()) {
+            //si la unidad que  nos dice no es la que vamos agregar decrementamos el
+            //indice y terminamos el ciclo
+            // var_dump($data);
+
+            if ($this->dataVacia($data[$index])) {
+                break;
+            }
+
+            if ($unidad->numero_letra != $data[$index]["unidad"]) {
+                $index--;
+            break;
+            }
+
+
+            //se crea la mascota
+            $index++;
+        }
+
+        return array("index" => $index, "error" => $saltarRegistros);
+    }
+
+
+    private function dataVacia($data)
+    {
+        foreach ($data as $value) {
+            if ($value != "") {
+                return false;
+            }
+        }
+        return true;
     }
 
     private function agregarRegistroFallos($unRegistro, $descripcion, $idArchivo)
     {
-
         $registroF = new RegistroFallosCargaUnidades();
         $registroF->registro = $unRegistro;
         $registroF->descripcion_fallo = $descripcion;
@@ -313,10 +373,19 @@ class ArchivoCargaMasivaController extends Controller
         $registroF->save();
     }
 
-    //metodo para crear una unidad desde el excel
+    /**
+     * metodo para crear una unidad desde el excel
+     *
+     * @param  \App\Tipo_unidad  $tipoUnidad
+     * @return \App\Unidad
+     */
     private function crearUnidad($data, $tipoUnidad)
     {
+        $unidad = new Unidad();
 
+        //TODO: create unidad
+
+        return $unidad;
         // foreach ($data[0] as $key => $value) {
         //     foreach ($value as $key1 => $value1) {
         //         echo ($key1 . " - " . $value1);
