@@ -220,7 +220,7 @@
 
     //mostrar el nombre de la imagen seleccionada
     function changeFile() {
-        let label = document.querySelector('#file');
+        let label = document.querySelector('#file_name');
         label.innerHTML = 'Nombre del archivo: ' + document.querySelector('#file').files[0].name;
     }
 
@@ -269,7 +269,7 @@
         }
     }
 
-    //funcion para eliminar archivo 
+    //funcion para eliminar archivo
     var csrf_token = $('meta[name="csrf-token"]').attr('content');
 
     function deleteData(id) {
@@ -312,7 +312,7 @@
     function runUpload(id) {
         console.log(id)
         console.log('corriendo...')
-        //muestra en toda la pantalla procesando 
+        //muestra en toda la pantalla procesando
         $('#loading').css("display", "flex")
             .hide()
             .fadeIn(800, () => {
