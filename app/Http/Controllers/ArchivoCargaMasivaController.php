@@ -10,21 +10,26 @@ use App\Tipo_unidad;
 use App\Conjunto;
 use App\Division;
 use App\Documento;
+use App\Mascota;
 use App\RegistroFallosCargaUnidades;
+use App\Tipo_Documento;
 use App\TipoDivision;
+use App\TipoDocumento;
 use App\Unidad;
+use App\Vehiculo;
+use App\Visitante;
 use Illuminate\Support\Facades\Auth;
 use Excel;
-use Excel\Concerns\WithMultipleSheets;
+use App\TipoMascotas;
 
 class ArchivoCargaMasivaController extends Controller
 {
 
     private static $_ATRIBUTOS_POR_LISTA = array(
-        "lista_mascotas" => array("código", "nombre", "raza", "fecha naciemiento (MM-DD-AAAA)", "descripcion", "foto (base64)", "unidad", "tipo mascota"),
+        "lista_mascotas" => array("código", "nombre", "raza", "fecha nacimiento (MM-DD-AAAA)", "descripcion", "foto (base64)", "unidad", "tipo mascota"),
         "lista_vehiculos" => array("foto vehículo (base64)", "foto tarjeta propiedad cara 1 (base64)", "foto tarjeta propiedad cara 2 (base64)", "Propietario", "tipo", "marca", "color", "placa", "unidad"),
         "lista_residentes" => array("tipo residente", "nombre", "apellido", "profesion", "ocupacion", "direccion", "email", "genero", "documento", "unidad", "tipo documento"),
-        "lista_visitantes" => array("dicumento", "nombre", "parentesco, unidad"),
+        "lista_visitantes" => array("documento", "nombre", "parentesco","unidad"),
         "lista_empleados" => array("nombre", "apellido", "genero", "documento", "unidad", "tipo documento"),
         "lista_unidades" => null
 
@@ -257,33 +262,32 @@ class ArchivoCargaMasivaController extends Controller
             // **********************************
             if (!empty($data) && $data->count() > 0) {
                 // try {
-                    $indexLista = array(
-                        "lista mascotas" => 0,
-                        "lista vehiculos" => 0,
-                        "lista residentes" => 0,
-                        "lista visitantes" => 0,
-                        "lista empleados" => 0
-                    );
+                //falta guardar en la base de datos
+                $indexLista = array(
+                    "lista mascotas" => 0,
+                    "lista vehiculos" => 0,
+                    "lista residentes" => 0,
+                    "lista visitantes" => 0,
+                    "lista empleados" => 0
+                );
 
-                    for ($i = 0; $i < $data[0]->count(); $i++) {
-                        //hay que eliminar la unidad y todo lo que se creo si es que
-                        //llega a fallar el proceso de acá en adelante
-                        $unidad = $this->crearUnidad($data[0][$i], $tipoUnidad);
-                        $unidad->id = 1; //for have a id aunque ese metodo no este implentado
+                for ($i = 0; $i < $data[0]->count(); $i++) {
+                    //hay que eliminar la unidad y todo lo que se creo si es que
+                    //llega a fallar el proceso de acá en adelante
+                    $unidad = $this->crearUnidad($data[0][$i], $tipoUnidad);
+                    $unidad->id = 1; //for have a id aunque ese metodo no este implentado
 
-                        $saltarRegistros = $unidad->id == 0;
-                        $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros);
-                        $indexLista = $result["index"];
+                    $saltarRegistros = $unidad->id == 0;
+                    $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros);
+                    $indexLista = $result["index"];
 
-                        if ($result["error"]) {
-                            $unidad->delete();
-                        }
+                    if ($result["error"]) {
+                        $unidad->delete();
                     }
+                }
 
-                    var_dump($indexLista);
-
-                    //when finished and all is good
-                    return array('res' => 1, 'msg' => 'Carga masiva terminada.');
+                //when finished and all is good
+                return array('res' => 1, 'msg' => 'Carga masiva terminada.');
                 // } catch (\Throwable $th) {
                 //     return array('res' => 0, 'msg' => 'Error en la carga masiva.');
                 // }
@@ -329,6 +333,7 @@ class ArchivoCargaMasivaController extends Controller
         return array("index" => $indexLista, "error" => $error);
     }
 
+    //crear la lista de mascotas de la unidad que llega
     private function crearListaMascotas($index, $data, $unidad, $saltarRegistros)
     {
         while ($index < $data->count()) {
@@ -342,16 +347,167 @@ class ArchivoCargaMasivaController extends Controller
 
             if ($unidad->numero_letra != $data[$index]["unidad"]) {
                 $index--;
-            break;
+                break;
             }
-
-
-            //se crea la mascota
+            //si saltar segistro es falso, se agrega la mascota (unidad valida)
+            if (!$saltarRegistros) {
+                $mascota = new Mascota();
+                $mascota->codigo = $data['codigo'];
+                $mascota->nombre = $data['nombre'];
+                $mascota->raza = $data['raza'];
+                $mascota->fecha_nacimiento = $data['fecha nacimiento (MM-DD-AAAA)'];
+                $mascota->descripcion = $data['descripcion'];
+                $mascota->foto = $data['foto (base64)'];
+                $mascota->unidad_id = $unidad;
+                $tipoMascota = TipoMascotas::where( //revisar
+                    'tipo',
+                    mb_strtoupper($data['tipo mascota'], 'UTF-8')
+                )->first();
+                dd($tipoMascota);
+                if (!$tipoMascota) {
+                    $tipoMascota = new TipoMascotas();
+                    $tipoMascota->tipo = mb_strtoupper($data['tipo mascota'], 'UTF-8');
+                    $tipoMascota->save();
+                }
+                $mascota->tipo_id = $tipoMascota->id;
+                $mascota->id_conjunto = session('conjunto');
+                $mascota->save();
+            } else {
+                $saltarRegistros = true;
+            }
             $index++;
         }
 
+
         return array("index" => $index, "error" => $saltarRegistros);
     }
+
+    //cargar lista de vehiculos de la unidad
+    private function cargarListaVehiculos($index, $data, $unidad, $saltarRegistros)
+    {
+
+        while ($index < $data->count()) {
+            //si la unidad que  nos dice no es la que vamos agregar decrementamos el
+            //indice y terminamos el ciclo
+            // var_dump($data);
+
+            if ($this->dataVacia($data[$index])) {
+                break;
+            }
+
+            if ($unidad->numero_letra != $data[$index]["unidad"]) {
+                $index--;
+                break;
+            }
+            //si saltar registro es falso, se agrega vehiculo (unidad valida)
+            if (!$saltarRegistros) {
+                $vehiculo = new Vehiculo();
+                $vehiculo->foto_vehiculo = $data['foto vehículo (base64)'];
+                $vehiculo->foto_tajeta_1 = $data['foto tarjeta propiedad cara 1 (base64)'];
+                $vehiculo->foto_tarjeta_2 = $data['foto tarjeta propiedad cara 2 (base64)'];
+                $vehiculo->registra = $data['propietario'];
+                $vehiculo->tipo = $data['tipo'];
+                $vehiculo->marca = $data['marca'];
+                $vehiculo->color = $data['color'];
+                $vehiculo->placa = $data['placa'];
+                $vehiculo->unidad_id = $unidad;
+                $vehiculo->id_conjunto = session('conjunto');
+                $vehiculo->save();
+            } else {
+                $saltarRegistros = true;
+            }
+            $index++;
+        }
+
+
+        return array("index" => $index, "error" => $saltarRegistros);
+    }
+
+    //cargar lista de empleados de la unidad
+    private function cargarListaEmpleados($index, $data, $unidad, $saltarRegistros)
+    {
+
+        while ($index < $data->count()) {
+            //si la unidad que  nos dice no es la que vamos agregar decrementamos el
+            //indice y terminamos el ciclo
+            // var_dump($data);
+
+            if ($this->dataVacia($data[$index])) {
+                break;
+            }
+
+            if ($unidad->numero_letra != $data[$index]["unidad"]) {
+                $index--;
+                break;
+            }
+            //si saltar registro es falso, se agrega empleado (unidad valida)
+            if (!$saltarRegistros) {
+                $empleado = new Empleado();
+                $empleado->nombre = $data['nombre'];
+                $empleado->apellido = $data['apellido'];
+                $empleado->genero = $data['genero'];
+                $empleado->documento = $data['documento'];
+                $tipoDocumento = Tipo_Documento::where( //revisar
+                    'tipo',
+                    mb_strtoupper($data['tipo'], 'UTF-8')
+                )->first();
+                if (!$tipoDocumento) {
+                    $tipoDocumento = new Tipo_Documento();
+                    $tipoDocumento->tipo = mb_strtoupper($data['tipo documento'], 'UTF-8');
+                    $tipoDocumento->save();
+                }
+                $empleado->tipo_documento_id = $tipoDocumento->id;
+                $empleado->unidad_id = $unidad;
+                $empleado->id_conjunto = session('conjunto');
+                $empleado->save();
+            } else {
+                $saltarRegistros = true;
+            }
+            $index++;
+        }
+
+
+        return array("index" => $index, "error" => $saltarRegistros);
+    }
+
+    //cargar lista de visitantes de la unidad
+    private function cargarListaVisitantes($index, $data, $unidad, $saltarRegistros)
+    {
+
+        while ($index < $data->count()) {
+            //si la unidad que  nos dice no es la que vamos agregar decrementamos el
+            //indice y terminamos el ciclo
+            // var_dump($data);
+
+            if ($this->dataVacia($data[$index])) {
+                break;
+            }
+
+            if ($unidad->numero_letra != $data[$index]["unidad"]) {
+                $index--;
+                break;
+            }
+
+            //si saltar registro es falso, se agrega empleado (unidad valida)
+            if (!$saltarRegistros) {
+                $visitante = new Visitante();
+                $visitante->identificacion = $data['documento'];
+                $visitante->nombre = $data['nombre'];
+                $visitante->parentesco = $data['parentesco'];
+                $visitante->unidad_id = $unidad;
+                $visitante->id_conjunto = session('conjunto');
+                $visitante->save();
+            } else {
+                $saltarRegistros = true;
+            }
+            $index++;
+        }
+
+
+        return array("index" => $index, "error" => $saltarRegistros);
+    }
+
+
 
 
     private function dataVacia($data)
