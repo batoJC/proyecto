@@ -9,6 +9,7 @@ use Yajra\Datatables\Datatables;
 use App\Tipo_unidad;
 use App\Conjunto;
 use App\Division;
+use App\User;
 use App\Documento;
 use App\Mascota;
 use App\RegistroFallosCargaUnidades;
@@ -104,7 +105,7 @@ class ArchivoCargaMasivaController extends Controller
      */
     public function show(ArchivoCargaMasiva $archivoCargaMasiva)
     {
-        //
+        return $archivoCargaMasiva;
     }
 
     /**
@@ -142,6 +143,7 @@ class ArchivoCargaMasivaController extends Controller
         try {
             if ($archivoCargaMasiva->ruta != '') {
                 // Elimina el archivo
+                //TODO :only delete when the status are load or completed
                 @unlink(public_path('archivos_masivos/' . $archivoCargaMasiva->ruta));
             }
             $archivoCargaMasiva->delete();
@@ -201,7 +203,7 @@ class ArchivoCargaMasivaController extends Controller
     {
 
         $listas = [];
-        $propiedades = ["Número o letra", "Referencia", "división", "Tipo Division"];
+        $propiedades = ["Número o letra", "Referencia", "División", "Tipo División","Fecha ingreso"];
         $aux = $tipoUnidad->atributos;
         foreach ($aux as $value) {
             if (str_contains($value->nombre, "lista")) {
@@ -274,8 +276,13 @@ class ArchivoCargaMasivaController extends Controller
                 for ($i = 0; $i < $data[0]->count(); $i++) {
                     //hay que eliminar la unidad y todo lo que se creo si es que
                     //llega a fallar el proceso de acá en adelante
-                    $unidad = $this->crearUnidad($data[0][$i], $tipoUnidad);
-                    $unidad->id = 1; //for have a id aunque ese metodo no este implentado
+                    $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $archivo);
+                    if(!$unidad){
+                        $archivo->fila = $i;
+                        $archivo->save();
+                        continue;
+                    }     
+        
 
                     $saltarRegistros = $unidad->id == 0;
                     $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros);
@@ -285,6 +292,8 @@ class ArchivoCargaMasivaController extends Controller
                         $unidad->delete();
                     }
                 }
+
+                var_dump($indexLista);
 
                 //when finished and all is good
                 return array('res' => 1, 'msg' => 'Carga masiva terminada.');
@@ -535,73 +544,105 @@ class ArchivoCargaMasivaController extends Controller
      * @param  \App\Tipo_unidad  $tipoUnidad
      * @return \App\Unidad
      */
-    private function crearUnidad($data, $tipoUnidad)
+    private function crearUnidad($fila, $data, $tipoUnidad, $archivo)
     {
-        $unidad = new Unidad();
+        $fila += 2;
 
+        $k=0;
+        for ($i=0; $i < 10000 ; $i++) {
+            for ($j=0; $j < 1000 ; $j++) {
+                for ($m=0; $m < 10000000 ; $m++) {
+                    $k++;
+                }
+            }
+        }
+
+        return null;
+
+        if ($this->dataVacia($data)) {
+            $descripcion = "Fila vacía, puede ser el fin del archivo";
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+            return null;
+        }
+
+        $unidad = new Unidad();
+        $unidad->numero_letra = $data["numero_o_letra"];
+        $unidad->referencia = $data["referencia"];
+        $unidad->coeficiente = $data["coeficiente"];
+        $unidad->observaciones = $data["observaciones"];
+
+        //verificamos que la division existe y el tipo de division existe
+        $tipoDivision = TipoDivision::where([
+            ['division', mb_strtoupper($data->tipo_division, 'UTF-8')]
+        ])->first();
+
+        if (!$tipoDivision) {
+            $descripcion = "No se encontro el tipo de división";
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+
+            return $unidad;
+        }
+
+        $division = Division::where([
+            ['numero_letra', mb_strtoupper($data['division'], 'UTF-8')],
+            ["id_tipo_division", $tipoDivision->id],
+            ["id_conjunto", session("conjunto")]
+        ])->first();
+
+        if (!$division) {
+            $descripcion = "No se encontro el número de division";
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+
+            return $unidad;
+        }
+
+        $unidad->division_id = $division->id;
+        $unidad->conjunto_id = session("conjunto");
+        $unidad->tipo_unidad_id = $tipoUnidad->id;
+
+        try {
+            $unidad->save();
+        } catch (\Throwable $th) {
+            if(str_contains ($th->getMessage(),"unidad_unica")){
+                $descripcion = "Ya existe una unidad con esas propiedades.";
+            }else{
+                $descripcion = "Error desconocido al crear la unidad.";
+            }
+
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+
+            return $unidad;
+        }
+
+
+        $coeficiente = false;
+        foreach ($tipoUnidad->atributos as $value) {
+            if ($value->nombre == "coeficiente") {
+                $coeficiente = true;
+                break;
+            }
+        }
+
+        if ($coeficiente) { //si tiene coeficiente debe de tener un propietario
+            $propietario = User::where([
+                ['numero_cedula',$data->propietario],
+                ['id_conjunto', session("conjunto")],
+                ["id_rol", 3]
+            ])->first();
+
+            if (!$propietario) {
+                $descripcion = "No se encontro el documento del propietario";
+                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+                $unidad->delete();
+
+                return $unidad;
+            }
+
+            $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso']]);
+        }
         //TODO: create unidad
 
         return $unidad;
-        // foreach ($data[0] as $key => $value) {
-        //     foreach ($value as $key1 => $value1) {
-        //         echo ($key1 . " - " . $value1);
-        //         echo ('\n');
-        //     }
-        //     echo ('procesando' . $i);
-        //     $unidad                    = new Unidad();
-        //     $unidad->numero_letra   = $value->numero_o_letra;
-        //     echo ($key . '-' . $value);
-        //     dd($unidad);
-        //     $unidad['referencia']        = $value['referencia'];
-        //     $unidad['coeficiente'] = $value['coeficiente'];
-        //     $unidad['observaciones'] = $value['observaciones'];
-
-
-        //     //verificar que exsita el propietario
-        //     /*****************************************/
-        //     $usuario = User::where(
-        //         'id',
-        //         mb_strtoupper($value->propietario, 'UTF-8')
-        //     )->first();
-        //     if (!$usuario) {
-        //         //fallo
-        //         $descripcion = "No se encontro el documento del propietario";
-        //         $this->agregarRegistroFallos($key, $descripcion, $archivo->id);
-        //         continue;
-        //     }
-        //     //verificamos que la division existe y el tipo de division existe
-        //     $tipoDivision = TipoDivision::where(
-        //         'division',
-        //         mb_strtoupper($value->tipo_division, 'UTF-8')
-        //     )->first();
-
-        //     if (!$tipoDivision) {
-        //         $descripcion = "No se encontro el número de division";
-        //         $this->agregarRegistroFallos($key, $descripcion, $archivo->id);
-        //         continue;
-        //     }
-        //     $division = Division::where(
-        //         [
-        //             [
-        //                 'numero_letra',
-        //                 mb_strtoupper($value['numero o letra'], 'UTF-8')
-        //             ], [
-        //                 "id_tipo_division", $tipoDivision->id
-        //             ]
-        //         ]
-        //     )->first();
-
-        //     if (!$division) {
-        //         $descripcion = "No se encontro el número de division";
-        //         $this->agregarRegistroFallos($key, $descripcion, $archivo->id);
-        //         continue;
-        //     }
-
-        //     $unidad->$tipoDivision->id = $value['division'];
-
-
-        //     $usuario->unidades()->attach($unidad, ['fecha_ingreso' => date('Y-m-d')]);
-        // }
     }
 
     private function crearResidentesUnidad($data, $tipoUnidad)
