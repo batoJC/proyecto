@@ -48,9 +48,6 @@ Route::group(['middleware' => ['auth']], function () {
 	Route::get('respuesta/{id}', 'QuejasReclamosController@respuesta');
 	// Mascotas Ruta
 	Route::resource('mascotas', 'MascotasController');
-	//Carga archivos
-	Route::post('archivos', 'ArchivoCargaMasivaController@store');
-	Route::delete('archivos/{archivoCargaMasiva}', 'ArchivoCargaMasivaController@destroy');
 	// Proveedores
 	Route::resource('proveedores', 'ProveedorController');
 	// Novedades para unidad
@@ -200,6 +197,12 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//novedades conjunto
 	Route::resource('novedadesConjunto', 'NovedadesConjuntoController');
+
+
+	//Carga masiva de unidades
+	Route::post('archivos', 'ArchivoCargaMasivaController@store');
+	Route::post('estadoProcesoCargaArchivo/{archivoCargaMasiva}', 'ArchivoCargaMasivaController@show');
+	Route::delete('archivos/{archivoCargaMasiva}', 'ArchivoCargaMasivaController@destroy');
 
 
 	/**************************************** */
