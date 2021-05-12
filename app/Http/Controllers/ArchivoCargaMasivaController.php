@@ -8,18 +8,23 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use App\Tipo_unidad;
 use App\Conjunto;
+use App\Division;
+use App\Documento;
+use App\RegistroFallosCargaUnidades;
+use App\TipoDivision;
+use App\Unidad;
 use Illuminate\Support\Facades\Auth;
 use Excel;
-
+use Excel\Concerns\WithMultipleSheets;
 
 class ArchivoCargaMasivaController extends Controller
 {
 
     private static $_ATRIBUTOS_POR_LISTA = array(
-        "lista_mascotas" => array("código","nombre","raza","fecha naciemiento (MM-DD-AAAA)","descripcion","foto (base64)", "unidad","tipo mascota"),
-        "lista_vehiculos" => array("foto vehículo (base64)","foto tarjeta propiedad cara 1 (base64)","foto tarjeta propiedad cara 2 (base64)", "Propietario","tipo", "marca", "color", "placa", "unidad"),
-        "lista_residentes" => array("tipo residente","nombre","apellido", "profesion", "ocupacion", "direccion", "email", "genero", "documento", "unidad", "tipo documento"),
-        "lista_visitantes" => array("dicumento","nombre","parentesco, unidad"),
+        "lista_mascotas" => array("código", "nombre", "raza", "fecha naciemiento (MM-DD-AAAA)", "descripcion", "foto (base64)", "unidad", "tipo mascota"),
+        "lista_vehiculos" => array("foto vehículo (base64)", "foto tarjeta propiedad cara 1 (base64)", "foto tarjeta propiedad cara 2 (base64)", "Propietario", "tipo", "marca", "color", "placa", "unidad"),
+        "lista_residentes" => array("tipo residente", "nombre", "apellido", "profesion", "ocupacion", "direccion", "email", "genero", "documento", "unidad", "tipo documento"),
+        "lista_visitantes" => array("dicumento", "nombre", "parentesco, unidad"),
         "lista_empleados" => array("nombre", "apellido", "genero", "documento", "unidad", "tipo documento"),
         "lista_unidades" => null
 
@@ -63,9 +68,9 @@ class ArchivoCargaMasivaController extends Controller
             $archivoCargaMasiva = new ArchivoCargaMasiva();
             $archivoCargaMasiva->nombre_archivo = $request->nombre_archivo;
             $archivoCargaMasiva->estado = 'subido';
-            $archivoCargaMasiva->fila=0;
-            $archivoCargaMasiva->procesados=0;
-            $archivoCargaMasiva->fallos=0;
+            $archivoCargaMasiva->fila = 0;
+            $archivoCargaMasiva->procesados = 0;
+            $archivoCargaMasiva->fallos = 0;
             $archivoCargaMasiva->tipo_unidad_id = $request->tipo_unidad;
             $archivoCargaMasiva->conjunto_id = session('conjunto');
             if ($request->file('archivo')) {
@@ -129,7 +134,7 @@ class ArchivoCargaMasivaController extends Controller
     public function destroy(ArchivoCargaMasiva $archivoCargaMasiva)
     {
         //dd($archivoCargaMasiva);        
-        try {            
+        try {
             if ($archivoCargaMasiva->ruta != '') {
                 // Elimina el archivo
                 @unlink(public_path('archivos_masivos/' . $archivoCargaMasiva->ruta));
@@ -166,7 +171,7 @@ class ArchivoCargaMasivaController extends Controller
                     })->addColumn('action', function ($archivo) {
                         return '<a data-toggle="tooltip" data-placement="top"
                                     title="Procesar el archivo" class="btn btn-default"
-                                    onclick="loadData(' . $archivo->id . ')">
+                                    onclick="runUpload(' . $archivo->id . ')">
                                     <i class="fa fa-play"></i>
                                 </a>
                                 <a data-toggle="tooltip" data-placement="top"
@@ -187,32 +192,32 @@ class ArchivoCargaMasivaController extends Controller
 
     // Generar un excel de acuerdo al tipo de unidad y los datos requeridos
     // para una carga masiva
-    public function downloadExcel(Tipo_unidad $tipoUnidad){
+    public function downloadExcel(Tipo_unidad $tipoUnidad)
+    {
 
         $listas = [];
-        $propiedades = ["Número o letra","Referencia","división"];
+        $propiedades = ["Número o letra", "Referencia", "división", "tipo_division"];
         $aux = $tipoUnidad->atributos;
         foreach ($aux as $value) {
-            if (str_contains($value->nombre,"lista")){
+            if (str_contains($value->nombre, "lista")) {
                 $listas[] = $value->nombre;
                 continue;
             }
 
             $propiedades[] = $value->nombre;
-            
         }
 
         $tipoUnidadLabel = strtolower($tipoUnidad->nombre);
 
-        Excel::create('plantilla '.ucfirst($tipoUnidadLabel), function($excel) use($tipoUnidadLabel,$propiedades,$listas){
+        Excel::create('plantilla ' . ucfirst($tipoUnidadLabel), function ($excel) use ($tipoUnidadLabel, $propiedades, $listas) {
 
-            $excel->sheet("attributos ".$tipoUnidadLabel, function ($sheet) use ($propiedades) {
+            $excel->sheet("attributos " . $tipoUnidadLabel, function ($sheet) use ($propiedades) {
                 $sheet->fromArray($propiedades, NULL, 'A1');
             });
 
             foreach ($listas as $key => $value) {
                 $encabezados_hoja = $this::$_ATRIBUTOS_POR_LISTA[$value];
-                if (!$encabezados_hoja){
+                if (!$encabezados_hoja) {
                     continue;
                 }
                 $excel->sheet(str_replace("_", " ", $value), function ($sheet) use ($encabezados_hoja) {
@@ -220,8 +225,118 @@ class ArchivoCargaMasivaController extends Controller
                     $sheet->fromArray($encabezados_hoja, NULL, 'A1');
                 });
             }
-
         })->download('xlsx');
     }
 
+    // Custom Method para cargar la vista por get
+    // ******************************************
+    public function unidades_csv()
+    {
+        //modificar todo
+        $user      = User::where('id_conjunto', session('conjunto'))->get();
+        $conjuntos = Conjunto::where('id', session('conjunto'))->first();
+        return view('admin.usuarios.masiva')
+            ->with('user', $user)
+            ->with('conjuntos', $conjuntos);
+    }
+
+    public function unidades_csv_post(Request $request)
+    {    // Validador si llega un archivo
+        // *****************************
+
+        $archivo = ArchivoCargaMasiva::find($request->id);
+
+        if ($archivo != null) {
+            $path = 'public/archivos_masivos/' . $archivo->ruta;
+            $data = Excel::load($path, function ($reader) {
+            })->get();
+            // Validador si el arreglo está vacío
+            // **********************************
+            echo ('encontre archivo');
+            if (!empty($data) && $data->count() > 0) {
+                try {
+                    echo ('hay un archivo');
+                    // dd($data[0]);
+                    //procesamos unidad (primera hoja)
+                    $i = 0;
+                    foreach ($data[0] as $key => $value) {
+                        echo ('procesando' . $i);
+                        $unidad                    = new Unidad();
+                        $unidad->numero_letra   = $value->numero_o_letra;
+                        echo($key .'-'. $value);
+                        dd($unidad);
+                        $unidad['referencia']        = $value['referencia'];
+                        $unidad['coeficiente'] = $value['coeficiente'];
+                        $unidad['observaciones'] = $value['observaciones'];
+                        dd($unidad);
+
+                        //verificar que exsita el propietario
+                        /*****************************************/
+                        $usuario = User::where(
+                            'id',
+                            mb_strtoupper($value->propietario, 'UTF-8')
+                        )->first();
+                        if (!$usuario) {
+                            //fallo
+                            $descripcion = "No se encontro el documento del propietario";
+                            $this->agregarRegistroFallos($key, $descripcion, $archivo->id);
+                            continue;
+                        }
+                        //verificamos que la division existe y el tipo de division existe
+                        $tipoDivision = TipoDivision::where(
+                            'division',
+                            mb_strtoupper($value->tipo_division, 'UTF-8')
+                        )->first();
+
+                        if (!$tipoDivision) {
+                            $descripcion = "No se encontro el número de division";
+                            $this->agregarRegistroFallos($key, $descripcion, $archivo->id);
+                            continue;
+                        }
+                        $division = Division::where(
+                            [
+                                [
+                                    'numero_letra',
+                                    mb_strtoupper($value['numero o letra'], 'UTF-8')
+                                ], [
+                                    "id_tipo_division", $tipoDivision->id
+                                ]
+                            ]
+                        )->first();
+
+                        if (!$division) {
+                            $descripcion = "No se encontro el número de division";
+                            $this->agregarRegistroFallos($key, $descripcion, $archivo->id);
+                            continue;
+                        }
+
+                        $unidad->$tipoDivision->id = $value['division'];
+
+
+                        $usuario->unidades()->attach($unidad, ['fecha_ingreso' => date('Y-m-d')]);
+                        $i++;
+                    }
+                    // return redirect('cargaMasivaUnidad/{id}')
+                    //     ->with('status', 'Se insertó correctamente')
+                    //     ->with('last', "El último registro fue '$last_name' cc: '$last_cc'");
+                } catch (\Throwable $th) {
+                    // return redirect('usuarios')
+                    //     ->with('error', 'Ocurrió un error al registrar el último registro, verifique que no se encuentre ya registrado.')
+                    //     ->with('last', "El último registro fue '$last_name' cc: '$last_cc'");
+                }
+            }
+        } else {
+            //swal('Error!', 'Ocurrió un error en el servidor, no se ingresó archivo', 'error');
+        }
+    }
+
+    private function agregarRegistroFallos($unRegistro, $descripcion, $idArchivo)
+    {
+
+        $registroF = new RegistroFallosCargaUnidades();
+        $registroF->registro = $unRegistro;
+        $registroF->descripcion_fallo = $descripcion;
+        $registroF->archivo_masivo_id = $idArchivo;
+        $registroF->save();
+    }
 }
