@@ -252,19 +252,27 @@ class ArchivoCargaMasivaController extends Controller
             $path = 'public/archivos_masivos/' . $archivo->ruta;
             $data = Excel::load($path, function ($reader) {
             })->get();
+
+
             // Validador si el arreglo está vacío
             // **********************************   
+
+            // dd($data->getTitle());
+
+            echo ('');
 
             if (!empty($data) && $data->count() > 0) {
                 try {
 
-                    foreach($data as $key=>$value){                        
-                        echo($key.' - '. $value);
-                        echo('</br>');
-                    }
 
-                    $this->crearUnidad($data[0],$tipoUnidad);
-                    // $this->crearResidentesUnidad();
+                    for ($i = 0; $i < $data[0]->count(); $i++) {                        
+                        $unidad = $this->crearUnidad($data[0][$i], $tipoUnidad);
+                    }
+                    
+                    for ($i = 1; $i < $data->count(); $i++) {
+                        echo ($data[$i]->getTitle());
+                    }
+                    //$this->crearResidentesUnidad();
 
 
                     $listas = [];
@@ -371,7 +379,7 @@ class ArchivoCargaMasivaController extends Controller
         // }
     }
 
-    private function crearResidentesUnidad($data, $tipoUnidad){
-
+    private function crearResidentesUnidad($data, $tipoUnidad)
+    {
     }
 }

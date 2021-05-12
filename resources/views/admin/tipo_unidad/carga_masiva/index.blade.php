@@ -309,9 +309,7 @@
     }
 
     //funcion para arrancar el procesamiento del archivo
-    function runUpload(id) {
-        console.log(id)
-        console.log('corriendo...')
+    function runUpload(id) {        
         //muestra en toda la pantalla procesando
         $('#loading').css("display", "flex")
             .hide()
