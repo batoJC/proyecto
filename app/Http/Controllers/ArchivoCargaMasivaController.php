@@ -22,16 +22,19 @@ use App\Visitante;
 use Illuminate\Support\Facades\Auth;
 use Excel;
 use App\TipoMascotas;
+use App\Empleado;
+use App\Residentes;
+
 
 class ArchivoCargaMasivaController extends Controller
 {
 
     private static $_ATRIBUTOS_POR_LISTA = array(
-        "lista_mascotas" => array("código", "nombre", "raza", "fecha nacimiento (MM-DD-AAAA)", "descripcion", "foto (base64)", "unidad", "tipo mascota"),
-        "lista_vehiculos" => array("foto vehículo (base64)", "foto tarjeta propiedad cara 1 (base64)", "foto tarjeta propiedad cara 2 (base64)", "Propietario", "tipo", "marca", "color", "placa", "unidad"),
-        "lista_residentes" => array("tipo residente", "nombre", "apellido", "profesion", "ocupacion", "direccion", "email", "genero", "documento", "unidad", "tipo documento"),
-        "lista_visitantes" => array("documento", "nombre", "parentesco","unidad"),
-        "lista_empleados" => array("nombre", "apellido", "genero", "documento", "unidad", "tipo documento"),
+        "lista_mascotas" => array("código", "nombre", "raza", "fecha nacimiento", "fecha ingreso", "descripcion", "foto (base64)", "unidad", "tipo mascota"),
+        "lista_vehiculos" => array("foto vehículo (base64)", "foto tarjeta propiedad cara 1 (base64)", "foto tarjeta propiedad cara 2 (base64)", "Propietario", "fecha ingreso", "tipo", "marca", "color", "placa", "unidad"),
+        "lista_residentes" => array("tipo residente", "nombre", "apellido", "fecha ingreso", "profesion", "ocupacion", "direccion", "email", "genero", "documento", "unidad", "tipo documento"),
+        "lista_visitantes" => array("documento", "nombre", "parentesco", "unidad", "fecha ingreso",),
+        "lista_empleados" => array("nombre", "apellido", "genero", "documento", "unidad", "tipo documento", "fecha ingreso"),
         "lista_unidades" => null
 
     );
@@ -203,7 +206,7 @@ class ArchivoCargaMasivaController extends Controller
     {
 
         $listas = [];
-        $propiedades = ["Número o letra", "Referencia", "División", "Tipo División","Fecha ingreso"];
+        $propiedades = ["Número o letra", "Referencia", "División", "Tipo División", "Fecha ingreso propietario"];
         $aux = $tipoUnidad->atributos;
         foreach ($aux as $value) {
             if (str_contains($value->nombre, "lista")) {
@@ -277,12 +280,12 @@ class ArchivoCargaMasivaController extends Controller
                     //hay que eliminar la unidad y todo lo que se creo si es que
                     //llega a fallar el proceso de acá en adelante
                     $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $archivo);
-                    if(!$unidad){
+                    if (!$unidad) {
                         $archivo->fila = $i;
                         $archivo->save();
                         continue;
-                    }     
-        
+                    }
+
 
                     $saltarRegistros = $unidad->id == 0;
                     $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros);
@@ -292,8 +295,6 @@ class ArchivoCargaMasivaController extends Controller
                         $unidad->delete();
                     }
                 }
-
-                var_dump($indexLista);
 
                 //when finished and all is good
                 return array('res' => 1, 'msg' => 'Carga masiva terminada.');
@@ -321,18 +322,25 @@ class ArchivoCargaMasivaController extends Controller
 
                     break;
                 case "lista vehiculos":
+                    $result = $this->crearListaVehiculos($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
                 case "lista residentes":
+                    //$saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
                 case "lista visitantes":
+                    $result = $this->crearListaVisitantes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
                 case "lista empleados":
+                    $result = $this->crearListaEmpleados($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
@@ -355,34 +363,31 @@ class ArchivoCargaMasivaController extends Controller
             }
 
             if ($unidad->numero_letra != $data[$index]["unidad"]) {
-                $index--;
                 break;
             }
             //si saltar segistro es falso, se agrega la mascota (unidad valida)
             if (!$saltarRegistros) {
                 $mascota = new Mascota();
-                $mascota->codigo = $data['codigo'];
-                $mascota->nombre = $data['nombre'];
-                $mascota->raza = $data['raza'];
-                $mascota->fecha_nacimiento = $data['fecha nacimiento (MM-DD-AAAA)'];
-                $mascota->descripcion = $data['descripcion'];
-                $mascota->foto = $data['foto (base64)'];
-                $mascota->unidad_id = $unidad;
+                $mascota->codigo = $data[$index]['codigo'];
+                $mascota->nombre = $data[$index]['nombre'];
+                $mascota->raza = $data[$index]['raza'];
+                $mascota->fecha_nacimiento = date("Y-m-d", strtotime($data[$index]["fecha_nacimiento"]));
+                $mascota->descripcion = $data[$index]['descripcion'];
+                $mascota->foto = $data[$index]['foto_base64'];
+                $mascota->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));                
+                $mascota->unidad_id = $unidad->id;
                 $tipoMascota = TipoMascotas::where( //revisar
                     'tipo',
-                    mb_strtoupper($data['tipo mascota'], 'UTF-8')
+                    mb_strtoupper($data[$index]['tipo_mascota'], 'UTF-8')
                 )->first();
-                dd($tipoMascota);
                 if (!$tipoMascota) {
                     $tipoMascota = new TipoMascotas();
-                    $tipoMascota->tipo = mb_strtoupper($data['tipo mascota'], 'UTF-8');
+                    $tipoMascota->tipo = mb_strtoupper($data[$index]['tipo_mascota'], 'UTF-8');
                     $tipoMascota->save();
                 }
                 $mascota->tipo_id = $tipoMascota->id;
                 $mascota->id_conjunto = session('conjunto');
                 $mascota->save();
-            } else {
-                $saltarRegistros = true;
             }
             $index++;
         }
@@ -392,7 +397,7 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     //cargar lista de vehiculos de la unidad
-    private function cargarListaVehiculos($index, $data, $unidad, $saltarRegistros)
+    private function crearListaVehiculos($index, $data, $unidad, $saltarRegistros)
     {
 
         while ($index < $data->count()) {
@@ -405,25 +410,23 @@ class ArchivoCargaMasivaController extends Controller
             }
 
             if ($unidad->numero_letra != $data[$index]["unidad"]) {
-                $index--;
                 break;
             }
             //si saltar registro es falso, se agrega vehiculo (unidad valida)
             if (!$saltarRegistros) {
                 $vehiculo = new Vehiculo();
-                $vehiculo->foto_vehiculo = $data['foto vehículo (base64)'];
-                $vehiculo->foto_tajeta_1 = $data['foto tarjeta propiedad cara 1 (base64)'];
-                $vehiculo->foto_tarjeta_2 = $data['foto tarjeta propiedad cara 2 (base64)'];
-                $vehiculo->registra = $data['propietario'];
-                $vehiculo->tipo = $data['tipo'];
-                $vehiculo->marca = $data['marca'];
-                $vehiculo->color = $data['color'];
-                $vehiculo->placa = $data['placa'];
-                $vehiculo->unidad_id = $unidad;
+                $vehiculo->foto_vehiculo = $data[$index]['foto_vehiculo_base64'];
+                $vehiculo->foto_tarjeta_1 = $data[$index]['foto_tarjeta_propiedad_cara_1_base64'];
+                $vehiculo->foto_tarjeta_2 = $data[$index]['foto_tarjeta_propiedad_cara_2_base64'];
+                $vehiculo->registra = $data[$index]['propietario'];
+                $vehiculo->tipo = $data[$index]['tipo'];
+                $vehiculo->marca = $data[$index]['marca'];
+                $vehiculo->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
+                $vehiculo->color = $data[$index]['color'];
+                $vehiculo->placa = $data[$index]['placa'];
+                $vehiculo->unidad_id = $unidad->id;
                 $vehiculo->id_conjunto = session('conjunto');
                 $vehiculo->save();
-            } else {
-                $saltarRegistros = true;
             }
             $index++;
         }
@@ -433,7 +436,7 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     //cargar lista de empleados de la unidad
-    private function cargarListaEmpleados($index, $data, $unidad, $saltarRegistros)
+    private function crearListaEmpleados($index, $data, $unidad, $saltarRegistros)
     {
 
         while ($index < $data->count()) {
@@ -446,31 +449,29 @@ class ArchivoCargaMasivaController extends Controller
             }
 
             if ($unidad->numero_letra != $data[$index]["unidad"]) {
-                $index--;
                 break;
             }
             //si saltar registro es falso, se agrega empleado (unidad valida)
             if (!$saltarRegistros) {
                 $empleado = new Empleado();
-                $empleado->nombre = $data['nombre'];
-                $empleado->apellido = $data['apellido'];
-                $empleado->genero = $data['genero'];
-                $empleado->documento = $data['documento'];
-                $tipoDocumento = Tipo_Documento::where( //revisar
+                $empleado->nombre = $data[$index]['nombre'];
+                $empleado->apellido = $data[$index]['apellido'];
+                $empleado->genero = $data[$index]['genero'];
+                $empleado->documento = $data[$index]['documento'];
+                $empleado->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
+                $tipoDocumento = Tipo_Documento::where(
                     'tipo',
-                    mb_strtoupper($data['tipo'], 'UTF-8')
+                    mb_strtoupper($data[$index]['tipo_documento'], 'UTF-8')
                 )->first();
                 if (!$tipoDocumento) {
                     $tipoDocumento = new Tipo_Documento();
-                    $tipoDocumento->tipo = mb_strtoupper($data['tipo documento'], 'UTF-8');
+                    $tipoDocumento->tipo = mb_strtoupper($data[$index]['tipo_documento'], 'UTF-8');
                     $tipoDocumento->save();
                 }
                 $empleado->tipo_documento_id = $tipoDocumento->id;
-                $empleado->unidad_id = $unidad;
+                $empleado->unidad_id = $unidad->id;
                 $empleado->id_conjunto = session('conjunto');
                 $empleado->save();
-            } else {
-                $saltarRegistros = true;
             }
             $index++;
         }
@@ -480,7 +481,7 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     //cargar lista de visitantes de la unidad
-    private function cargarListaVisitantes($index, $data, $unidad, $saltarRegistros)
+    private function crearListaVisitantes($index, $data, $unidad, $saltarRegistros)
     {
 
         while ($index < $data->count()) {
@@ -493,21 +494,19 @@ class ArchivoCargaMasivaController extends Controller
             }
 
             if ($unidad->numero_letra != $data[$index]["unidad"]) {
-                $index--;
                 break;
             }
 
             //si saltar registro es falso, se agrega empleado (unidad valida)
             if (!$saltarRegistros) {
                 $visitante = new Visitante();
-                $visitante->identificacion = $data['documento'];
-                $visitante->nombre = $data['nombre'];
-                $visitante->parentesco = $data['parentesco'];
-                $visitante->unidad_id = $unidad;
+                $visitante->identificacion = $data[$index]['documento'];
+                $visitante->nombre = $data[$index]['nombre'];
+                $visitante->parentesco = $data[$index]['parentesco'];
+                $visitante->unidad_id = $unidad->id;
+                $visitante->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
                 $visitante->id_conjunto = session('conjunto');
                 $visitante->save();
-            } else {
-                $saltarRegistros = true;
             }
             $index++;
         }
@@ -547,17 +546,6 @@ class ArchivoCargaMasivaController extends Controller
     private function crearUnidad($fila, $data, $tipoUnidad, $archivo)
     {
         $fila += 2;
-
-        $k=0;
-        for ($i=0; $i < 10000 ; $i++) {
-            for ($j=0; $j < 1000 ; $j++) {
-                for ($m=0; $m < 10000000 ; $m++) {
-                    $k++;
-                }
-            }
-        }
-
-        return null;
 
         if ($this->dataVacia($data)) {
             $descripcion = "Fila vacía, puede ser el fin del archivo";
@@ -603,9 +591,9 @@ class ArchivoCargaMasivaController extends Controller
         try {
             $unidad->save();
         } catch (\Throwable $th) {
-            if(str_contains ($th->getMessage(),"unidad_unica")){
+            if (str_contains($th->getMessage(), "unidad_unica")) {
                 $descripcion = "Ya existe una unidad con esas propiedades.";
-            }else{
+            } else {
                 $descripcion = "Error desconocido al crear la unidad.";
             }
 
@@ -625,7 +613,7 @@ class ArchivoCargaMasivaController extends Controller
 
         if ($coeficiente) { //si tiene coeficiente debe de tener un propietario
             $propietario = User::where([
-                ['numero_cedula',$data->propietario],
+                ['numero_cedula', $data->propietario],
                 ['id_conjunto', session("conjunto")],
                 ["id_rol", 3]
             ])->first();
@@ -638,14 +626,10 @@ class ArchivoCargaMasivaController extends Controller
                 return $unidad;
             }
 
-            $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso']]);
+            $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso_propietario']]);
         }
         //TODO: create unidad
 
         return $unidad;
-    }
-
-    private function crearResidentesUnidad($data, $tipoUnidad)
-    {
     }
 }
