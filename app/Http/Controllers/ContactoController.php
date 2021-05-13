@@ -38,23 +38,71 @@ class ContactoController extends Controller
      */
     public function store(Request $request)
     {
-        $contacto          = new Contacto();
-        $contacto->correo  = $request->correo;
-        $contacto->mensaje = $request->mensaje;
-        $contacto->save();
+        $request->nombre = trim($request->nombre, " \n\r\t\v\0");
+        $request->email = trim($request->email, " \n\r\t\v\0");
+        $request->mensaje = trim($request->mensaje, " \n\r\t\v\0");
 
-        // Envio de correo que alerta la comunicación
-        // ******************************************
+        if ($request->nombre == "") {
+            return ["res" => 0, "msg" => "Debes de ingresar un nombre para saber como llamarte cuando nos comuniquemos contigo."];
+        }
 
-        $data = array(
-            'name' => 'Gestion Copropietarios',
-        );
+        if ($request->email == "") {
+            return ["res" => 0, "msg" => "Hola " . $request->nombre . ", debes de ingresar un correo para poder contactarnos contigo."];
+        }
 
-        //TODO: revisar este envio
-        Mail::send('emails.contacto', $data, function ($message) {
-            $message->from('gestioncopropietario@gmail.com', 'Gestion Copropietarios');
-            $message->to('agrupacion2007@gmail.com')->subject('¡Un Nuevo Contacto!');
-        });
+        if ($request->mensaje == "") {
+            return ["res" => 0, "msg" => "Hola " . $request->nombre . ", debes de ingresar un mensaje para saber como podemos ayudarte."];
+        }
+
+        try {
+
+            $url = 'https://www.google.com/recaptcha/api/siteverify';
+            $remoteip = $_SERVER['REMOTE_ADDR'];
+            $data = [
+                'secret' => config('services.recaptcha.secret'),
+                'response' => $request->get('recaptcha'),
+                'remoteip' => $remoteip
+            ];
+            $options = [
+                'http' => [
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method' => 'POST',
+                    'content' => http_build_query($data)
+                ]
+            ];
+            $context = stream_context_create($options);
+            $result = file_get_contents($url, false, $context);
+            $resultJson = json_decode($result);
+            if ($resultJson->success != true) {
+                return ["res" => 0, "msg" => $request->nombre . ", nuestra conexión con google a fallado por favor vuelve a intentar."];
+            }
+            if ($resultJson->score < 0.3) {
+                return ["res" => 0, "msg" => $request->nombre . ", detectamos que tu petición no es válida según google, si sigues teniendo problemas escribemos a nuestro correo de contacto."];
+            }
+
+
+
+            $contacto          = new Contacto();
+            $contacto->nombre  = $request->nombre;
+            $contacto->email  = $request->email;
+            $contacto->mensaje = $request->mensaje;
+            $contacto->save();
+
+            // Envio de correo que alerta la comunicación
+            // ******************************************
+            $data = array(
+                'name' => 'Gestion Copropietarios',
+            );
+            //TODO: revisar este envio
+            Mail::send('emails.contacto', $data, function ($message) {
+                $message->from('gestioncopropietario@gmail.com', 'Gestion Copropietarios');
+                $message->to('juacagiri@gmail.com')->subject('¡Un Nuevo Contacto!');
+            });
+
+            return ["res" => 1, "msg" => $request->nombre . ", hemos recibido tu mensaje y nos pondremos en contacto contigo lo más rápido posible."];
+        } catch (\Throwable $th) {
+            return ["res" => 0, "msg" => "Hola " . $request->nombre . ", lo sentimos ocurrió un problema al registrar tu mensaje."];
+        }
     }
 
     /**
