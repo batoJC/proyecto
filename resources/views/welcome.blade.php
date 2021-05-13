@@ -85,7 +85,7 @@
                                                     Sin rol
                                                     <i class="fa fa-arrow-right"></i>
                                                 </a>
-                                            @endif  
+                                            @endif
                                         @else
                                             <a href="{{ url('login') }}" class="options-navbar-responsive anchor">Ingreso</a>
                                         @endauth
@@ -166,7 +166,7 @@
                                             Sin rol
                                             <i class="fa fa-arrow-right"></i>
                                         </a>
-                                    @endif  
+                                    @endif
                                 @else
                                     <a href="{{ url('login') }}" class="options-navbar">Ingreso</a>
                                 @endauth
@@ -188,7 +188,7 @@
                         <div class="textos-centro">
                             <h5 id="scroll-position-1">¿Qué esperas para conocernos?</h5>
                             <h2>
-                                ¡Hola! Somos 
+                                ¡Hola! Somos
                                 <span>
                                     Gestión Copropietario
                                 </span>
@@ -203,9 +203,9 @@
             </div>
             <div class="second-content" id="quienes_somos">
                 <div class="row reset-styles">
-                    
+
                     <br>
-                   
+
                         <h2 class="text-center">
                             <span class="quienes">
                                 &nbsp;¿Quienes
@@ -220,7 +220,7 @@
                         </p>
                         <br>
 
-                   
+
                 </div>
             </div>
             <div class="third-content">
@@ -297,7 +297,7 @@
                             <div class="col-lg-8 grandchild-content">
                                 <h4 class="text-center">Administra tu Propiedad</h4>
                                 <p class="text-justify">
-                                    Organiza, Programa, Agenda todo lo que incumbe con tu propiedad de manera ágil, rápida y sencilla 
+                                    Organiza, Programa, Agenda todo lo que incumbe con tu propiedad de manera ágil, rápida y sencilla
                                 </p>
                             </div>
                         </div>
@@ -309,8 +309,8 @@
                             <div class="col-lg-8 grandchild-content">
                                 <h4 class="text-center">Soporte 24 / 7</h4>
                                 <p class="text-justify">
-                                    ¿Tienes problemas? ¿Dudas? Estamos ahí para tí. 
-                                    Estaremos apoyandote en todo lo que necesites. 
+                                    ¿Tienes problemas? ¿Dudas? Estamos ahí para tí.
+                                    Estaremos apoyandote en todo lo que necesites.
                                 </p>
                             </div>
                         </div>
@@ -323,7 +323,7 @@
                                 <h4 class="text-center">Facturación</h4>
                                 <p class="text-justify">
                                     ¿Cansado de los trámites tediosos de las facturas?
-                                    Nosotros te gestionamos la facturación, rapida y ágilmente. 
+                                    Nosotros te gestionamos la facturación, rapida y ágilmente.
                                 </p>
                             </div>
                         </div>
@@ -335,7 +335,7 @@
                             <div class="col-lg-8 grandchild-content">
                                 <h4 class="text-center">Tus datos están seguros</h4>
                                 <p class="text-justify">
-                                    Tus datos están seguros en nuestros servidores, 
+                                    Tus datos están seguros en nuestros servidores,
                                     contamos con copias de seguridad programadas.
                                 </p>
                             </div>
@@ -396,7 +396,7 @@
             <div class="seventh-content">
                 <div class="col-lg-12">
                     <h5 class="text-center">
-                        Mis 
+                        Mis
                         <span class="nuestro">
                             Encomientas
                         </span>
@@ -467,11 +467,12 @@
                                     <div class="col-md-8">
                                         <select name="id_conjunto" id="id_conjunto" class="form-control field-3 select-2">
                                             <option value="">Seleccione...</option>
-                                            @foreach($conjunto as $conjunt)
+                                            {{-- This is a issue of security show for all user the ids and names of conjuntos --}}
+                                            {{-- @foreach($conjunto as $conjunt)
                                                 <option value="{{ $conjunt->id }}">
                                                     {{ $conjunt->nombre }}
                                                 </option>
-                                            @endforeach
+                                            @endforeach --}}
                                         </select>
                                     </div>
                                 </div>
@@ -624,7 +625,7 @@
     <script src="{{ asset('js/custom_validator.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script>
-        
+
         // Código hermoso, select dependiente precioso ♥
         // *********************************************
         $('#id_conjunto').on('change', function(e){
@@ -641,8 +642,8 @@
               })
             });
         });
-    
-        // Select 2 
+
+        // Select 2
         // ****************
         $('.select-2').select2({
             // Este es el id de la ventana modal #modal-form
@@ -662,7 +663,7 @@
                     swal("¡Ya nos ha llegado tu mensaje!", "Muy pronto nos pondremos en contacto", "success")
                         .then((value) => {
                         location.reload();
-                    });                
+                    });
                 },
                 error: function(){
                     swal("Operación cancelada", "Lo sentimos, vuelve a intentarlo", "error");
@@ -698,7 +699,7 @@
                     error: function(){
                         swal("Ocurrió un error", "Lo sentimos, vuelve a intentarlo", "error");
                     }
-                }); 
+                });
             } else {
                 swal("Contraseña Incorrecta", "La contraseña no coincide, intentalo de nuevo", "error")
                         .then((value) => {

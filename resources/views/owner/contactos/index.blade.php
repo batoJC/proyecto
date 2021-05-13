@@ -16,10 +16,10 @@
 			</div>
 			<div class="col-1 col md-1 text-right">
 				<div class="btn-group">
-					<i  data-placement="left" 
-						title="Ayuda" 
-						data-toggle="dropdown" 
-						type="button" 
+					<i  data-placement="left"
+						title="Ayuda"
+						data-toggle="dropdown"
+						type="button"
 						aria-expanded="false"
 						class="fa blue fa-question-circle-o ayuda">
 					</i>
@@ -31,7 +31,7 @@
 				</div>
 			</div>
             <div class="col-md-12">
-            	
+
 				<div class="alert alert-success-original alert-dismissible" role="alert">
 					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 						<span aria-hidden="true">x</span>
@@ -46,6 +46,7 @@
 				@include('owner.contactos.form')
 				<table id="contactos-table" class="table table-striped">
 					<thead>
+						<th>Nombre</th>
 						<th>Correo</th>
 						<th>Mensaje</th>
 						<th>Fecha de envio</th>
@@ -84,7 +85,8 @@
           	serverSide: true,
           	ajax : actualizarTabla,
           	columns: [
-          		{ data: 'correo', name: 'correo'},
+          		{ data: 'nombre', name: 'nombre'},
+          		{ data: 'email', name: 'email'},
           		{ data: 'mensaje', name: 'mensaje'},
           		{ data: 'created_at', name: 'created_at'},
           		{ data: 'action', name: 'action', orderable: false, searchable: false},
@@ -112,7 +114,7 @@
                 }
             }
 		});
-		
+
 		// Mostrar registro
 		// ****************
 		function showForm(id){
@@ -154,7 +156,7 @@
                     type: "POST",
                     data: {
                           '_token' : csrf_token,
-                    }, 
+                    },
                     success: function(data){
                         swal("Operación Exitosa", "El procedimiento se ha llevado acabo con éxito", "success")
                             .then((value) => {
