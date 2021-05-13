@@ -24,7 +24,7 @@ use Excel;
 use App\TipoMascotas;
 use App\Empleado;
 use App\Residentes;
-
+use Symfony\Component\VarDumper\Cloner\Data;
 
 class ArchivoCargaMasivaController extends Controller
 {
@@ -328,7 +328,8 @@ class ArchivoCargaMasivaController extends Controller
 
                     break;
                 case "lista residentes":
-                    //$saltarRegistros = $result["error"];
+                    $result=$this->crearListaResdentes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
@@ -348,6 +349,61 @@ class ArchivoCargaMasivaController extends Controller
         }
 
         return array("index" => $indexLista, "error" => $error);
+    }
+
+    //crear la lista de residentes de la unidad
+    private function crearListaResdentes($index, $data, $unidad, $saltarRegistros)
+    {
+        while ($index < $data->count()) {
+            //si la unidad que  nos dice no es la que vamos agregar decrementamos el
+            //indice y terminamos el ciclo
+            // var_dump($data);
+
+            if ($this->dataVacia($data[$index])) {
+                break;
+            }
+
+            if ($unidad->numero_letra != $data[$index]["unidad"]) {
+                break;
+            }
+            //si saltar segistro es falso, se agrega la mascota (unidad valida)
+            if (!$saltarRegistros) {
+                dd($data);
+                $residente = new Residentes();
+                $residente->tipo_residente = $data[$index]['tipo_residente'];
+                $residente->nombre = $data[$index]['nombre'];
+                $residente->apellido = $data[$index]['apellido'];
+                $residente->profesion = $data[$index]['profesion'];
+                $residente->ocupacion = $data[$index]['ocupacion'];
+                $residente->direccion = $data[$index]['direccion'];
+                $residente->email = $data[$index]['email'];
+                $residente->fecha_nacimiento = date("Y-m-d", strtotime($data[$index]["fecha_nacimiento"])); //falta excel
+                $residente->genero = $data[$index]['genero'];
+                $residente->documento = $data[$index]['documento'];
+                $residente->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
+                $residente->unidad_id = $unidad->id;
+                $tipoDocumento = Tipo_Documento::where(
+                    'tipo',
+                    mb_strtoupper($data[$index]['tipo_documento'], 'UTF-8')
+                )->first();
+                if (!$tipoDocumento) {
+                    $tipoDocumento = new Tipo_Documento();
+                    $tipoDocumento->tipo = mb_strtoupper($data[$index]['tipo_documento'], 'UTF-8');
+                    $tipoDocumento->save();
+                }
+                $residente->tipo_documento_id = $tipoDocumento->id;
+                $residente->tipo_id = $tipoDocumento->id;
+                $residente->id_conjunto = session('conjunto');
+                $residente->save();
+            } else {
+                $descripcion = 'No se pudo agregar el residente a la unidad';
+                $this->agregarRegistroFallos($index, $descripcion, $data->id);
+            }
+            $index++;
+        }
+
+
+        return array("index" => $index, "error" => $saltarRegistros);
     }
 
     //crear la lista de mascotas de la unidad que llega
@@ -374,7 +430,7 @@ class ArchivoCargaMasivaController extends Controller
                 $mascota->fecha_nacimiento = date("Y-m-d", strtotime($data[$index]["fecha_nacimiento"]));
                 $mascota->descripcion = $data[$index]['descripcion'];
                 $mascota->foto = $data[$index]['foto_base64'];
-                $mascota->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));                
+                $mascota->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
                 $mascota->unidad_id = $unidad->id;
                 $tipoMascota = TipoMascotas::where( //revisar
                     'tipo',
@@ -388,6 +444,7 @@ class ArchivoCargaMasivaController extends Controller
                 $mascota->tipo_id = $tipoMascota->id;
                 $mascota->id_conjunto = session('conjunto');
                 $mascota->save();
+            } else {
             }
             $index++;
         }
