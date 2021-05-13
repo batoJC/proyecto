@@ -36,7 +36,7 @@
             <h4 class="section_1__title_1">¿Qué espera para conocernos?</h4>
             <h1 class="section_1__title_2">¡Hola! Somos <span class="text_blue_primary">Gestión Copropietario</span></h1>
         </div>
-        <a href="#section_2" class="section_1__action animate__animated animate__bounce animate__repeat-2">
+        <a href="#section_2" class="section_1__action animate__animated animate__bounce animate__repeat-3">
             <svg class="section_1__icon">
               <use xlink:href="{{ asset('landing_resources/img/icons.svg#down-arrow') }}" />
             </svg>
@@ -248,11 +248,11 @@
                 <div class="section_6__row_1">
                     <div class="row_1__column_1">
                         <label for="">NOMBRE:</label><br>
-                        <input type="text" name="nombre" id="nombre" placeholder="Diana Uribe">
+                        <input type="text" name="nombre" id="nombre" placeholder="Tú nombre">
                     </div>
                     <div class="row_1__column_2">
                         <label for="">EMAIL:</label><br>
-                        <input type="email" name="email" id="email" placeholder="dianauribe@gmail.com">
+                        <input type="email" name="email" id="email" placeholder="correo@gmail.com">
                     </div>
                 </div>
                 <br>
@@ -267,7 +267,7 @@
             </form>
         </div>
         <p class="footer">
-            Gestioncopropietario.com - 2021
+            © 2021 Todos los derechos reservados - Gestioncopropietario.com
         </p>
     </div>
 </body>
