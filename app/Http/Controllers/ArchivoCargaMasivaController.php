@@ -252,12 +252,7 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     public function unidades_csv_post(Request $request)
-        { try{
-
-        }catch(\Throwable $th){
-
-        }   
-        
+    {
         // Validador si llega un archivo
         // *****************************
 
@@ -270,7 +265,7 @@ class ArchivoCargaMasivaController extends Controller
 
         $tipoUnidad = $archivo->tipoUnidad;
 
-        if ($archivo != null && $archivo->conjunto_id == $archivo->id) {
+        if ($archivo != null) {
             $path = public_path('archivos_masivos/' . $archivo->ruta);
             $data = Excel::load($path, function ($reader) {
             })->get();
@@ -672,8 +667,8 @@ class ArchivoCargaMasivaController extends Controller
         $division = Division::where([
             ['numero_letra', mb_strtoupper($data['division'], 'UTF-8')],
             ["id_tipo_division", $tipoDivision->id],
-            ["id_conjunto", $archivo->id]
-        ])->first();
+            ["id_conjunto", $archivo->conjunto_id]
+        ])->first();        
 
         if (!$division) {
             $descripcion = "No se encontro el número de division";
@@ -712,7 +707,7 @@ class ArchivoCargaMasivaController extends Controller
         if ($coeficiente) { //si tiene coeficiente debe de tener un propietario
             $propietario = User::where([
                 ['numero_cedula', $data->propietario],
-                ['id_conjunto', $archivo->id],
+                ['id_conjunto', $archivo->conjunto_id],
                 ["id_rol", 3]
             ])->first();
 

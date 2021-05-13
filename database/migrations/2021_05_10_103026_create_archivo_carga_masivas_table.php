@@ -23,6 +23,11 @@ class CreateArchivoCargaMasivasTable extends Migration
             $table->enum('estado',['subido','en progreso','terminado','eliminado']); 
             $table->integer('tipo_unidad_id')->unsigned();
             $table->integer('conjunto_id')->unsigned();
+            $table->integer('indice_mascotas');
+            $table->integer('indice_residentes');
+            $table->integer('indice_vehiculos');
+            $table->integer('indice_empleados');
+            $table->integer('indice_visitantes');
                         
             $table->timestamps();
 

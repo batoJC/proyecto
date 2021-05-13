@@ -21,7 +21,6 @@ class CreateUnidadsTable extends Migration
             $table->text('observaciones')->nullable();
             $table->boolean('editar')->default(false);
             $table->boolean('cambio_propietario')->default(false);
-
             //Foreign Keys
             /************/
 
