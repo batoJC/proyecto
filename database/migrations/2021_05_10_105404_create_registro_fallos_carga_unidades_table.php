@@ -17,7 +17,8 @@ class CreateRegistroFallosCargaUnidadesTable extends Migration
             $table->increments('id');
             $table->string('registro');
             $table->string('descripcion_fallo');            
-            $table->integer('archivo_masivo_id')->unsigned();            
+            $table->integer('archivo_masivo_id')->unsigned(); 
+            $table->string('error_real');           
             $table->timestamps();
             //llaves foraneas
 

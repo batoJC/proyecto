@@ -256,15 +256,15 @@ class ArchivoCargaMasivaController extends Controller
         // *****************************
 
         $archivo = ArchivoCargaMasiva::find($request->id);
-        // dd($archivo);
-        $process = new ProcessArchivoMasivoUnidades($archivo);
-        $process->dispatch($archivo);
+        // // dd($archivo);
+        // $process = new ProcessArchivoMasivoUnidades($archivo);
+        // $process->dispatch($archivo);
 
-        return array('res' => 1, 'msg' => 'Carga masiva Iniciada.');
+        //return array('res' => 1, 'msg' => 'Carga masiva Iniciada.');
 
         $tipoUnidad = $archivo->tipoUnidad;
 
-        if ($archivo != null && $archivo->conjunto_id == session("conjunto")) {
+        if ($archivo != null && $archivo->conjunto_id == $archivo->id) {
             $path = public_path('archivos_masivos/' . $archivo->ruta);
             $data = Excel::load($path, function ($reader) {
             })->get();
@@ -296,7 +296,7 @@ class ArchivoCargaMasivaController extends Controller
 
 
                     $saltarRegistros = $unidad->id == 0;
-                    $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros);
+                    $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $archivo);
                     $indexLista = $result["index"];
 
                     if ($result["error"]) {
@@ -315,7 +315,7 @@ class ArchivoCargaMasivaController extends Controller
         }
     }
 
-    private function agregarListasPorUnidad($hojasExcel, $unidad, $indexLista, $saltarRegistros)
+    private function agregarListasPorUnidad($hojasExcel, $unidad, $indexLista, $saltarRegistros, $archivo)
     {
         $error = false;
         for ($i = 1; $i < $hojasExcel->count(); $i++) {
@@ -324,31 +324,31 @@ class ArchivoCargaMasivaController extends Controller
             $nombreHoja = $hojasExcel[$i]->getTitle();
             switch ($nombreHoja) {
                 case  "lista mascotas":
-                    $result = $this->crearListaMascotas($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $result = $this->crearListaMascotas($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista vehiculos":
-                    $result = $this->crearListaVehiculos($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $result = $this->crearListaVehiculos($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
                 case "lista residentes":
-                    $result=$this->crearListaResdentes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $result = $this->crearListaResidentes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
                 case "lista visitantes":
-                    $result = $this->crearListaVisitantes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $result = $this->crearListaVisitantes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
                     break;
                 case "lista empleados":
-                    $result = $this->crearListaEmpleados($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros);
+                    $result = $this->crearListaEmpleados($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
                     $indexLista[$nombreHoja]++;
 
@@ -360,7 +360,7 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     //crear la lista de residentes de la unidad
-    private function crearListaResdentes($index, $data, $unidad, $saltarRegistros)
+    private function crearListaResidentes($index, $data, $unidad, $saltarRegistros, $archivo)
     {
         while ($index < $data->count()) {
             //si la unidad que  nos dice no es la que vamos agregar decrementamos el
@@ -376,7 +376,6 @@ class ArchivoCargaMasivaController extends Controller
             }
             //si saltar segistro es falso, se agrega la mascota (unidad valida)
             if (!$saltarRegistros) {
-                dd($data);
                 $residente = new Residentes();
                 $residente->tipo_residente = $data[$index]['tipo_residente'];
                 $residente->nombre = $data[$index]['nombre'];
@@ -397,15 +396,21 @@ class ArchivoCargaMasivaController extends Controller
                 if (!$tipoDocumento) {
                     $tipoDocumento = new Tipo_Documento();
                     $tipoDocumento->tipo = mb_strtoupper($data[$index]['tipo_documento'], 'UTF-8');
-                    $tipoDocumento->save();
+                    try {
+                        $tipoDocumento->save();
+                    } catch (\Throwable $th) {
+                        $descripcion = 'No se pudo agregar el tipo documento al momento de crear el residente en la unidad';
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    }
                 }
                 $residente->tipo_documento_id = $tipoDocumento->id;
-                $residente->tipo_id = $tipoDocumento->id;
-                $residente->id_conjunto = session('conjunto');
-                $residente->save();
-            } else {
-                $descripcion = 'No se pudo agregar el residente a la unidad';
-                $this->agregarRegistroFallos($index, $descripcion, $data->id);
+                $residente->id_conjunto = $archivo->conjunto_id;
+                try {
+                    $residente->save();
+                } catch (\Throwable $th) {
+                    $descripcion = 'No se pudo guardar el residente a la unidad';
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                }
             }
             $index++;
         }
@@ -415,7 +420,7 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     //crear la lista de mascotas de la unidad que llega
-    private function crearListaMascotas($index, $data, $unidad, $saltarRegistros)
+    private function crearListaMascotas($index, $data, $unidad, $saltarRegistros, $archivo)
     {
         while ($index < $data->count()) {
             //si la unidad que  nos dice no es la que vamos agregar decrementamos el
@@ -447,22 +452,29 @@ class ArchivoCargaMasivaController extends Controller
                 if (!$tipoMascota) {
                     $tipoMascota = new TipoMascotas();
                     $tipoMascota->tipo = mb_strtoupper($data[$index]['tipo_mascota'], 'UTF-8');
-                    $tipoMascota->save();
+                    try {
+                        $tipoMascota->save();
+                    } catch (\Throwable $th) {
+                        $descripcion = 'No se pudo agregar el tipo de mascota, cuando agregamos mascota a la unidad';
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    }
                 }
                 $mascota->tipo_id = $tipoMascota->id;
-                $mascota->id_conjunto = session('conjunto');
-                $mascota->save();
-            } else {
+                $mascota->id_conjunto = $archivo->conjunto_id;
+                try {
+                    $mascota->save();
+                } catch (\Throwable $th) {
+                    $descripcion = 'No se pudo agregar la mascota a la unidad';
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                }
             }
             $index++;
         }
-
-
         return array("index" => $index, "error" => $saltarRegistros);
     }
 
     //cargar lista de vehiculos de la unidad
-    private function crearListaVehiculos($index, $data, $unidad, $saltarRegistros)
+    private function crearListaVehiculos($index, $data, $unidad, $saltarRegistros, $archivo)
     {
 
         while ($index < $data->count()) {
@@ -490,18 +502,21 @@ class ArchivoCargaMasivaController extends Controller
                 $vehiculo->color = $data[$index]['color'];
                 $vehiculo->placa = $data[$index]['placa'];
                 $vehiculo->unidad_id = $unidad->id;
-                $vehiculo->id_conjunto = session('conjunto');
-                $vehiculo->save();
+                $vehiculo->id_conjunto = $archivo->conjunto_id;
+                try {
+                    $vehiculo->save();
+                } catch (\Throwable $th) {
+                    $descripcion = 'No se pudo agregar el vehiculo a la unidad';
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                }
             }
             $index++;
         }
-
-
         return array("index" => $index, "error" => $saltarRegistros);
     }
 
     //cargar lista de empleados de la unidad
-    private function crearListaEmpleados($index, $data, $unidad, $saltarRegistros)
+    private function crearListaEmpleados($index, $data, $unidad, $saltarRegistros, $archivo)
     {
 
         while ($index < $data->count()) {
@@ -531,12 +546,23 @@ class ArchivoCargaMasivaController extends Controller
                 if (!$tipoDocumento) {
                     $tipoDocumento = new Tipo_Documento();
                     $tipoDocumento->tipo = mb_strtoupper($data[$index]['tipo_documento'], 'UTF-8');
-                    $tipoDocumento->save();
+                    try {
+                        $tipoDocumento->save();
+                    } catch (\Throwable $th) {
+                        $descripcion = 'No se pudo agregar el tipo de documento, cuando se agregaba empleado';
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    }
                 }
+                
                 $empleado->tipo_documento_id = $tipoDocumento->id;
                 $empleado->unidad_id = $unidad->id;
-                $empleado->id_conjunto = session('conjunto');
-                $empleado->save();
+                $empleado->id_conjunto = $archivo->conjunto_id;
+                try {
+                    $empleado->save();
+                } catch (\Throwable $th) {
+                    $descripcion = 'No se pudo agregar el empleado a la unidad';
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                }
             }
             $index++;
         }
@@ -546,7 +572,7 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     //cargar lista de visitantes de la unidad
-    private function crearListaVisitantes($index, $data, $unidad, $saltarRegistros)
+    private function crearListaVisitantes($index, $data, $unidad, $saltarRegistros, $archivo)
     {
 
         while ($index < $data->count()) {
@@ -570,18 +596,18 @@ class ArchivoCargaMasivaController extends Controller
                 $visitante->parentesco = $data[$index]['parentesco'];
                 $visitante->unidad_id = $unidad->id;
                 $visitante->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
-                $visitante->id_conjunto = session('conjunto');
-                $visitante->save();
+                $visitante->id_conjunto = $archivo->conjunto_id;
+                try {
+                    $visitante->save();
+                } catch (\Throwable $th) {
+                    $descripcion = 'No se pudo agregar el visitante a la unidad';
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                }
             }
             $index++;
         }
-
-
         return array("index" => $index, "error" => $saltarRegistros);
     }
-
-
-
 
     private function dataVacia($data)
     {
@@ -593,12 +619,13 @@ class ArchivoCargaMasivaController extends Controller
         return true;
     }
 
-    private function agregarRegistroFallos($unRegistro, $descripcion, $idArchivo)
+    private function agregarRegistroFallos($unRegistro, $descripcion, $idArchivo, $registroInterno)
     {
         $registroF = new RegistroFallosCargaUnidades();
         $registroF->registro = $unRegistro;
         $registroF->descripcion_fallo = $descripcion;
         $registroF->archivo_masivo_id = $idArchivo;
+        $registroF->error_real = $registroInterno;
         $registroF->save();
     }
 
@@ -613,8 +640,8 @@ class ArchivoCargaMasivaController extends Controller
         $fila += 2;
 
         if ($this->dataVacia($data)) {
-            $descripcion = "Fila vacía, puede ser el fin del archivo. Fila: ".$fila;
-            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+            $descripcion = "Fila vacía, puede ser el fin del archivo. Fila: " . $fila;
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'N/A');
             return null;
         }
 
@@ -631,7 +658,7 @@ class ArchivoCargaMasivaController extends Controller
 
         if (!$tipoDivision) {
             $descripcion = "No se encontro el tipo de división";
-            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'N/A');
 
             return $unidad;
         }
@@ -639,18 +666,18 @@ class ArchivoCargaMasivaController extends Controller
         $division = Division::where([
             ['numero_letra', mb_strtoupper($data['division'], 'UTF-8')],
             ["id_tipo_division", $tipoDivision->id],
-            ["id_conjunto", session("conjunto")]
+            ["id_conjunto", $archivo->id]
         ])->first();
 
         if (!$division) {
             $descripcion = "No se encontro el número de division";
-            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'N/A');
 
             return $unidad;
         }
 
         $unidad->division_id = $division->id;
-        $unidad->conjunto_id = session("conjunto");
+        $unidad->conjunto_id = $archivo->conjunto_id;
         $unidad->tipo_unidad_id = $tipoUnidad->id;
 
         try {
@@ -662,7 +689,7 @@ class ArchivoCargaMasivaController extends Controller
                 $descripcion = "Error desconocido al crear la unidad.";
             }
 
-            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, $th);
 
             return $unidad;
         }
@@ -679,13 +706,13 @@ class ArchivoCargaMasivaController extends Controller
         if ($coeficiente) { //si tiene coeficiente debe de tener un propietario
             $propietario = User::where([
                 ['numero_cedula', $data->propietario],
-                ['id_conjunto', session("conjunto")],
+                ['id_conjunto', $archivo->id],
                 ["id_rol", 3]
             ])->first();
 
             if (!$propietario) {
                 $descripcion = "No se encontro el documento del propietario";
-                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'N/A');
                 $unidad->delete();
 
                 return $unidad;
@@ -695,16 +722,15 @@ class ArchivoCargaMasivaController extends Controller
                 $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso_propietario']]);
             } catch (\Throwable $th) {
                 if (str_contains($th->getMessage(), "Invalid datetime format")) {
-                    $descripcion = "Problema con el formato de la fecha de ingresso de la unidad. Unidad: ".$unidad->numero_letra;
+                    $descripcion = "Problema con el formato de la fecha de ingresso de la unidad. Unidad: " . $unidad->numero_letra;
                 } else {
-                    $descripcion = "Error desconocido al asociar el propietario con la unidad. Unidad: ".$unidad->numero_letra;
+                    $descripcion = "Error desconocido al asociar el propietario con la unidad. Unidad: " . $unidad->numero_letra;
                 }
 
-                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, $th);
 
                 return $unidad;
             }
-
         }
 
         return $unidad;
