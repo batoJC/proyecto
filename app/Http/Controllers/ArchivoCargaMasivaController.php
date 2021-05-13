@@ -24,6 +24,7 @@ use Excel;
 use App\TipoMascotas;
 use App\Empleado;
 use App\Residentes;
+use App\Jobs\ProcessArchivoMasivoUnidades;
 
 
 class ArchivoCargaMasivaController extends Controller
@@ -255,6 +256,12 @@ class ArchivoCargaMasivaController extends Controller
         // *****************************
 
         $archivo = ArchivoCargaMasiva::find($request->id);
+        // dd($archivo);
+        $process = new ProcessArchivoMasivoUnidades($archivo);
+        $process->dispatch($archivo);
+
+        return array('res' => 1, 'msg' => 'Carga masiva Iniciada.');
+
         $tipoUnidad = $archivo->tipoUnidad;
 
         if ($archivo != null && $archivo->conjunto_id == session("conjunto")) {
@@ -283,7 +290,8 @@ class ArchivoCargaMasivaController extends Controller
                     if (!$unidad) {
                         $archivo->fila = $i;
                         $archivo->save();
-                        continue;
+
+                        break;
                     }
 
 
@@ -374,7 +382,7 @@ class ArchivoCargaMasivaController extends Controller
                 $mascota->fecha_nacimiento = date("Y-m-d", strtotime($data[$index]["fecha_nacimiento"]));
                 $mascota->descripcion = $data[$index]['descripcion'];
                 $mascota->foto = $data[$index]['foto_base64'];
-                $mascota->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));                
+                $mascota->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
                 $mascota->unidad_id = $unidad->id;
                 $tipoMascota = TipoMascotas::where( //revisar
                     'tipo',
@@ -548,7 +556,7 @@ class ArchivoCargaMasivaController extends Controller
         $fila += 2;
 
         if ($this->dataVacia($data)) {
-            $descripcion = "Fila vacía, puede ser el fin del archivo";
+            $descripcion = "Fila vacía, puede ser el fin del archivo. Fila: ".$fila;
             $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
             return null;
         }
@@ -626,9 +634,21 @@ class ArchivoCargaMasivaController extends Controller
                 return $unidad;
             }
 
-            $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso_propietario']]);
+            try {
+                $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso_propietario']]);
+            } catch (\Throwable $th) {
+                if (str_contains($th->getMessage(), "Invalid datetime format")) {
+                    $descripcion = "Problema con el formato de la fecha de ingresso de la unidad. Unidad: ".$unidad->numero_letra;
+                } else {
+                    $descripcion = "Error desconocido al asociar el propietario con la unidad. Unidad: ".$unidad->numero_letra;
+                }
+
+                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
+
+                return $unidad;
+            }
+
         }
-        //TODO: create unidad
 
         return $unidad;
     }
