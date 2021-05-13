@@ -252,7 +252,13 @@ class ArchivoCargaMasivaController extends Controller
     }
 
     public function unidades_csv_post(Request $request)
-    {    // Validador si llega un archivo
+        { try{
+
+        }catch(\Throwable $th){
+
+        }   
+        
+        // Validador si llega un archivo
         // *****************************
 
         $archivo = ArchivoCargaMasiva::find($request->id);
@@ -553,7 +559,7 @@ class ArchivoCargaMasivaController extends Controller
                         $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
                     }
                 }
-                
+
                 $empleado->tipo_documento_id = $tipoDocumento->id;
                 $empleado->unidad_id = $unidad->id;
                 $empleado->id_conjunto = $archivo->conjunto_id;
