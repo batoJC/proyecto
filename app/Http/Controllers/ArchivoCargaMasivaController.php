@@ -83,14 +83,18 @@ class ArchivoCargaMasivaController extends Controller
             $archivoCargaMasiva->fallos = 0;
             $archivoCargaMasiva->tipo_unidad_id = $request->tipo_unidad;
             $archivoCargaMasiva->conjunto_id = session('conjunto');
+            $archivoCargaMasiva->indice_unidad = 0;
+            $archivoCargaMasiva->indice_residentes = 0;
+            $archivoCargaMasiva->indice_mascotas = 0;
+            $archivoCargaMasiva->indice_vehiculos = 0;
+            $archivoCargaMasiva->indice_empleados = 0;
+            $archivoCargaMasiva->indice_visitantes = 0;
+
             if ($request->file('archivo')) {
-                $file = time() . '.' . $request->archivo->getClientOriginalExtension();
+                $file = $request->nombre_archivo . time() . '.' . $request->archivo->getClientOriginalExtension();
                 $request->archivo->move(public_path('archivos_masivos/'), $file);
                 //ruta archivo
                 $archivoCargaMasiva->ruta = $file;
-
-                //dd($archivoCargaMasiva);
-
                 $archivoCargaMasiva->save();
                 return array('res' => 1, 'msg' => 'Archivo subido correctamente.');
             } else {
@@ -668,7 +672,7 @@ class ArchivoCargaMasivaController extends Controller
             ['numero_letra', mb_strtoupper($data['division'], 'UTF-8')],
             ["id_tipo_division", $tipoDivision->id],
             ["id_conjunto", $archivo->conjunto_id]
-        ])->first();        
+        ])->first();
 
         if (!$division) {
             $descripcion = "No se encontro el número de division";
