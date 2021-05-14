@@ -16,4 +16,5 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "Run the test of repositore."
+      - run: rm -Rf vendor
       - run: vendor/bin/phpunit
