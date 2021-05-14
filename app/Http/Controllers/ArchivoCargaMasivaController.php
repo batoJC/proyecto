@@ -32,8 +32,8 @@ class ArchivoCargaMasivaController extends Controller
 {
 
     private static $_ATRIBUTOS_POR_LISTA = array(
-        "lista_mascotas" => array("código", "nombre", "raza", "fecha nacimiento", "fecha ingreso", "descripcion", "foto (base64)", "unidad", "tipo mascota"),
-        "lista_vehiculos" => array("foto vehículo (base64)", "foto tarjeta propiedad cara 1 (base64)", "foto tarjeta propiedad cara 2 (base64)", "Propietario", "fecha ingreso", "tipo", "marca", "color", "placa", "unidad"),
+        "lista_mascotas" => array("código", "nombre", "raza", "fecha nacimiento", "fecha ingreso", "descripcion", "unidad", "tipo mascota"),
+        "lista_vehiculos" => array("Propietario", "fecha ingreso", "tipo", "marca", "color", "placa", "unidad"),
         "lista_residentes" => array("tipo residente", "nombre", "apellido", "fecha ingreso", "profesion", "ocupacion", "direccion", "email", "genero", "documento", "unidad", "tipo documento"),
         "lista_visitantes" => array("documento", "nombre", "parentesco", "unidad", "fecha ingreso",),
         "lista_empleados" => array("nombre", "apellido", "genero", "documento", "unidad", "tipo documento", "fecha ingreso"),
@@ -157,6 +157,11 @@ class ArchivoCargaMasivaController extends Controller
             $archivoCargaMasiva->delete();
             return ['res' => 1, 'msg' => 'Registro eliminado correctamente'];
         } catch (\Throwable $th) {
+            $error = substr($th->getMessage(), 0, 90);
+            Log::channel('slack')->critical("Error inesperado. Ocurrió un error al tratar de eliminar el registro en carga masiva de unidades
+                \n Error: {$error}");
+            Log::channel('daily')->critical("Error inesperado. Ocurrio un error al tratar de eliminar el registro en carga masiva de unidades
+                \n Error: {$th->getMessage()}");
             return ['res' => 0, 'msg' => 'Ocurrió un error al tratar de eliminar el registro'];
         }
     }
@@ -339,7 +344,10 @@ class ArchivoCargaMasivaController extends Controller
 
                     //when finished and all is good
                     return array('res' => 1, 'msg' => 'Carga masiva terminada.');
+<<<<<<< HEAD
 
+=======
+>>>>>>> d40bcaa8973fb139844bede5705afd41c0e384f5
                 }
             } else {
                 return array('res' => 0, 'msg' => 'El archivo ya se ha procesado.');
@@ -433,13 +441,13 @@ class ArchivoCargaMasivaController extends Controller
                     try {
                         $tipoDocumento->save();
                     } catch (\Throwable $th) {
-                        $error = substr($th->getMessage(), 0, 200);
                         $descripcion = 'No se pudo agregar el tipo documento al momento de crear el residente en la unidad';
                         $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
 
-                        Log::channel('slack')->critical("Error inesperado. Agregando residente en carga masiva de unidades
+                        $error = substr($th->getMessage(), 0, 90);
+                        Log::channel('slack')->critical("Error, no se pudo agregar el documento al crear el redidente en la unidad, en carga masiva de unidades
                         \n Error: {$error}");
-                        Log::channel('daily')->critical("Error inesperado. Agregando residente en carga masiva de unidades
+                        Log::channel('daily')->critical("Error, no se pudo agregar el documento al crear el redidente en la unidad, en carga masiva de unidades
                         \n Error: {$th->getMessage()}");
                     }
                 }
@@ -449,7 +457,13 @@ class ArchivoCargaMasivaController extends Controller
                     $residente->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo guardar el residente a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+
+                    $error = substr($th->getMessage(), 0, 90);
+                    Log::channel('slack')->critical("Error, no se puedo agregar el residente a la unidad, en carga masiva de unidades
+                        \n Error: {$error}");
+                    Log::channel('daily')->critical("Error, no se puedo agregar el residente a la unidad, en carga masiva de unidades
+                        \n Error: {$th->getMessage()}");
                 }
             }
             $index++;
@@ -482,9 +496,7 @@ class ArchivoCargaMasivaController extends Controller
                 $mascota->raza = $data[$index]['raza'];
                 $mascota->fecha_nacimiento = date("Y-m-d", strtotime($data[$index]["fecha_nacimiento"]));
                 $mascota->descripcion = $data[$index]['descripcion'];
-                $convertido = $this->decodeBase64($data[$index]['foto_base64']);
-                dd($convertido);
-                $mascota->foto = $data[$index]['foto_base64'];
+                $mascota->foto = '';
                 $mascota->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
                 $mascota->unidad_id = $unidad->id;
                 $tipoMascota = TipoMascotas::where( //revisar
@@ -498,7 +510,12 @@ class ArchivoCargaMasivaController extends Controller
                         $tipoMascota->save();
                     } catch (\Throwable $th) {
                         $descripcion = 'No se pudo agregar el tipo de mascota, cuando agregamos mascota a la unidad';
-                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+                        $error = substr($th->getMessage(), 0, 90);
+                        Log::channel('slack')->critical("Error, No se pudo agregar el tipo de mascota, cuando agregamos mascota a la unidad, en carga masiva de unidades
+                            \n Error: {$error}");
+                        Log::channel('daily')->critical("Error, No se pudo agregar el tipo de mascota, cuando agregamos mascota a la unidad,  en carga masiva de unidades
+                            \n Error: {$th->getMessage()}");
                     }
                 }
                 $mascota->tipo_id = $tipoMascota->id;
@@ -507,7 +524,12 @@ class ArchivoCargaMasivaController extends Controller
                     $mascota->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar la mascota a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+                    $error = substr($th->getMessage(), 0, 90);
+                    Log::channel('slack')->critical("Error, no se pudo agregar la mascota a la unidad, en carga masiva de unidades
+                        \n Error: {$error}");
+                    Log::channel('daily')->critical("Error, no se pudo agregar la mascota a la unidad, en carga masiva de unidades
+                        \n Error: {$th->getMessage()}");
                 }
             }
             $index++;
@@ -534,9 +556,9 @@ class ArchivoCargaMasivaController extends Controller
             //si saltar registro es falso, se agrega vehiculo (unidad valida)
             if (!$saltarRegistros) {
                 $vehiculo = new Vehiculo();
-                $vehiculo->foto_vehiculo = $data[$index]['foto_vehiculo_base64'];
-                $vehiculo->foto_tarjeta_1 = $data[$index]['foto_tarjeta_propiedad_cara_1_base64'];
-                $vehiculo->foto_tarjeta_2 = $data[$index]['foto_tarjeta_propiedad_cara_2_base64'];
+                $vehiculo->foto_vehiculo = '';
+                $vehiculo->foto_tarjeta_1 = '';
+                $vehiculo->foto_tarjeta_2 = '';
                 $vehiculo->registra = $data[$index]['propietario'];
                 $vehiculo->tipo = $data[$index]['tipo'];
                 $vehiculo->marca = $data[$index]['marca'];
@@ -549,7 +571,12 @@ class ArchivoCargaMasivaController extends Controller
                     $vehiculo->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar el vehiculo a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+                    $error = substr($th->getMessage(), 0, 90);
+                    Log::channel('slack')->critical("Error, no se pudo agregar el vehiculo a la unidad, en carga masiva de unidades
+                        \n Error: {$error}");
+                    Log::channel('daily')->critical("Error no se pudo agregar el vehiculo a la unidad, en carga masiva de unidades
+                        \n Error: {$th->getMessage()}");
                 }
             }
             $index++;
@@ -592,7 +619,12 @@ class ArchivoCargaMasivaController extends Controller
                         $tipoDocumento->save();
                     } catch (\Throwable $th) {
                         $descripcion = 'No se pudo agregar el tipo de documento, cuando se agregaba empleado';
-                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+                        $error = substr($th->getMessage(), 0, 90);
+                        Log::channel('slack')->critical("Error, no se pudo agregar el tipo de documento, cuando se agregaba empleado, en carga masiva de unidades
+                            \n Error: {$error}");
+                        Log::channel('daily')->critical("Error, no se pudo agregar el tipo de documento, cuando se agregaba empleado, en carga masiva de unidades
+                            \n Error: {$th->getMessage()}");
                     }
                 }
 
@@ -603,7 +635,12 @@ class ArchivoCargaMasivaController extends Controller
                     $empleado->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar el empleado a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+                    $error = substr($th->getMessage(), 0, 90);
+                    Log::channel('slack')->critical("Error, No se pudo agregar el empleado a la unidad, en carga masiva de unidades
+                        \n Error: {$error}");
+                    Log::channel('daily')->critical("Error, No se pudo agregar el empleado a la unidad en carga masiva de unidades
+                        \n Error: {$th->getMessage()}");
                 }
             }
             $index++;
@@ -643,7 +680,12 @@ class ArchivoCargaMasivaController extends Controller
                     $visitante->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar el visitante a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+                    $error = substr($th->getMessage(), 0, 90);
+                    Log::channel('slack')->critical("Error, No se pudo agregar el visitante a la unidad, en carga masiva de unidades
+                        \n Error: {$error}");
+                    Log::channel('daily')->critical("Error, No se pudo agregar el visitante a la unidad en carga masiva de unidades
+                        \n Error: {$th->getMessage()}");
                 }
             }
             $index++;
@@ -726,8 +768,18 @@ class ArchivoCargaMasivaController extends Controller
         } catch (\Throwable $th) {
             if (str_contains($th->getMessage(), "unidad_unica")) {
                 $descripcion = "Ya existe una unidad con esas propiedades.";
+                $error = substr($th->getMessage(), 0, 90);
+                Log::channel('slack')->critical("Error, Ya existe una unidad con esas propiedades, en carga masiva de unidades
+                    \n Error: {$error}");
+                Log::channel('daily')->critical("Error, Ya existe una unidad con esas propiedades en carga masiva de unidades
+                    \n Error: {$th->getMessage()}");
             } else {
                 $descripcion = "Error desconocido al crear la unidad.";
+                $error = substr($th->getMessage(), 0, 90);
+                Log::channel('slack')->critical("Error desconocido al crear la unidad en carga masiva de unidades
+                    \n Error: {$error}");
+                Log::channel('daily')->critical("Error desconocido al crear la unidaden carga masiva de unidades
+                    \n Error: {$th->getMessage()}");
             }
 
             $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'na');
@@ -769,11 +821,16 @@ class ArchivoCargaMasivaController extends Controller
             } catch (\Throwable $th) {
                 if (str_contains($th->getMessage(), "Invalid datetime format")) {
                     $descripcion = "Problema con el formato de la fecha de ingresso de la unidad. Unidad: " . $unidad->numero_letra;
+                    $error = substr($th->getMessage(), 0, 90);
+                    Log::channel('slack')->critical("Problema con el formato de la fecha de ingresso de la unidad. Unidad: " . $unidad->numero_letra
+                        . "\n Error: {$error}");
+                    Log::channel('daily')->critical("Problema con el formato de la fecha de ingresso de la unidad. Unidad: " . $unidad->numero_letra
+                        . "\n Error: {$th->getMessage()}");
                 } else {
                     $descripcion = "Error desconocido al asociar el propietario con la unidad. Unidad: " . $unidad->numero_letra;
                 }
 
-                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'na');
+                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id);
 
                 $error = substr($th->getMessage(), 0, 200);
                 Log::channel('slack')->critical("Error inesperado. Agregando residente en carga masiva de unidades
@@ -786,16 +843,5 @@ class ArchivoCargaMasivaController extends Controller
         }
 
         return $unidad;
-    }
-
-
-
-    public function decodeBase64($base64Image)
-    {
-        $rutaImagenSalida = public_path('imgs/private_imgs/prueba.jpg');
-        $imagenBinaria = base64_decode($base64Image);
-        $bytes = file_put_contents($rutaImagenSalida, $imagenBinaria);
-        echo ('terminando decode');
-        echo ($bytes);
     }
 }
