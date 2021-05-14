@@ -270,51 +270,77 @@ class ArchivoCargaMasivaController extends Controller
         $tipoUnidad = $archivo->tipoUnidad;
 
         if ($archivo != null) {
-            $path = public_path('archivos_masivos/' . $archivo->ruta);
-            $data = Excel::load($path, function ($reader) {
-            })->get();
+            //comprobamos que el archivo no se ha procesado
+            if ($archivo->estado!='terminado'){
 
-
-            // Validador si el arreglo está vacío
-            // **********************************
-            if (!empty($data) && $data->count() > 0) {
-                // try {
-                //falta guardar en la base de datos
-                $indexLista = array(
-                    "lista mascotas" => 0,
-                    "lista vehiculos" => 0,
-                    "lista residentes" => 0,
-                    "lista visitantes" => 0,
-                    "lista empleados" => 0
-                );
-
-                for ($i = 0; $i < $data[0]->count(); $i++) {
-                    //hay que eliminar la unidad y todo lo que se creo si es que
-                    //llega a fallar el proceso de acá en adelante
-                    $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $archivo);
-                    if (!$unidad) {
-                        $archivo->fila = $i;
+                $path = public_path('archivos_masivos/' . $archivo->ruta);
+                $data = Excel::load($path, function ($reader) {
+                })->get();
+                
+                // Validador si el arreglo está vacío
+                // **********************************
+                if (!empty($data) && $data->count() > 0) {
+                    // try {
+                    //falta guardar en la base de datos
+                    $indexLista = array(
+                        "lista mascotas" => $archivo->indice_mascotas,
+                        "lista vehiculos" => $archivo->indice_vehiculos,
+                        "lista residentes" => $archivo->indice_residentes,
+                        "lista visitantes" => $archivo->indice_visitantes,
+                        "lista empleados" => $archivo->indice_empleados
+                    );
+    
+                    $i = $archivo->indice_unidad;
+                    for ($i; $i < $data[0]->count(); $i++) {
+                        //hay que eliminar la unidad y todo lo que se creo si es que
+                        //llega a fallar el proceso de acá en adelante
+                        $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $archivo);
+                        if (!$unidad) {
+                            $archivo->indice_unidad = $i;
+                            $archivo->save();
+    
+                            break;
+                        }
+    
+    
+                        $saltarRegistros = $unidad->id == 0;
+                        $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $archivo);
+                        $indexLista = $result["index"];
+    
+                        if ($result["error"]) {
+                            //eliminar las dependencias de la unidad
+                            $mascotas = $unidad->mascotas();
+                            foreach ($mascotas as $key => $mascota) {
+                                if ($mascota->foto != 'default_img.jpg') {
+                                    // Elimina el archivo
+                                    @unlink(public_path('imgs/private_imgs/' . $mascotas->foto));
+                                }
+                            }
+                            $unidad->delete();
+                        }
+                        $archivo->indice_unidad = $i;
+                        $archivo->indice_residentes = $indexLista['lista residentes'];
+                        $archivo->indice_mascotas = $indexLista['lista mascotas'];
+                        $archivo->indice_empleados = $indexLista['lista empleados'];
+                        $archivo->indice_vehiculos = $indexLista['lista vehiculos'];
+                        $archivo->indice_visitantes = $indexLista['lista visitantes'];
                         $archivo->save();
-
-                        break;
                     }
-
-
-                    $saltarRegistros = $unidad->id == 0;
-                    $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $archivo);
-                    $indexLista = $result["index"];
-
-                    if ($result["error"]) {
-                        $unidad->delete();
-                    }
+                    $archivo->indice_unidad = $i;
+                    $archivo->save();
+                    $archivo->estado = "terminado";
+    
+                    //when finished and all is good
+                    return array('res' => 1, 'msg' => 'Carga masiva terminada.');
+                    // } catch (\Throwable $th) {
+                    //     return array('res' => 0, 'msg' => 'Error en la carga masiva.');
+                    // }
                 }
-
-                //when finished and all is good
-                return array('res' => 1, 'msg' => 'Carga masiva terminada.');
-                // } catch (\Throwable $th) {
-                //     return array('res' => 0, 'msg' => 'Error en la carga masiva.');
-                // }
+            
+            }else{
+                return array('res' => 0, 'msg' => 'El archivo ya se ha procesado.');
             }
+
         } else {
             return array('res' => 0, 'msg' => 'Ese archivo no existe');
         }
@@ -337,25 +363,25 @@ class ArchivoCargaMasivaController extends Controller
                 case "lista vehiculos":
                     $result = $this->crearListaVehiculos($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
-                    $indexLista[$nombreHoja]++;
+                    $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista residentes":
                     $result = $this->crearListaResidentes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
-                    $indexLista[$nombreHoja]++;
+                    $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista visitantes":
                     $result = $this->crearListaVisitantes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
-                    $indexLista[$nombreHoja]++;
+                    $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista empleados":
                     $result = $this->crearListaEmpleados($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
                     $saltarRegistros = $result["error"];
-                    $indexLista[$nombreHoja]++;
+                    $indexLista[$nombreHoja] = $result["index"];
 
                     break;
             }
@@ -405,7 +431,7 @@ class ArchivoCargaMasivaController extends Controller
                         $tipoDocumento->save();
                     } catch (\Throwable $th) {
                         $descripcion = 'No se pudo agregar el tipo documento al momento de crear el residente en la unidad';
-                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                     }
                 }
                 $residente->tipo_documento_id = $tipoDocumento->id;
@@ -414,7 +440,7 @@ class ArchivoCargaMasivaController extends Controller
                     $residente->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo guardar el residente a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                 }
             }
             $index++;
@@ -461,7 +487,7 @@ class ArchivoCargaMasivaController extends Controller
                         $tipoMascota->save();
                     } catch (\Throwable $th) {
                         $descripcion = 'No se pudo agregar el tipo de mascota, cuando agregamos mascota a la unidad';
-                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                     }
                 }
                 $mascota->tipo_id = $tipoMascota->id;
@@ -470,7 +496,7 @@ class ArchivoCargaMasivaController extends Controller
                     $mascota->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar la mascota a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                 }
             }
             $index++;
@@ -512,7 +538,7 @@ class ArchivoCargaMasivaController extends Controller
                     $vehiculo->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar el vehiculo a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                 }
             }
             $index++;
@@ -555,7 +581,7 @@ class ArchivoCargaMasivaController extends Controller
                         $tipoDocumento->save();
                     } catch (\Throwable $th) {
                         $descripcion = 'No se pudo agregar el tipo de documento, cuando se agregaba empleado';
-                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                     }
                 }
 
@@ -566,7 +592,7 @@ class ArchivoCargaMasivaController extends Controller
                     $empleado->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar el empleado a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                 }
             }
             $index++;
@@ -606,7 +632,7 @@ class ArchivoCargaMasivaController extends Controller
                     $visitante->save();
                 } catch (\Throwable $th) {
                     $descripcion = 'No se pudo agregar el visitante a la unidad';
-                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, $th);
+                    $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
                 }
             }
             $index++;
@@ -694,7 +720,7 @@ class ArchivoCargaMasivaController extends Controller
                 $descripcion = "Error desconocido al crear la unidad.";
             }
 
-            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, $th);
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
 
             return $unidad;
         }
@@ -732,7 +758,7 @@ class ArchivoCargaMasivaController extends Controller
                     $descripcion = "Error desconocido al asociar el propietario con la unidad. Unidad: " . $unidad->numero_letra;
                 }
 
-                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, $th);
+                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
 
                 return $unidad;
             }
