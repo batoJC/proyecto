@@ -27,8 +27,7 @@ class CreateArchivoCargaMasivasTable extends Migration
             $table->integer('indice_residentes');
             $table->integer('indice_vehiculos');
             $table->integer('indice_empleados');
-            $table->integer('indice_visitantes');
-                        
+            $table->integer('indice_visitantes');                        
             $table->timestamps();
 
             //llaves foraneas config
