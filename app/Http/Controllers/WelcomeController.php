@@ -10,10 +10,15 @@ class WelcomeController extends Controller
 {
     // Método personalizado para el /welcome
     // *************************************
+    //TODO: delete this when the landing are accepted
     public function welcome(){
         $conjunto = Conjunto::all();
-        return view('welcome')		  
-        	   ->with('conjunto', $conjunto);		  
+        return view('welcome');
+    }
+
+    public function welcome2(){
+        $conjunto = Conjunto::all();
+        return view('welcome2');
     }
 
 
