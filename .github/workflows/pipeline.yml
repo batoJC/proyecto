@@ -17,9 +17,9 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "Run the test of repositore."
       - run: chmod 746 vendor
-      - run: ls
-      - run: cd vendor
-      - run: ls
-      - run: cd bin
-      - run: ls
-      - run: vendor/bin/phpunit
+             ls
+             cd vendor
+             ls
+             cd bin
+             ls
+             vendor/bin/phpunit
