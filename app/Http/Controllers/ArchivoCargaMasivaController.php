@@ -24,6 +24,7 @@ use Excel;
 use App\TipoMascotas;
 use App\Empleado;
 use App\Residentes;
+use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessArchivoMasivoUnidades;
 
 
@@ -78,7 +79,6 @@ class ArchivoCargaMasivaController extends Controller
             $archivoCargaMasiva = new ArchivoCargaMasiva();
             $archivoCargaMasiva->nombre_archivo = $request->nombre_archivo;
             $archivoCargaMasiva->estado = 'subido';
-            $archivoCargaMasiva->fila = 0;
             $archivoCargaMasiva->procesados = 0;
             $archivoCargaMasiva->fallos = 0;
             $archivoCargaMasiva->tipo_unidad_id = $request->tipo_unidad;
@@ -91,7 +91,7 @@ class ArchivoCargaMasivaController extends Controller
             $archivoCargaMasiva->indice_visitantes = 0;
 
             if ($request->file('archivo')) {
-                $file = $request->nombre_archivo . time() . '.' . $request->archivo->getClientOriginalExtension();
+                $file = $request->conjunto_id . time() . '.' . $request->archivo->getClientOriginalExtension();
                 $request->archivo->move(public_path('archivos_masivos/'), $file);
                 //ruta archivo
                 $archivoCargaMasiva->ruta = $file;
@@ -167,16 +167,16 @@ class ArchivoCargaMasivaController extends Controller
     {
         switch (Auth::user()->id_rol) {
             case 2:
+
                 $archivos = ArchivoCargaMasiva::where([
                     ['tipo_unidad_id', $tipo],
                     ['conjunto_id', session('conjunto')]
                 ])->get();
-
                 return Datatables::of($archivos)
                     ->addColumn('nombre', function ($archivo) {
                         return $archivo->nombre_archivo;
                     })->addColumn('ultimoRegistro', function ($archivo) {
-                        return $archivo->fila;
+                        return $archivo->indice_unidad;
                     })->addColumn('fallos', function ($archivo) {
                         return $archivo->fallos;
                     })->addColumn('procesados', function ($archivo) {
@@ -184,16 +184,20 @@ class ArchivoCargaMasivaController extends Controller
                     })->addColumn('estado', function ($archivo) {
                         return $archivo->estado;
                     })->addColumn('action', function ($archivo) {
-                        return '<a data-toggle="tooltip" data-placement="top"
-                                    title="Procesar el archivo" class="btn btn-default"
+                        $boton = '';
+                        if ($archivo->estado == 'terminado') {
+                            $boton = 'disabled';
+                        }
+                        return '<a data-toggle="tooltip" data-placement="top" id="process"
+                                    title="Procesar el archivo" class="btn btn-default ' . $boton . '"
                                     onclick="runUpload(' . $archivo->id . ')">
                                     <i class="fa fa-play"></i>
                                 </a>
-                                <a data-toggle="tooltip" data-placement="top"
+                                <a data-toggle="tooltip" data-placement="top" id="seeResults"
                                     title="Ver resultados del proceso" href="" class="btn btn-default">
                                     <i class="fa fa-list-ol"></i>
                                 </a>
-                                <a data-toggle="tooltip" data-placement="top"
+                                <a data-toggle="tooltip" data-placement="top" id="delete"
                                     title="Eliminar este archivo" class="btn btn-default" onclick="deleteData(' . $archivo->id . ')">
                                     <i class="fa fa-trash"></i>
                                 </a>
@@ -209,7 +213,6 @@ class ArchivoCargaMasivaController extends Controller
     // para una carga masiva
     public function downloadExcel(Tipo_unidad $tipoUnidad)
     {
-
         $listas = [];
         $propiedades = ["Número o letra", "Referencia", "División", "Tipo División", "Fecha ingreso propietario"];
         $aux = $tipoUnidad->atributos;
@@ -271,12 +274,14 @@ class ArchivoCargaMasivaController extends Controller
 
         if ($archivo != null) {
             //comprobamos que el archivo no se ha procesado
-            if ($archivo->estado!='terminado'){
+            if ($archivo->estado != 'terminado') {
 
                 $path = public_path('archivos_masivos/' . $archivo->ruta);
                 $data = Excel::load($path, function ($reader) {
                 })->get();
-                
+
+
+
                 // Validador si el arreglo está vacío
                 // **********************************
                 if (!empty($data) && $data->count() > 0) {
@@ -289,7 +294,7 @@ class ArchivoCargaMasivaController extends Controller
                         "lista visitantes" => $archivo->indice_visitantes,
                         "lista empleados" => $archivo->indice_empleados
                     );
-    
+
                     $i = $archivo->indice_unidad;
                     for ($i; $i < $data[0]->count(); $i++) {
                         //hay que eliminar la unidad y todo lo que se creo si es que
@@ -298,15 +303,15 @@ class ArchivoCargaMasivaController extends Controller
                         if (!$unidad) {
                             $archivo->indice_unidad = $i;
                             $archivo->save();
-    
+
                             break;
                         }
-    
-    
+
+
                         $saltarRegistros = $unidad->id == 0;
                         $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $archivo);
                         $indexLista = $result["index"];
-    
+
                         if ($result["error"]) {
                             //eliminar las dependencias de la unidad
                             $mascotas = $unidad->mascotas();
@@ -327,20 +332,16 @@ class ArchivoCargaMasivaController extends Controller
                         $archivo->save();
                     }
                     $archivo->indice_unidad = $i;
-                    $archivo->save();
                     $archivo->estado = "terminado";
-    
+                    $archivo->save();
+
                     //when finished and all is good
                     return array('res' => 1, 'msg' => 'Carga masiva terminada.');
-                    // } catch (\Throwable $th) {
-                    //     return array('res' => 0, 'msg' => 'Error en la carga masiva.');
-                    // }
+                    
                 }
-            
-            }else{
+            } else {
                 return array('res' => 0, 'msg' => 'El archivo ya se ha procesado.');
             }
-
         } else {
             return array('res' => 0, 'msg' => 'Ese archivo no existe');
         }
@@ -430,8 +431,14 @@ class ArchivoCargaMasivaController extends Controller
                     try {
                         $tipoDocumento->save();
                     } catch (\Throwable $th) {
+                        $error = substr($th->getMessage(), 0, 200);
                         $descripcion = 'No se pudo agregar el tipo documento al momento de crear el residente en la unidad';
-                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                        $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
+
+                        Log::channel('slack')->critical("Error inesperado. Agregando residente en carga masiva de unidades
+                        \n Error: {$error}");
+                        Log::channel('daily')->critical("Error inesperado. Agregando residente en carga masiva de unidades
+                        \n Error: {$th->getMessage()}");
                     }
                 }
                 $residente->tipo_documento_id = $tipoDocumento->id;
@@ -473,6 +480,8 @@ class ArchivoCargaMasivaController extends Controller
                 $mascota->raza = $data[$index]['raza'];
                 $mascota->fecha_nacimiento = date("Y-m-d", strtotime($data[$index]["fecha_nacimiento"]));
                 $mascota->descripcion = $data[$index]['descripcion'];
+                $convertido = $this->decodeBase64($data[$index]['foto_base64']);
+                dd($convertido);
                 $mascota->foto = $data[$index]['foto_base64'];
                 $mascota->fecha_ingreso = date("Y-m-d", strtotime($data[$index]["fecha_ingreso"]));
                 $mascota->unidad_id = $unidad->id;
@@ -650,13 +659,12 @@ class ArchivoCargaMasivaController extends Controller
         return true;
     }
 
-    private function agregarRegistroFallos($unRegistro, $descripcion, $idArchivo, $registroInterno)
+    private function agregarRegistroFallos($unRegistro, $descripcion, $idArchivo)
     {
         $registroF = new RegistroFallosCargaUnidades();
         $registroF->registro = $unRegistro;
         $registroF->descripcion_fallo = $descripcion;
-        $registroF->archivo_masivo_id = $idArchivo;
-        $registroF->error_real = $registroInterno;
+        $registroF->archivo_masivo_id = $idArchivo;        
         $registroF->save();
     }
 
@@ -720,8 +728,13 @@ class ArchivoCargaMasivaController extends Controller
                 $descripcion = "Error desconocido al crear la unidad.";
             }
 
-            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+            $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'na');
 
+            $error = substr($th->getMessage(), 0, 50);
+            Log::channel('slack')->critical("Error inesperado. Agregando unidad en carga masiva de unidades
+                \n Error: {$error}");
+            Log::channel('daily')->critical("Error inesperado. Agregando unidad en carga masiva de unidades
+                \n Error: {$th->getMessage()}");
             return $unidad;
         }
 
@@ -758,12 +771,29 @@ class ArchivoCargaMasivaController extends Controller
                     $descripcion = "Error desconocido al asociar el propietario con la unidad. Unidad: " . $unidad->numero_letra;
                 }
 
-                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, substr($th->getMessage(), 0, 1000));
+                $this->agregarRegistroFallos($fila, $descripcion, $archivo->id, 'na');
+
+                $error = substr($th->getMessage(), 0, 200);
+                Log::channel('slack')->critical("Error inesperado. Agregando residente en carga masiva de unidades
+                \n Error: {$error}");
+                Log::channel('daily')->critical("Error inesperado. Agregando residente en carga masiva de unidades
+                \n Error: {$th->getMessage()}");
 
                 return $unidad;
             }
         }
 
         return $unidad;
+    }
+
+
+
+    public function decodeBase64($base64Image)
+    {
+        $rutaImagenSalida = public_path('imgs/private_imgs/prueba.jpg');
+        $imagenBinaria = base64_decode($base64Image);
+        $bytes = file_put_contents($rutaImagenSalida, $imagenBinaria);
+        echo ('terminando decode');
+        echo ($bytes);
     }
 }
