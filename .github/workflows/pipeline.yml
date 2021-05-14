@@ -16,7 +16,7 @@ jobs:
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - run: echo "Run the test of repositore."
-      - run: rm -Rf vendor
+      - run: chmod 746 vendor
       - run: ls
       - run: cd vendor
       - run: ls
