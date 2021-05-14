@@ -18,4 +18,4 @@ jobs:
       - name: Run test of repositore
         run: |
           chmod 777 vendor/bin/phpunit
-          bash ./vendor/bin/phpunit
+          phpunit
