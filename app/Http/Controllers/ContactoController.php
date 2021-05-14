@@ -76,7 +76,7 @@ class ContactoController extends Controller
             if ($resultJson->success != true) {
                 return ["res" => 0, "msg" => $request->nombre . ", nuestra conexión con google a fallado por favor vuelve a intentar."];
             }
-            if ($resultJson->score < 0.3) {
+            if ($resultJson->score < 0.6) {
                 return ["res" => 0, "msg" => $request->nombre . ", detectamos que tu petición no es válida según google, si sigues teniendo problemas escribemos a nuestro correo de contacto."];
             }
 
