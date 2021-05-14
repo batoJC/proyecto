@@ -75,11 +75,13 @@ class ContactoController extends Controller
             $result = file_get_contents($url, false, $context);
             $resultJson = json_decode($result);
             if ($resultJson->success != true) {
-                Log::channel('stack')->warning("Formulario de contacto: No se pudo conectar con google para validar captcha.");
+                Log::channel('slack')->warning("Formulario de contacto: No se pudo conectar con google para validar captcha.
+                \nEmail: {$request->email}\nNombre: {$request->nombre}");
                 return ["res" => 0, "msg" => $request->nombre . ", nuestra conexión con google a fallado por favor vuelve a intentar."];
             }
-            if ($resultJson->score < 0.8) {
-                Log::channel('stack')->warning("Formulario de contacto: El captcha no pasó el score necesario para que sea válido.");
+            if ($resultJson->score < 2) {
+                Log::channel('slack')->warning("Formulario de contacto: El captcha no pasó el score necesario para que sea válido.
+                \nEmail: {$request->email}\nNombre: {$request->nombre}");
                 return ["res" => 0, "msg" => $request->nombre . ", detectamos que tu petición no es válida según google, si sigues teniendo problemas escribemos a nuestro correo de contacto."];
             }
 
