@@ -17,5 +17,5 @@ jobs:
       - run: echo "🍏 This job's status is ${{ job.status }}."
       - name: Run test of repositore
         run: |
-          chmod 746 vendor
+          chmod 777 vendor
           vendor/bin/phpunit
