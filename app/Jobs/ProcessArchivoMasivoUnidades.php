@@ -33,10 +33,14 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
     public function handle(ArchivoCargaMasiva $archivo)
     {
         // $archivo = ArchivoCargaMasiva::find(4);
-        for ($i=0; $i < 10; $i++) {
-                    // dd($archivo);
-            $this->archivoMasivo->fila++;
-            $this->archivoMasivo->save();
+
+        for ($i=0; $i < 2; $i++) {
+            for ($j=0; $j < 2; $j++) {
+                for ($k=0; $k < 10000; $k++) {
+                    $this->archivoMasivo->procesados++;
+                    $this->archivoMasivo->save();
+                }
+            }
         }
     }
 }

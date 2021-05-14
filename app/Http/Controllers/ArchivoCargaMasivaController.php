@@ -263,12 +263,14 @@ class ArchivoCargaMasivaController extends Controller
         // Validador si llega un archivo
         // *****************************
 
-        $archivo = ArchivoCargaMasiva::find($request->id);
-        // // dd($archivo);
-        // $process = new ProcessArchivoMasivoUnidades($archivo);
-        // $process->dispatch($archivo);
 
-        //return array('res' => 1, 'msg' => 'Carga masiva Iniciada.');
+
+        $archivo = ArchivoCargaMasiva::find($request->id);
+        // dd($archivo);
+        $process = new ProcessArchivoMasivoUnidades($archivo);
+        $process->dispatch($archivo);
+
+        return array('res' => 1, 'msg' => 'Carga masiva Iniciada.');
 
         $tipoUnidad = $archivo->tipoUnidad;
 
@@ -337,7 +339,7 @@ class ArchivoCargaMasivaController extends Controller
 
                     //when finished and all is good
                     return array('res' => 1, 'msg' => 'Carga masiva terminada.');
-                    
+
                 }
             } else {
                 return array('res' => 0, 'msg' => 'El archivo ya se ha procesado.');
@@ -664,7 +666,7 @@ class ArchivoCargaMasivaController extends Controller
         $registroF = new RegistroFallosCargaUnidades();
         $registroF->registro = $unRegistro;
         $registroF->descripcion_fallo = $descripcion;
-        $registroF->archivo_masivo_id = $idArchivo;        
+        $registroF->archivo_masivo_id = $idArchivo;
         $registroF->save();
     }
 
