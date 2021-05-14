@@ -10,7 +10,15 @@
                 <li>
                     <a href="{{ asset('admin') }}">Inicio</a>
                 </li>
-                <li>Carga masiva {{ ucfirst(strtolower($tipo_unidad->nombre)) }}</li>
+                <li>
+                    <a href="{{ url('unidades') }}">Tipos de unidad</a>                    
+                </li>
+                <li>
+                    <a href="{{ url('unidadestipo', $tipo_unidad) }}">{{ ucfirst(strtolower($tipo_unidad->nombre)) }}</a>                    
+                </li>
+                <li>
+                    Carga masiva {{ ucfirst(strtolower($tipo_unidad->nombre)) }}
+                </li>
             </ul>
         </div>
         <div class="col-1 col md-1 text-right">
