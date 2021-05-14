@@ -15,11 +15,12 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
-      - run: echo "Run the test of repositore."
-      - run: chmod 746 vendor
-             ls
-             cd vendor
-             ls
-             cd bin
-             ls
-             vendor/bin/phpunit
+      - name: Run test of repositore
+      - run: |
+          chmod 746 vendor
+          ls
+          cd vendor
+          ls
+          cd bin
+          ls
+          vendor/bin/phpunit
