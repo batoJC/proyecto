@@ -16,10 +16,11 @@ class CreateArchivoCargaMasivasTable extends Migration
         Schema::create('archivo_carga_masivas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ruta');
-            $table->string('nombre_archivo');            
+            $table->string('email')->default("");
+            $table->string('nombre_archivo');
             $table->integer('fallos');
             $table->integer('procesados');
-            $table->enum('estado',['subido','en progreso','terminado','eliminado']); 
+            $table->enum('estado',['subido','en progreso','terminado','eliminado']);
             $table->integer('tipo_unidad_id')->unsigned();
             $table->integer('conjunto_id')->unsigned();
             $table->integer('indice_unidad');
@@ -27,7 +28,7 @@ class CreateArchivoCargaMasivasTable extends Migration
             $table->integer('indice_residentes');
             $table->integer('indice_vehiculos');
             $table->integer('indice_empleados');
-            $table->integer('indice_visitantes');                        
+            $table->integer('indice_visitantes');
             $table->timestamps();
 
             //llaves foraneas config
