@@ -6,6 +6,7 @@ use Mail;
 use App\Contacto;
 use Yajra\Datatables\Datatables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ContactoController extends Controller
 {
@@ -74,9 +75,13 @@ class ContactoController extends Controller
             $result = file_get_contents($url, false, $context);
             $resultJson = json_decode($result);
             if ($resultJson->success != true) {
+                Log::channel('slack')->warning("Formulario de contacto: No se pudo conectar con google para validar captcha.
+                \nEmail: {$request->email}\nNombre: {$request->nombre}");
                 return ["res" => 0, "msg" => $request->nombre . ", nuestra conexión con google a fallado por favor vuelve a intentar."];
             }
-            if ($resultJson->score < 0.6) {
+            if ($resultJson->score < 0.7) {
+                Log::channel('slack')->warning("Formulario de contacto: El captcha no pasó el score necesario para que sea válido.
+                \nEmail: {$request->email}\nNombre: {$request->nombre}");
                 return ["res" => 0, "msg" => $request->nombre . ", detectamos que tu petición no es válida según google, si sigues teniendo problemas escribemos a nuestro correo de contacto."];
             }
 
@@ -90,17 +95,19 @@ class ContactoController extends Controller
 
             // Envio de correo que alerta la comunicación
             // ******************************************
-            $data = array(
-                'name' => 'Gestion Copropietarios',
-            );
-            //TODO: revisar este envio
-            Mail::send('emails.contacto', $data, function ($message) {
-                $message->from('gestioncopropietario@gmail.com', 'Gestion Copropietarios');
-                $message->to('juacagiri@gmail.com')->subject('¡Un Nuevo Contacto!');
-            });
+            // $data = array(
+            //     'name' => 'Gestion Copropietarios',
+            // );
+            //TODO: revisar este envio o hacer un envio a slack
+            // Mail::send('emails.contacto', $data, function ($message) {
+            //     $message->from('gestioncopropietario@gmail.com', 'Gestion Copropietarios');
+            //     $message->to('juacagiri@gmail.com')->subject('¡Un Nuevo Contacto!');
+            // });
 
             return ["res" => 1, "msg" => $request->nombre . ", hemos recibido tu mensaje y nos pondremos en contacto contigo lo más rápido posible."];
         } catch (\Throwable $th) {
+            Log::channel('slack')->critical("Formulario de contacto: Error inesperado.
+                \nEmail: {$request->email}\nNombre: {$request->nombre} \n Error: {$th->getMessage()}");
             return ["res" => 0, "msg" => "Hola " . $request->nombre . ", lo sentimos ocurrió un problema al registrar tu mensaje."];
         }
     }
