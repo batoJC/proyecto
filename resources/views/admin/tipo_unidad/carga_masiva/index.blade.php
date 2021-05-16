@@ -145,37 +145,37 @@
 
     // Mostrar Registro
     // ****************
-    function showForm(id) {
-        $('#modal-form form')[0].reset();
-        $('.modal-title').text('Tipo de Unidad');
-        $('#send_form').hide();
+    function showForm() {
+        modal=document.getElementById('#modal-errores form');
+        console.log(modal);
+       $('#modal-errores form')[0].reset();
+			$('.modal-title').text('Errores');
+			$('#send_form').hide();
 
-        $.ajax({
-            url: "{{ url('tipo_unidad') }}" + "/" + id
-            , type: "GET"
-            , dataType: "JSON"
-            , success: function(data) {
-                $('#modal-form').modal('show');
-                $('#modal-form form').trigger('reset');
-                $('.check span').remove()
-                var elem = document.querySelectorAll('.js-switch');
-                elem.forEach((e) => {
-                    new Switchery(e, {
-                        color: '#169F85'
-                    });
-                })
+			$.ajax({
+				url: "{{ url('errores') }}",
+				type: "GET",
+				dataType: "JSON",
+				success: function(data){
+					$('#modal-form').modal('show');
+					$('#modal-form form').trigger('reset');
+					$('.check span').remove()
+					var elem = document.querySelectorAll('.js-switch');
+					elem.forEach((e)=>{
+						new Switchery(e,{color:'#169F85'});
+					})
 
-                // Datos
-                $('#nombre').val(data[0].nombre);
-                $('#id').val(data[0].id);
-                data[0].atributos.forEach(e => {
-                    $(`input[name='${e.nombre}']`).click();
-                });
-            }
-            , error: function() {
-                swal("Ocurrió un error", "Lo sentimos, Este apartamento no existe", "error");
-            }
-        });
+					// Datos
+					$('#nombre').val(data[0].nombre);
+					$('#id').val(data[0].id);
+					data[0].atributos.forEach(e => {
+						$(`input[name='${e.nombre}']`).click();
+					});
+				},
+				error: function(){
+					swal("Ocurrió un error", "Lo sentimos, Este apartamento no existe", "error");
+				}
+			});
     }
 
     // Agregar registro
