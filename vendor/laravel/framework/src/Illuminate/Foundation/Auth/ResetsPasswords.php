@@ -37,6 +37,32 @@ trait ResetsPasswords
      */
     public function reset(Request $request)
     {
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $remoteip = $_SERVER['REMOTE_ADDR'];
+        $data = [
+            'secret' => config('services.recaptcha.secret'),
+            'response' => $request->get('recaptcha'),
+            'remoteip' => $remoteip
+        ];
+        $options = [
+            'http' => [
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data)
+            ]
+        ];
+        $context = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
+        $resultJson = json_decode($result);
+        if ($resultJson->success != true) {
+            return view('auth.passwords.email')
+                        ->with('captcha_errors', ['Ocurrió un problema con el servicio de captcha. Vuelva a intentarlo']);
+        }
+        if ($resultJson->score < 0.8) {
+            return view('auth.passwords.email')
+            ->with('captcha_errors', ['Ocurrió un problema con el servicio de captcha. Vuelva a intentarlo']);
+        }
+
         $this->validate($request, $this->rules(), $this->validationErrorMessages());
 
         // Here we will attempt to reset the user's password. If it is successful we

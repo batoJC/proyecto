@@ -5,6 +5,7 @@ namespace Illuminate\Foundation\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\ViewErrorBag;
 
 trait AuthenticatesUsers
 {
@@ -30,6 +31,33 @@ trait AuthenticatesUsers
      */
     public function login(Request $request)
     {
+
+        $url = 'https://www.google.com/recaptcha/api/siteverify';
+        $remoteip = $_SERVER['REMOTE_ADDR'];
+        $data = [
+            'secret' => config('services.recaptcha.secret'),
+            'response' => $request->get('recaptcha'),
+            'remoteip' => $remoteip
+        ];
+        $options = [
+            'http' => [
+                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                'method' => 'POST',
+                'content' => http_build_query($data)
+            ]
+        ];
+        $context = stream_context_create($options);
+        $result = file_get_contents($url, false, $context);
+        $resultJson = json_decode($result);
+        if ($resultJson->success != true) {
+            return view('auth.login')
+                        ->with('captcha_errors', ['Ocurrió un problema con el servicio de captcha. Vuelva a intentarlo']);
+        }
+        if ($resultJson->score < 0.8) {
+            return view('auth.login')
+            ->with('captcha_errors', ['Ocurrió un problema con el servicio de captcha. Vuelva a intentarlo']);
+        }
+
         $this->validateLogin($request);
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
