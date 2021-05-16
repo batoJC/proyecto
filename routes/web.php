@@ -21,10 +21,10 @@ Route::get('/migrate', function () {
 
 
 // Ruta para el Landing page
-Route::get('/', 'WelcomeController@welcome');
+// Route::get('/', 'WelcomeController@welcome');
 
 // Ruta para el Landing page 2
-Route::get('/landing', 'WelcomeController@welcome2');
+Route::get('/', 'WelcomeController@welcome2');
 
 // Ruta para el contacto del footer
 Route::post('contacto', 'ContactoController@store');
