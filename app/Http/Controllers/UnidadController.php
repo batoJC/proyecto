@@ -9,7 +9,6 @@ use App\Tipo_unidad;
 use App\TipoMascotas;
 use Yajra\Datatables\Datatables;
 use App\Unidad;
-use Illuminate\Support\Facades\Crypt;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
