@@ -94,7 +94,7 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
 
 
                             $saltarRegistros = $unidad->id == 0;
-                            $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $archivo);
+                            $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $this->archivoMasivo);
                             $indexLista = $result["index"];
 
                             if ($result["error"]) {

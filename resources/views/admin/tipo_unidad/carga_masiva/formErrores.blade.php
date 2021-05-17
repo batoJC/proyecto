@@ -13,10 +13,10 @@
 			</div>
 			<div class="modal-body">
 				<div class="row">
-					<div class="col-sm-12 col-md-6 col-lg-6">
+					<div class="col-xs-12 col-md-6 col-lg-6">
 						<h3 class="text-center" style="color:green" id="und-procesadas"></h3>
 					</div>
-					<div class="col-sm-12 col-md-6 col-lg-6">
+					<div class="col-xs-12 col-md-6 col-lg-6">
 						<h3 class="text-center" style="color: red;" id="und-fallidas"></h3>
 					</div>
 				</div>
