@@ -139,7 +139,11 @@ class ArchivoCargaMasivaController extends Controller
             if ($archivoCargaMasiva->ruta != '') {
                 // Elimina el archivo
                 //TODO :only delete when the status are load or completed
-                @unlink(public_path('archivos_masivos/' . $archivoCargaMasiva->ruta));
+                if ($archivoCargaMasiva->estado == 'subido' || $archivoCargaMasiva->estado == 'terminado') {
+                    @unlink(public_path('archivos_masivos/' . $archivoCargaMasiva->ruta));
+                } else {
+                    return ['res' => 0, 'msg' => 'No se puede eliminar un archivo mientras está siendo procesado'];
+                }
             }
             $archivoCargaMasiva->delete();
             return ['res' => 1, 'msg' => 'Registro eliminado correctamente'];
