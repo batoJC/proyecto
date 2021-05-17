@@ -11,10 +11,11 @@
                     <a href="{{ asset('admin') }}">Inicio</a>
                 </li>
                 <li>
-                    <a href="{{ url('unidades') }}">Tipos de unidad</a>                    
+                    <a href="{{ url('unidades') }}">Tipos de unidad</a>
                 </li>
                 <li>
-                    <a href="{{ url('unidadestipo', $tipo_unidad) }}">{{ ucfirst(strtolower($tipo_unidad->nombre)) }}</a>                    
+                    <a href="{{ url('unidadestipo', $tipo_unidad) }}">{{ ucfirst(strtolower($tipo_unidad->nombre))
+                        }}</a>
                 </li>
                 <li>
                     Carga masiva {{ ucfirst(strtolower($tipo_unidad->nombre)) }}
@@ -23,7 +24,8 @@
         </div>
         <div class="col-1 col md-1 text-right">
             <div class="btn-group">
-                <i data-placement="left" title="Ayuda" data-toggle="dropdown" type="button" aria-expanded="false" class="fa blue fa-question-circle-o ayuda">
+                <i data-placement="left" title="Ayuda" data-toggle="dropdown" type="button" aria-expanded="false"
+                    class="fa blue fa-question-circle-o ayuda">
                 </i>
                 <ul role="menu" class="dropdown-menu pull-right">
                     <li>
@@ -37,11 +39,15 @@
         <i class="fa fa-plus"></i>
         Agregar Archivo
     </a>
-    <a data-placement="top" title="Descarga archivo excel para una carga masiva de {{ ucfirst(strtolower($tipo_unidad->nombre)) }}" data-toggle="tooltip" class="btn btn-warning" href="{{ url('generarPlantillaMasivoUnidades',['tipo'=>$tipo_unidad->id]) }}" target="_blank">
+    <a data-placement="top"
+        title="Descarga archivo excel para una carga masiva de {{ ucfirst(strtolower($tipo_unidad->nombre)) }}"
+        data-toggle="tooltip" class="btn btn-warning"
+        href="{{ url('generarPlantillaMasivoUnidades',['tipo'=>$tipo_unidad->id]) }}" target="_blank">
         <i class="fa fa-download"></i>
         &nbsp; Descargar plantilla
     </a>
     @include('admin.tipo_unidad.carga_masiva.form')
+    @include('admin.tipo_unidad.carga_masiva.formErrores')
     <br><br>
     <table id="archivos-table" class="table table-stripped">
         <thead>
@@ -68,7 +74,7 @@
             , url: "{{ url('api.archivos_masivos')}}/{{$tipo_unidad->id}}"
             , data: data
             , dataType: "json"
-            , success: function(response) {
+            , success: function (response) {
                 callback(
                     response
                 );
@@ -86,32 +92,32 @@
         , serverSide: true
         , ajax: actualizarTabla
         , columns: [{
-                data: 'nombre'
-                , name: 'nombre'
-            }
+            data: 'nombre'
+            , name: 'nombre'
+        }
             , {
-                data: 'ultimoRegistro'
-                , name: 'ultimoRegistro'
-            }
+            data: 'ultimoRegistro'
+            , name: 'ultimoRegistro'
+        }
             , {
-                data: 'fallos'
-                , name: 'fallos'
-            }
+            data: 'fallos'
+            , name: 'fallos'
+        }
             , {
-                data: 'procesados'
-                , name: 'procesados'
-            }
+            data: 'procesados'
+            , name: 'procesados'
+        }
             , {
-                data: 'estado'
-                , name: 'estado'
-            }
+            data: 'estado'
+            , name: 'estado'
+        }
             , {
-                data: 'action'
-                , name: 'action'
-                , orderable: false
-                , searchable: false
-            }
-        , ]
+            data: 'action'
+            , name: 'action'
+            , orderable: false
+            , searchable: false
+        }
+            ,]
         , language: {
             "processing": "Procesando..."
             , "search": "Buscar:"
@@ -145,44 +151,43 @@
 
     // Mostrar Registro
     // ****************
-    function showForm() {
-        modal=document.getElementById('#modal-errores form');
-        console.log(modal);
-       $('#modal-errores form')[0].reset();
-			$('.modal-title').text('Errores');
-			$('#send_form').hide();
+    function showForm(id) {
 
-			$.ajax({
-				url: "{{ url('errores') }}",
-				type: "GET",
-				dataType: "JSON",
-				success: function(data){
-					$('#modal-form').modal('show');
-					$('#modal-form form').trigger('reset');
-					$('.check span').remove()
-					var elem = document.querySelectorAll('.js-switch');
-					elem.forEach((e)=>{
-						new Switchery(e,{color:'#169F85'});
-					})
+        $.ajax({
+            url: "{{ url('errores') }}" + "/" + id
+            , type: "GET"
+            , dataType: "JSON"
+            , success: function (data) {
+                $('#modal-errores').modal('show');
+                $('#modal-errores').trigger('reset');
+                tbody = document.getElementById('errores-body');
+                unidadError = document.getElementById('und-fallidas');
+                unidadProcesadas = document.getElementById('und-procesadas')
+                unidadError.innerHTML = 'Unidades no agregadas: ' + data.unidades_fallidas;
+                unidadProcesadas.innerHTML = 'Unidades Procesadas: ' + data.unidades_procesadas;
+                aux = '';
+                data.errores.forEach(element => {
+                    aux += `<tr>
+							    <td>${element.registro}</td>
+							    <td>${element.error}</td>
+						   </tr>`
+                });
 
-					// Datos
-					$('#nombre').val(data[0].nombre);
-					$('#id').val(data[0].id);
-					data[0].atributos.forEach(e => {
-						$(`input[name='${e.nombre}']`).click();
-					});
-				},
-				error: function(){
-					swal("Ocurrió un error", "Lo sentimos, Este apartamento no existe", "error");
-				}
-			});
+                tbody.innerHTML = aux;
+
+
+
+            }
+            , error: function () {
+                swal("Ocurrió un error", "Lo sentimos, Este apartamento no existe", "error");
+            }
+        });
     }
 
     // Agregar registro
     // ****************
 
     function addForm() {
-        console.log('dentro')
         $('#archivos').modal('show');
         $('#dataArchivo').trigger('reset');
     }
@@ -201,7 +206,7 @@
             url: "{{ url('tipo_unidad') }}" + "/" + id
             , type: "GET"
             , dataType: "JSON"
-            , success: function(data) {
+            , success: function (data) {
                 $('#modal-form').modal('show');
                 // Data
                 $('#modal-form form').trigger('reset');
@@ -218,10 +223,11 @@
                     $(`input[name='${e.nombre}']`).click();
                 });
             }
-            , error: function() {
+            , error: function () {
                 swal("¡Opps! Ocurrió un error", {
                     icon: "error"
-                , });
+                    ,
+                });
             }
         });
     }
@@ -282,12 +288,13 @@
 
     function deleteData(id) {
         swal({
-                title: "¿Estás seguro?"
-                , text: "Ten en cuenta que este procedimiento es irreversible. ¿Deseas eliminar este archivo?"
-                , icon: "warning"
-                , buttons: true
-                , dangerMode: true
-            , })
+            title: "¿Estás seguro?"
+            , text: "Ten en cuenta que este procedimiento es irreversible. ¿Deseas eliminar este archivo?"
+            , icon: "warning"
+            , buttons: true
+            , dangerMode: true
+            ,
+        })
             .then((willDelete) => {
                 if (willDelete) {
                     $.ajax({
@@ -296,8 +303,9 @@
                         , data: {
                             '_method': 'DELETE'
                             , '_token': csrf_token
-                        , }
-                        , success: function(e) {
+                            ,
+                        }
+                        , success: function (e) {
                             if (e.res) {
                                 swal('Logrado!', e.msg, 'success').then(() => {
                                     table.ajax.reload();
@@ -306,7 +314,7 @@
                                 swal('Error!', e.msg, 'error');
                             }
                         }
-                        , error: function(data) {
+                        , error: function (data) {
                             swal('Error!', 'Ocurrió un error en el servidor', 'error');
                         }
                     });
@@ -335,8 +343,9 @@
                         '_method': 'POST'
                         , 'id': id
                         , '_token': csrf_token
-                    , }
-                    , success: function(e) {
+                        ,
+                    }
+                    , success: function (e) {
                         if (e.res) {
                             swal('Logrado!', e.msg, 'success').then(() => {
                                 table.ajax.reload();
@@ -347,7 +356,7 @@
                         $("#loading").fadeOut(800);
                         procesando = false;
                     }
-                    , error: function(data) {
+                    , error: function (data) {
                         swal('Error!', 'Ocurrió un error en el servidor', 'error');
                         $("#loading").fadeOut(800);
                         procesando = false;
@@ -358,27 +367,26 @@
 
     function mostrarEstadoProceso(id) {
         idProceso = id;
-        setTimeout(()=>{
+        setTimeout(() => {
             $.ajax({
-                url: "{{ url('estadoProcesoCargaArchivo') }}/"+id
+                url: "{{ url('estadoProcesoCargaArchivo') }}/" + id
                 , type: "POST"
                 , data: {
                     '_method': 'POST'
                     , '_token': csrf_token
-                , }
-                , success: function(e) {
+                    ,
+                }
+                , success: function (e) {
                     console.log(e);
                     mostrarEstadoProceso(idProceso);
                 }
-                , error: function(data) {
+                , error: function (data) {
                     mostrarEstadoProceso(idProceso);
                 }
             });
-        },30000)
+        }, 30000)
 
     }
-
-
 
 </script>
 @endsection

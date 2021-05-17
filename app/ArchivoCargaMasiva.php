@@ -15,4 +15,9 @@ class ArchivoCargaMasiva extends Model
   {
     return $this->hasOne(Tipo_unidad::class, 'id', 'conjunto_id');
   }
+
+  public function errores()
+  {
+    return $this->hasMany(RegistroFallosCargaUnidades::class, 'archivo_masivo_id', 'id');
+  }
 }

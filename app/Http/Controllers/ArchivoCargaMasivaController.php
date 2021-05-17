@@ -198,8 +198,8 @@ class ArchivoCargaMasivaController extends Controller
                                     <i class="fa fa-play"></i>
                                 </a>
                                 <a data-toggle="tooltip" data-placement="top" id="seeResults"
-                                    title="Ver resultados del proceso" href="" class="btn btn-default" "
-                                    onclick="showForm()">
+                                    title="Ver resultados del proceso" class="btn btn-default" "
+                                    onclick="showForm(' . $archivo->id . ')">
                                     <i class="fa fa-list-ol"></i>
                                 </a>
                                 <a data-toggle="tooltip" data-placement="top" id="delete"
@@ -276,11 +276,16 @@ class ArchivoCargaMasivaController extends Controller
         $process->dispatch($archivo);
 
         return array('res' => 1, 'msg' => 'Carga masiva Iniciada, cuando esta termine se le notificara con un correo. Recuerde que puede consultar el estado cada vez que lo desee.');
-
     }
 
-    private function showErrors()
+    public function showErrors(ArchivoCargaMasiva $archivo)
     {
-        dd('mostrando errores...');
+        $aux = $archivo->errores;
+        $errores = array();
+        foreach ($aux as $key => $value) {
+            $errores[] = array('error' => $value->descripcion_fallo, 'registro' => $value->registro);
+        }
+
+        return array('unidades_procesadas' => $archivo->procesados, 'unidades_fallidas' => $archivo->fallos, 'errores' => $errores);
     }
 }

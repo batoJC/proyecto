@@ -140,7 +140,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             \nError: {$th->getMessage()}");
             $this->enviarEmailRespuesta("Ocurrió un error al procesar la carga masiva, si el error persiste pongase en contacto con nuestro soporte técnico");
         }
-
     }
 
     private function enviarEmailRespuesta($mensaje)
@@ -154,8 +153,8 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             $usuario->email = $this->archivoMasivo->email;
             $correo = new CorreoController();
             $nombreArchivo = $this->archivoMasivo->nombre_archivo;
-            $salida = $correo->enviarEmail($conjunto, [$usuario],"Estado carga masiva {$nombreArchivo}", $mensaje);
-            if (!$salida){
+            $salida = $correo->enviarEmail($conjunto, [$usuario], "Estado carga masiva {$nombreArchivo}", $mensaje);
+            if (!$salida) {
                 Log::channel('slack')->critical("Error, no se pudo enviar mensaje al terminar el proceso de carga masiva para:
                 \n Email: {$this->archivoMasivo->email}
                 \nArchivo: {$this->archivoMasivo->nombre_archivo}
@@ -184,8 +183,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
     {
         $error = false;
         for ($i = 1; $i < $hojasExcel->count(); $i++) {
-            // echo ($hojasExcel[$i]->getTitle());
-            // $indexLista["lista mascotas"]++;
             $nombreHoja = $hojasExcel[$i]->getTitle();
             switch ($nombreHoja) {
                 case  "lista mascotas":
@@ -590,7 +587,7 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             $unidad->save();
         } catch (\Throwable $th) {
             if (str_contains($th->getMessage(), "unidad_unica")) {
-                $descripcion = "Ya existe una unidad con esas propiedades.";
+                $descripcion = "La unidad " . $data["numero_o_letra"] . " Ya existe, con esas propiedades.";
             } else {
                 $descripcion = "Error desconocido al crear la unidad.";
                 $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);

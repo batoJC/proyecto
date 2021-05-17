@@ -168,7 +168,7 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('generarPlantillaMasivoUnidades/{tipoUnidad}', 'ArchivoCargaMasivaController@downloadExcel');
 	Route::post('unidades_csv_post', 'ArchivoCargaMasivaController@unidades_csv_post');
 	Route::get('unidades_csv', 'ArchivoCargaMasivaController@unidades_csv');
-	Route::get('errores', 'ArchivoCargaMasivaController@showErrors');
+	Route::get('errores/{archivo}', 'ArchivoCargaMasivaController@showErrors');
 
 	// Ruta para el dashboard
 	Route::get('admin', 'HomeController@admin');

@@ -19,7 +19,7 @@ class CreateArchivoCargaMasivasTable extends Migration
             $table->string('email')->default("");
             $table->string('nombre_archivo');
             $table->integer('fallos');
-            $table->integer('procesados');
+            $table->integer('procesados');            
             $table->enum('estado',['subido','en progreso','terminado','eliminado']);
             $table->integer('tipo_unidad_id')->unsigned();
             $table->integer('conjunto_id')->unsigned();
