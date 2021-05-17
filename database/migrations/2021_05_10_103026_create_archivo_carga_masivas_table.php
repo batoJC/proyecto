@@ -16,13 +16,13 @@ class CreateArchivoCargaMasivasTable extends Migration
         Schema::create('archivo_carga_masivas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ruta');
-            $table->string('email')->default("");
             $table->string('nombre_archivo');
             $table->integer('fallos');
-            $table->integer('procesados');            
+            $table->integer('procesados');
             $table->enum('estado',['subido','en progreso','terminado','eliminado']);
             $table->integer('tipo_unidad_id')->unsigned();
             $table->integer('conjunto_id')->unsigned();
+            $table->integer('usuario_id')->unsigned();
             $table->integer('indice_unidad');
             $table->integer('indice_mascotas');
             $table->integer('indice_residentes');
@@ -35,6 +35,7 @@ class CreateArchivoCargaMasivasTable extends Migration
             $table->unique(array('nombre_archivo', 'conjunto_id'));
             $table->foreign('conjunto_id')->references('id')->on('conjuntos')->onDelete('cascade');
             $table->foreign('tipo_unidad_id')->references('id')->on('tipo_unidad')->onDelete('cascade');
+            $table->foreign('usuario_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

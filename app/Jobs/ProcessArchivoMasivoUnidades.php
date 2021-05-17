@@ -129,12 +129,14 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
                 $this->enviarEmailRespuesta("El archivo no existe");
             }
         } catch (\Throwable $th) {
-            Log::channel('slack')->info("Ocurrió un error al realizar la carga masiva:
-            \n Email: {$this->archivoMasivo->email}
+            $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);
+            Log::channel('slack')->critical("Ocurrió un error al realizar la carga masiva:
+            \n Email: {$this->archivoMasivo->usuario->email}
             \nArchivo: {$this->archivoMasivo->nombre_archivo}
+            \Error: {$error}
             \nConjunto: {$this->archivoMasivo->conjunto->nombre}");
             Log::channel('daily')->critical("Ocurrió un error al realizar la carga masiva:
-            \n Email: {$this->archivoMasivo->email}
+            \n Email: {$this->archivoMasivo->usuario->email}
             \nArchivo: {$this->archivoMasivo->nombre_archivo}
             \nConjunto: {$this->archivoMasivo->conjunto->nombre}
             \nError: {$th->getMessage()}");
@@ -149,14 +151,13 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             $conjunto->nombre = 'Gestión copropietario';
             $conjunto->correo = env("MAIL_USERNAME");
             $conjunto->password = Crypt::encrypt(env("MAIL_PASSWORD"));
-            $usuario = new User();
-            $usuario->email = $this->archivoMasivo->email;
+            $usuario = $this->archivoMasivo->usuario;
             $correo = new CorreoController();
             $nombreArchivo = $this->archivoMasivo->nombre_archivo;
             $salida = $correo->enviarEmail($conjunto, [$usuario], "Estado carga masiva {$nombreArchivo}", $mensaje);
             if (!$salida) {
                 Log::channel('slack')->critical("Error, no se pudo enviar mensaje al terminar el proceso de carga masiva para:
-                \n Email: {$this->archivoMasivo->email}
+                \n Email: {$this->archivoMasivo->usuario->email}
                 \nArchivo: {$this->archivoMasivo->nombre_archivo}
                 \nConjunto: {$this->archivoMasivo->conjunto->nombre}
                 \nMensaje: {$mensaje}");
@@ -164,13 +165,13 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
         } catch (\Throwable $th) {
             $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);
             Log::channel('slack')->critical("Error, Ocurrió un error en el proceso de carga masiva para:
-            \n Email: {$this->archivoMasivo->email}
+            \n Email: {$this->archivoMasivo->usuario->email}
             \nArchivo: {$this->archivoMasivo->nombre_archivo}
             \nConjunto: {$this->archivoMasivo->conjunto->nombre}
             \nMensaje: {$mensaje}
             \nError: {$error}");
             Log::channel('daily')->critical("Error, Ocurrió un error en el proceso de carga masiva para:
-            \n Email: {$this->archivoMasivo->email}
+            \n Email: {$this->archivoMasivo->usuario->email}
             \nArchivo: {$this->archivoMasivo->nombre_archivo}
             \nConjunto: {$this->archivoMasivo->conjunto->nombre}
             \nMensaje: {$mensaje}
@@ -179,39 +180,38 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
     }
 
 
-    private function agregarListasPorUnidad($hojasExcel, $unidad, $indexLista, $saltarRegistros, $archivo)
+    private function agregarListasPorUnidad($hojasExcel, $unidad, $indexLista, $error, $archivo)
     {
-        $error = false;
         for ($i = 1; $i < $hojasExcel->count(); $i++) {
             $nombreHoja = $hojasExcel[$i]->getTitle();
             switch ($nombreHoja) {
                 case  "lista mascotas":
-                    $result = $this->crearListaMascotas($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
-                    $saltarRegistros = $result["error"];
+                    $result = $this->crearListaMascotas($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $error, $archivo);
+                    $error = $result["error"];
                     $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista vehiculos":
-                    $result = $this->crearListaVehiculos($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
-                    $saltarRegistros = $result["error"];
+                    $result = $this->crearListaVehiculos($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $error, $archivo);
+                    $error = $result["error"];
                     $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista residentes":
-                    $result = $this->crearListaResidentes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
-                    $saltarRegistros = $result["error"];
+                    $result = $this->crearListaResidentes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $error, $archivo);
+                    $error = $result["error"];
                     $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista visitantes":
-                    $result = $this->crearListaVisitantes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
-                    $saltarRegistros = $result["error"];
+                    $result = $this->crearListaVisitantes($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $error, $archivo);
+                    $error = $result["error"];
                     $indexLista[$nombreHoja] = $result["index"];
 
                     break;
                 case "lista empleados":
-                    $result = $this->crearListaEmpleados($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $saltarRegistros, $archivo);
-                    $saltarRegistros = $result["error"];
+                    $result = $this->crearListaEmpleados($indexLista[$nombreHoja], $hojasExcel[$i], $unidad, $error, $archivo);
+                    $error = $result["error"];
                     $indexLista[$nombreHoja] = $result["index"];
 
                     break;

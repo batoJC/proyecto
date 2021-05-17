@@ -16,12 +16,12 @@ class CreateRegistroFallosCargaUnidadesTable extends Migration
         Schema::create('registro_fallos_carga_unidades', function (Blueprint $table) {
             $table->increments('id');
             $table->string('registro');
-            $table->string('descripcion_fallo');            
-            $table->integer('archivo_masivo_id')->unsigned();                                  
+            $table->string('descripcion_fallo');
+            $table->integer('archivo_masivo_id')->unsigned();
             $table->timestamps();
             //llaves foraneas
             $table->foreign('archivo_masivo_id')->references('id')->on('archivo_carga_masivas')->onDelete('cascade');
-            
+
 
         });
     }

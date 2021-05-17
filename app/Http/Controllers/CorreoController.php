@@ -132,7 +132,7 @@ class CorreoController extends Controller
     /**
      * Save the email in the BD
      */
-    public function saveEmail($conjunto, $users, $subject, $content, $file = null)
+    public function saveEmail($conjunto_id, $users, $subject, $content, $file = null)
     {
         $correo = new Correo();
         $ids = array();
@@ -144,7 +144,7 @@ class CorreoController extends Controller
         $correo->subject = $subject;
         $correo->content = $content;
         $correo->file = $file;
-        $correo->conjunto_id = $conjunto;
+        $correo->conjunto_id = $conjunto_id;
         $correo->save();
     }
 }

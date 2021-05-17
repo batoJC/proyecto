@@ -8,22 +8,9 @@ use App\Http\Controllers\Controller;
 use Yajra\Datatables\Datatables;
 use App\Tipo_unidad;
 use App\Conjunto;
-use App\Division;
 use App\User;
-use App\Documento;
-use App\Mascota;
-use App\RegistroFallosCargaUnidades;
-use App\Tipo_Documento;
-use App\TipoDivision;
-use App\TipoDocumento;
-use App\Unidad;
-use App\Vehiculo;
-use App\Visitante;
 use Illuminate\Support\Facades\Auth;
 use Excel;
-use App\TipoMascotas;
-use App\Empleado;
-use App\Residentes;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\ProcessArchivoMasivoUnidades;
 
@@ -89,6 +76,7 @@ class ArchivoCargaMasivaController extends Controller
             $archivoCargaMasiva->indice_vehiculos = 0;
             $archivoCargaMasiva->indice_empleados = 0;
             $archivoCargaMasiva->indice_visitantes = 0;
+            $archivoCargaMasiva->usuario_id = Auth::user()->id;
 
             if ($request->file('archivo')) {
                 $file = $request->conjunto_id . time() . '.' . $request->archivo->getClientOriginalExtension();
@@ -269,11 +257,11 @@ class ArchivoCargaMasivaController extends Controller
         // *****************************
 
         $archivo = ArchivoCargaMasiva::find($request->id);
-        $archivo->email = Auth::user()->email;
+        $archivo->usuario_id = Auth::user()->id;
         $archivo->save();
         // dd($archivo);
         $process = new ProcessArchivoMasivoUnidades($archivo);
-        $process->dispatch($archivo);
+        $process->dispatch($archivo)->onQueue('low');
 
         return array('res' => 1, 'msg' => 'Carga masiva Iniciada, cuando esta termine se le notificara con un correo. Recuerde que puede consultar el estado cada vez que lo desee.');
     }

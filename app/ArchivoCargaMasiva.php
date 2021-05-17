@@ -13,7 +13,12 @@ class ArchivoCargaMasiva extends Model
 
   public function conjunto()
   {
-    return $this->hasOne(Tipo_unidad::class, 'id', 'conjunto_id');
+    return $this->hasOne(Conjunto::class, 'id', 'conjunto_id');
+  }
+
+  public function usuario()
+  {
+    return $this->hasOne(User::class, 'id', 'usuario_id');
   }
 
   public function errores()

@@ -377,8 +377,8 @@ class RecaudoController extends Controller
                 $nombre_archivo = 'temp/' . str_replace('/', ' ', $recaudo->propietario->nombre_completo) . ' - ' . $recaudo->consecutivo . ".pdf";
                 file_put_contents(public_path($nombre_archivo), $archivo);
 
-                // $this->enviarEmail($auxCuentaCobro->propietario,$nombre_archivo);
-                $this->enviarEmail([User::find(6)], $nombre_archivo);
+                $this->enviarEmail($recaudo->propietario,$nombre_archivo);
+                // $this->enviarEmail([User::find(6)], $nombre_archivo);
                 @unlink($nombre_archivo);
 
                 return array('res' => 1, 'msg' => 'Recaudo guardado correctamente.', 'pago' => $recaudo);
@@ -410,7 +410,7 @@ class RecaudoController extends Controller
     private function enviarEmail($propietario, $file)
     {
         $aux = new CorreoController();
-        $res = $aux->enviarEmail(Conjunto::find(session('conjunto')), $propietario, 'Recibo de pago', '<p>Se ha generado un recibo de pago a su nombre. Se adjunta una copia en pdf de mismo.</p>', $file);
+        $res = $aux->enviarEmail(Conjunto::find(session('conjunto')), [$propietario], 'Recibo de pago', '<p>Se ha generado un recibo de pago a su nombre. Se adjunta una copia en pdf de mismo.</p>', $file);
 
         if ($res) {
             return true;
@@ -468,7 +468,7 @@ class RecaudoController extends Controller
         $files = glob(public_path('qrcodes') . '/*');
         foreach ($files as $file) {
             if (is_file($file))
-                unlink($file); 
+                unlink($file);
         }
 
 
@@ -500,12 +500,12 @@ class RecaudoController extends Controller
     {
         $recaudo  = Recaudo::where([['conjunto_id', session('conjunto')], ['consecutivo', $consecutivo]])->first();
 
-        
+
         $pdf = null;
         $files = glob(public_path('qrcodes') . '/*');
         foreach ($files as $file) {
             if (is_file($file))
-                unlink($file); 
+                unlink($file);
         }
 
 
