@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Gestion Copropietarios</title>
+    <title>Gestion Copropietario</title>
 
     <link rel="icon" type="image/png" href="{{ asset('imgs/favicon.png') }}">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">

@@ -66,7 +66,7 @@
 											0; text-align: left;">Hola!</h1>
 										<p style="font-family: Avenir, Helvetica, sans-serif; box-sizing: border-box;
 											color: #74787E; font-size: 16px; line-height: 1.5em; margin-top: 0;
-											text-align: left;">{!! utf8_decode( $contenido ) !!}</p>										
+											text-align: left;">{!! utf8_decode( $contenido ) !!}</p>
 									</td>
 								</tr>
 							</table>
@@ -85,7 +85,7 @@
 										<p style="font-family: Avenir, Helvetica, sans-serif;box-sizing: border-box;
 											line-height: 1.5em; margin-top: 0; color: #AEAEAE;font-size: 12px;
 											text-align: center;">@php
-												echo utf8_decode('Todos los derechos reservados - Gestión Copropietarios © - 2018');
+												echo utf8_decode('Todos los derechos reservados - Gestión Copropietario © - 2021');
 											@endphp</p>
 									</td>
 								</tr>

@@ -325,9 +325,6 @@
     }
 
 
-    let procesando = false;
-    let idProceso = 0;
-
     //funcion para arrancar el procesamiento del archivo
     function runUpload(id) {
         //muestra en toda la pantalla procesando
@@ -335,7 +332,6 @@
             .hide()
             .fadeIn(800, () => {
                 procesando = true;
-                mostrarEstadoProceso(id);
                 $.ajax({
                     url: "{{ url('unidades_csv_post') }}"
                     , type: "POST"
@@ -354,38 +350,13 @@
                             swal('Error!', e.msg, 'error');
                         }
                         $("#loading").fadeOut(800);
-                        procesando = false;
                     }
                     , error: function (data) {
                         swal('Error!', 'Ocurrió un error en el servidor', 'error');
                         $("#loading").fadeOut(800);
-                        procesando = false;
                     }
                 });
             })
-    }
-
-    function mostrarEstadoProceso(id) {
-        idProceso = id;
-        setTimeout(() => {
-            $.ajax({
-                url: "{{ url('estadoProcesoCargaArchivo') }}/" + id
-                , type: "POST"
-                , data: {
-                    '_method': 'POST'
-                    , '_token': csrf_token
-                    ,
-                }
-                , success: function (e) {
-                    console.log(e);
-                    mostrarEstadoProceso(idProceso);
-                }
-                , error: function (data) {
-                    mostrarEstadoProceso(idProceso);
-                }
-            });
-        }, 30000)
-
     }
 
 </script>
