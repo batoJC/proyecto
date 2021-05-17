@@ -19,6 +19,8 @@
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/master.css') }}" rel="stylesheet">
     <link href="{{ asset('css/fullcalendar.min.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <style>
             html,body{
                 overflow: hidden;

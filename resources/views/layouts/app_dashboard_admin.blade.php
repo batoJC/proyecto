@@ -21,6 +21,8 @@
     <link href="{{ asset('css/fullcalendar.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/switchery.min.css') }}" rel="stylesheet">
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
     <style>
         html,body{
