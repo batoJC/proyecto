@@ -52,25 +52,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
     public function handle(ArchivoCargaMasiva $archivo)
     {
         try {
-
-            if($this->archivoMasivo->id == 2){
-                for ($i=0; $i < 100000; $i++) {
-                    for ($j=0; $j < 100000; $j++) {
-                        for ($k=0; $k < 100000; $k++) {
-                        }
-                    }
-                }
-            }
-
-            if($this->archivoMasivo->id == 1){
-                for ($i=0; $i < 10000; $i++) {
-                    for ($j=0; $j < 10000; $j++) {
-                        for ($k=0; $k < 10000; $k++) {
-                        }
-                    }
-                }
-            }
-
             $tipoUnidad = $this->archivoMasivo->tipoUnidad;
 
             if ($this->archivoMasivo != null) {
