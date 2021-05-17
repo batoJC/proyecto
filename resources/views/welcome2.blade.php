@@ -3,10 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Aries es una plataforma para la administración de coopropiedades horizontales, conocenos y contáctanos para poder ayudarte."/>
+    <meta name="keywords" content="administración, software, propiedad horizontal, aries"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
+    <meta name="robots" content="index,follow"/>
+    <meta http-equiv="expires" content="43200"/>
+    <link rel="preload" href="{{ asset('landing_resources/font/Kanit-Bold.ttf')}}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('landing_resources/font/Kanit-Light.ttf')}}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('landing_resources/font/Kanit-Medium.ttf')}}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ asset('landing_resources/font/Kanit-Regular.ttf')}}" as="font" type="font/woff2" crossorigin>
+    <title>Aries | Tu copropiedad en manos expertas</title>
     <link rel="stylesheet"  href="{{ asset('landing_resources/css/main.css')}}">
-    <link rel="stylesheet"  href="{{ asset('landing_resources/css/animate.css')}}" />
     <script  src="{{ asset('landing_resources/js/main.js') }}"></script>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -15,7 +22,7 @@
 <body class="container">
     <!-- NAVBAR -->
     <nav id="nav_bar" class="blue-bar navbar">
-        <img id="logo" class="logo" src="{{ asset('landing_resources/img/logo_blanco.svg') }}" alt="">
+        <img id="logo" class="logo" src="{{ asset('landing_resources/img/logo_blanco.svg') }}" alt="logo">
         <ul>
             <li>
                 <a href="#section_1">Inicio</a></li>
@@ -274,6 +281,7 @@
         </p>
     </div>
 </body>
+<link rel="stylesheet"  href="{{ asset('landing_resources/css/animate.css')}}" />
 <script src="https://www.google.com/recaptcha/api.js?render=6Lfnh9MaAAAAAHsQJMxiiOxfPFpfbEtKy7EnocUY"></script>
 <script src="{{ asset('js/sweetalert.min.js') }}"></script>
 </html>
