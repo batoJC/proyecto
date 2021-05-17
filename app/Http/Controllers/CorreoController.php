@@ -6,6 +6,7 @@ use App\Conjunto;
 use App\Correo;
 use App\Jobs\ProcessEmail;
 use App\User;
+use Exception;
 use Illuminate\Http\Request;
 use PHPMailer\PHPMailer\PHPMailer;
 use Illuminate\Support\Facades\Crypt;
@@ -58,7 +59,11 @@ class CorreoController extends Controller
         }
 
         //send mail
-        return $mail->send();
+        if(!$mail->send()){
+            return new Exception($mail->ErrorInfo);
+        }
+
+        return true;
     }
 
     /**
