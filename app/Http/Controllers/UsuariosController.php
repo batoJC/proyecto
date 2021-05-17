@@ -226,6 +226,7 @@ class UsuariosController extends Controller
         // Validador si llega un archivo
         // *****************************
         if ($request->hasFile('archivo')) {
+            echo "entre file";
             $path = $request->file('archivo')->getRealPath();
             $data = Excel::load($path, function ($reader) {
             })->get();
@@ -278,6 +279,9 @@ class UsuariosController extends Controller
                         ->with('error', 'Ocurrió un error al registrar el último registro, verifique que no se encuentre ya registrado.')
                         ->with('last', "El último registro fue '$last_name' cc: '$last_cc'");
                 }
+            }else{
+                return redirect('usuarios')
+                ->with('error', 'No hay registros para cargar.');
             }
         }
     }

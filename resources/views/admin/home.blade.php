@@ -22,10 +22,10 @@
 		</div>
 		<div class="col-1 col md-1 text-right">
 			<div class="btn-group">
-				<i  data-placement="left" 
-					title="Ayuda" 
-					data-toggle="dropdown" 
-					type="button" 
+				<i  data-placement="left"
+					title="Ayuda"
+					data-toggle="dropdown"
+					type="button"
 					aria-expanded="false"
 					class="fa blue fa-question-circle-o ayuda">
 				</i>
@@ -58,11 +58,11 @@
 							<h4 class="text-center terminos-title">
 								Gestion Copropietarios
 							</h4>
-							@if($reglamento) 
+							@if($reglamento)
 								{{ $reglamento->descripcion }}
 								<br>
 								<a href="{{ asset('reglamentos/'.$reglamento->archivo) }}" target="_blank" class="link">
-									Leer Artículo Completo 
+									Leer Artículo Completo
 									<i class="fa fa-eye"></i>
 								</a>
 								<br><br>
@@ -153,7 +153,7 @@
 						<i class="fa fa-standard fa-standard-5 fa-commenting-o"></i>
 					</div>
 					<div class="col-md-5 no-padding text-center line-height-50 quejas-text">
-						Cerradas: 
+						Cerradas:
 					</div>
 					<div class="col-md-3 no-padding text-center line-height-50 quejas-count">
 						{{ count($quejas_reclamos_cer) }}
@@ -164,7 +164,7 @@
 						<i class="fa fa-standard fa-standard-6 fa-commenting-o"></i>
 					</div>
 					<div class="col-md-5 no-padding text-center line-height-50 quejas-text">
-						Totalidad: 
+						Totalidad:
 					</div>
 					<div class="col-md-3 no-padding text-center line-height-50 quejas-count">
 						{{ count($quejas_reclamos_all) }}
@@ -510,13 +510,13 @@
 		<br>
 		<br>
 		<br>
-		
+
 	@endif
 
 
 @endsection
 @section('ajax_crud')
-	
+
 	<script>
 
 		var csrf_token = $('meta[name="csrf-token"]').attr('content');
@@ -565,7 +565,7 @@
                     data: {
                           '_method': 'DELETE',
                           '_token' : csrf_token,
-                    }, 
+                    },
                     success: function(e){
                         if(e.res){
                             swal('Logrado!',e.msg,'success').then(()=>{
@@ -586,10 +586,10 @@
 		}
 
 
-		
+
 		// Validacion modal habeas data
 		// ****************************
-		
+
 		habeas_data = '{{ Auth::user()->habeas_data }}';
 
 		if(habeas_data == 'Sin Aceptar'){
@@ -630,26 +630,26 @@
 		$('.btn-speacial').hide();
 
 		$('.btn-logotype-brand').click(function(event) {
-			
+
 			$('.upload').click();
 
 			$(function() {
 				$('#file-input').change(function(e) {
-					addImage(e); 
+					addImage(e);
 				});
 
 			    function addImage(e){
 			    	var file = e.target.files[0],
 			   		imageType = /image.*/;
-			    
+
 			    	if (!file.type.match(imageType))
 			    	return;
-			  
+
 			    	var reader = new FileReader();
 			    	reader.onload = fileOnload;
 			    	reader.readAsDataURL(file);
 			    }
-			  
+
 			    function fileOnload(e) {
 			    	var result=e.target.result;
 			    	$('#imgSalida').attr("src", result);
@@ -674,7 +674,7 @@
 
 		$('#form-logo-adm').on('submit', function(e){
 			e.preventDefault();
-			
+
 			$.ajax({
 				url: '{{ url('logo_conjunto_store') }}',
 				type: 'POST',
@@ -741,7 +741,7 @@
 	</script>
 	@if ($conjuntos->password != null)
 		<script>
-			
+
 			function enviarCorreo(){
 				if(email.value != ''){
 					$.ajax({
@@ -764,7 +764,7 @@
 					});
 				}
 			}
-			
+
 		</script>
 	@endif
 @endsection

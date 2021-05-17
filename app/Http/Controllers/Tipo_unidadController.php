@@ -27,10 +27,7 @@ class Tipo_unidadController extends Controller
 
         $user         = User::where('id_conjunto', session('conjunto'))->get();
         $conjuntos    = Conjunto::find(session('conjunto'));
-        
         $divisiones   = Division::where('id_conjunto', session('conjunto'))->get();
-        // $parqueaderos = Parqueadero::where('id_conjunto', session('conjunto'))->get();
-        // $residentes   = Residentes::where('id_conjunto', session('conjunto'))->get();
 
         return view('admin.tipo_unidad.index')
             ->with('user', $user)
@@ -83,7 +80,6 @@ class Tipo_unidadController extends Controller
     {
         $tipo_unidad = Tipo_unidad::find($id);
         return [$tipo_unidad, $tipo_unidad->atributos];
-        // return [$tipo_unidad];
     }
 
     /**
@@ -139,7 +135,6 @@ class Tipo_unidadController extends Controller
 
     public function showFormResidentes($id)
     {
-        // $residentes   = Residentes::where('id_tipo_unidad', $id)->get();
         $residentes = DB::table('residentes')->select('tipo_residente', 'nombre', 'apellido', 'estado')->where('id_tipo_unidad', $id)->get();
         return $residentes;
     }
@@ -152,15 +147,15 @@ class Tipo_unidadController extends Controller
 
         return Datatables::of($tipos_unidad)
             ->addColumn('action', function($tipo_unidad){
-                return '<a data-toggle="tooltip" data-placement="top" 
+                return '<a data-toggle="tooltip" data-placement="top"
                                     title="Mostrar" onclick="showForm('.$tipo_unidad->id.')" class="btn btn-default">
                             <i class="fa fa-search"></i>
                         </a>
-                        <a data-toggle="tooltip" data-placement="top" 
+                        <a data-toggle="tooltip" data-placement="top"
                                     title="Editar" onclick="editForm('.$tipo_unidad->id.')" class="btn btn-default">
                             <i class="fa fa-pencil"></i>
                         </a>
-                        <a data-toggle="tooltip" data-placement="top" 
+                        <a data-toggle="tooltip" data-placement="top"
                                     title="Eliminar" onclick="deleteData('.$tipo_unidad->id.')" class="btn btn-default">
                             <i class="fa fa-trash"></i>
                         </a>';

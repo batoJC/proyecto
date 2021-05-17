@@ -9,7 +9,6 @@ use App\Tipo_unidad;
 use App\TipoMascotas;
 use Yajra\Datatables\Datatables;
 use App\Unidad;
-use Illuminate\Support\Facades\Crypt;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -131,8 +130,6 @@ class UnidadController extends Controller
      */
     public function show(Unidad $unidade)
     {
-        // $residentes_activos = $unidade->residentes()->where('estado','Activo')->get();
-
         //atributos para pedir en la vista
         $atributos = [];
         $aux = $unidade->tipo->atributos;
@@ -141,9 +138,6 @@ class UnidadController extends Controller
         }
 
         $var = $unidade->propietarios->where('pivot.estado', 'Activo')->first();
-
-        // dd($var);
-
         $nombre_propietario = null;
         $documento_propietario = null;
         $email_propietario = null;
@@ -208,22 +202,8 @@ class UnidadController extends Controller
             ])->get();
         }
 
-        //lista de unidades que pueden tener unidades asociadas
-        // $unidades = Unidad::where('conjunto_id',session('conjunto'))->tipo->where('nombre','APARTAMENTO')->get();
-
-        $unidades = Unidad::join('tipo_unidad', 'unidads.tipo_unidad_id', '=', 'tipo_unidad.id')
-            ->join('atributos_tipo_unidads', 'tipo_unidad.id', '=', 'atributos_tipo_unidads.tipo_unidad_id')
-            ->where([
-                ['unidads.conjunto_id', session('conjunto')],
-                ['atributos_tipo_unidads.nombre', 'lista_unidades']
-            ])
-            ->select('unidads.*')
-            ->get();
-
-
         return view('admin.unidades.editarUnidad')
             ->with('unidad', $unidade)
-            ->with('unidades', $unidades)
             ->with('tipos_mascotas', $tipos_mascotas)
             ->with('tipos_documentos', $tipos_documentos)
             ->with('propietarios', $propietarios)
@@ -242,11 +222,6 @@ class UnidadController extends Controller
      */
     public function update(Request $request, Unidad $unidade)
     {
-        //
-
-        // $user = App\User::find(1);
-        // $user->roles()->updateExistingPivot($roleId, $attributes);
-
         try {
             $unidade->numero_letra = $request->numero_letra;
             $unidade->coeficiente = $request->coeficiente;
@@ -289,7 +264,10 @@ class UnidadController extends Controller
                 "propietario" => $propietario,
             ];
         } catch (\Throwable $th) {
-            //throw $th;
+            return [
+                'res' => 0,
+                "msg" => "No se logro editar la unidad"
+            ];
         }
     }
 
@@ -349,21 +327,7 @@ class UnidadController extends Controller
             ])->get();
         }
 
-        //lista de unidades que pueden tener unidades asociadas
-        // $unidades = Unidad::where('conjunto_id',session('conjunto'))->tipo->where('nombre','APARTAMENTO')->get();
-
-        $unidades = Unidad::join('tipo_unidad', 'unidads.tipo_unidad_id', '=', 'tipo_unidad.id')
-            ->join('atributos_tipo_unidads', 'tipo_unidad.id', '=', 'atributos_tipo_unidads.tipo_unidad_id')
-            ->where([
-                ['unidads.conjunto_id', session('conjunto')],
-                ['atributos_tipo_unidads.nombre', 'lista_unidades']
-            ])
-            ->select('unidads.*')
-            ->get();
-
-
         return view('admin.unidades.agregarUnidad')
-            ->with('unidades', $unidades)
             ->with('tipos_mascotas', $tipos_mascotas)
             ->with('tipos_documentos', $tipos_documentos)
             ->with('propietarios', $propietarios)
@@ -376,8 +340,6 @@ class UnidadController extends Controller
 
     public function datosPdf($tipo, Unidad $unidad)
     {
-
-
         $atributos = [];
         $aux = $unidad->tipo->atributos;
         foreach ($aux as $value) {
@@ -402,9 +364,6 @@ class UnidadController extends Controller
     // ****************************
     public function datatables($tipo = null)
     {
-
-
-
         switch (Auth::user()->id_rol) {
             case 2:
                 $unidades = Unidad::where([

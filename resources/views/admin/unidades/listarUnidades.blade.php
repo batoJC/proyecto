@@ -15,7 +15,9 @@
                   <li>
                       <a href="{{ url('unidades') }}">Tipos de unidad</a>
                 </li>
-                <li>{{ ucfirst(strtolower($tipo->nombre)) }}</li>
+                <li>
+                    {{ ucfirst(strtolower($tipo->nombre)) }}
+                </li>
             </ul>
         </div>
         <div class="col-1 col md-1 text-right">
@@ -42,7 +44,8 @@
     
     @include('admin.unidades.modalInfo')
     
-    <a class="btn btn-success" href="{{ url('addUnidad', ['tipo'=> $tipo->id]) }}">Agregar {{ strtolower($tipo->nombre) }}</a>
+    <a class="btn btn-success" href="{{ url('addUnidad', ['tipo'=> $tipo->id]) }}"> <i class="fa fa-plus"></i> Agregar {{ strtolower($tipo->nombre) }}</a>
+    <a class="btn btn-success" href="{{ url('cargaMasivaUnidad', ['tipo'=> $tipo->id]) }}"><i class="fa fa-building"></i>Carga Masiva {{ strtolower($tipo->nombre) }}</a>
     
     <div class="container-fluid">
         <br><br>

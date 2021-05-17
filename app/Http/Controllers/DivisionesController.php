@@ -50,7 +50,7 @@ class DivisionesController extends Controller
     {
         $division                = new Division();
         $division->id_tipo_division = $request->id_tipo_division;
-        $division->numero_letra  = $request->numero_letra;
+        $division->numero_letra  = mb_strtoupper($request->numero_letra, 'UTF-8');
         $division->id_conjunto   = session('conjunto');
         $division->save();
     }
@@ -89,7 +89,7 @@ class DivisionesController extends Controller
     {
         $division               = Division::find($id);
         $division->id_tipo_division = $request->id_tipo_division;
-        $division->numero_letra  = $request->numero_letra;
+        $division->numero_letra  = mb_strtoupper($request->numero_letra, 'UTF-8');
         $division->id_conjunto   = session('conjunto');
         $division->save();
     }
