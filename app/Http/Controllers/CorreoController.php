@@ -31,43 +31,34 @@ class CorreoController extends Controller
     public function enviarEmailToPerson(Conjunto $conjunto, $users, $subject, $content, $file = null)
     {
 
-        try {
+        //settigs for send mail
+        $mail = new PHPMailer;
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->SMTPAuth = true;
 
-            //settigs for send mail
-            $mail = new PHPMailer;
-            $mail->isSMTP();
-            $mail->Host = 'smtp.gmail.com';
-            $mail->Port = 587;
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->SMTPAuth = true;
+        //data of conjunto
+        $mail->Username = $conjunto->correo;
+        $mail->Password = Crypt::decrypt($conjunto->password);
+        $mail->setFrom($conjunto->correo, utf8_decode($conjunto->nombre));
 
-            //data of conjunto
-            $mail->Username = $conjunto->correo;
-            $mail->Password = Crypt::decrypt($conjunto->password);
-            $mail->setFrom($conjunto->correo, utf8_decode($conjunto->nombre));
+        //mail data
+        $mail->Subject = $subject;
+        $mail->msgHTML(view('emails.plantilla')->with('contenido', $content));
 
-            //mail data
-            $mail->Subject = $subject;
-            $mail->msgHTML(view('emails.plantilla')->with('contenido', $content));
-
-            //users for to send
-            foreach ($users as $user) {
-                $mail->addAddress($user->email, utf8_decode($user->nombre_completo));
-            }
-
-            if ($file != null) {
-                $mail->addAttachment(public_path($file));
-            }
-
-            //send mail
-            if (!$mail->send()) {
-                return false;
-            } else {
-                return true;
-            }
-        } catch (\Throwable $th) {
-            return false;
+        //users for to send
+        foreach ($users as $user) {
+            $mail->addAddress($user->email, utf8_decode($user->nombre_completo));
         }
+
+        if ($file != null) {
+            $mail->addAttachment(public_path($file));
+        }
+
+        //send mail
+        return $mail->send();
     }
 
     /**
