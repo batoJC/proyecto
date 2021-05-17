@@ -282,6 +282,6 @@
     </div>
 </body>
 <link rel="stylesheet"  href="{{ asset('landing_resources/css/animate.css')}}" />
-<script src="https://www.google.com/recaptcha/api.js?render=6Lfnh9MaAAAAAHsQJMxiiOxfPFpfbEtKy7EnocUY"></script>
+<script rel="preconnect" src="https://www.google.com/recaptcha/api.js?render=6Lfnh9MaAAAAAHsQJMxiiOxfPFpfbEtKy7EnocUY"></script>
 <script src="{{ asset('js/sweetalert.min.js') }}"></script>
 </html>
