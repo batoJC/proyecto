@@ -225,8 +225,7 @@ class UsuariosController extends Controller
     {
         // Validador si llega un archivo
         // *****************************
-        if ($request->hasFile('archivo')) {
-            echo "entre file";
+        if ($request->hasFile('archivo')) {            
             $path = $request->file('archivo')->getRealPath();
             $data = Excel::load($path, function ($reader) {
             })->get();
