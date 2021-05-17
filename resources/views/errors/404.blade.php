@@ -13,7 +13,7 @@
 		<div class="row">
 			<div class="col-lg-6 div-one"></div>
 			<div class="col-lg-6 div-two">
-				<h1 class="text-center">Gestion Copropietarios</h1>
+				<h1 class="text-center">Gestion Copropietario</h1>
 				<br>
 				<p class="text-center">Página no encontrada</p>
 				<h2 class="text-center">404</h2>

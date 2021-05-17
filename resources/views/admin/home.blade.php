@@ -56,7 +56,7 @@
 						<div class="col-md-5 no-padding logo-background-terminos"></div>
 						<div class="col-md-7 textos-terminos">
 							<h4 class="text-center terminos-title">
-								Gestion Copropietarios
+								Gestion Copropietario
 							</h4>
 							@if($reglamento)
 								{{ $reglamento->descripcion }}
