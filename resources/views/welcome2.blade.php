@@ -8,12 +8,14 @@
     <link rel="stylesheet"  href="{{ asset('landing_resources/css/main.css')}}">
     <link rel="stylesheet"  href="{{ asset('landing_resources/css/animate.css')}}" />
     <script  src="{{ asset('landing_resources/js/main.js') }}"></script>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
 <body class="container">
     <!-- NAVBAR -->
     <nav id="nav_bar" class="blue-bar navbar">
-        <img id="logo" class="logo" src="{{ asset('landing_resources/img/Logo_blanco.svg') }}" alt="">
+        <img id="logo" class="logo" src="{{ asset('landing_resources/img/logo_blanco.svg') }}" alt="">
         <ul>
             <li>
                 <a href="#section_1">Inicio</a></li>
@@ -33,7 +35,7 @@
 
     <div id="section_1" class="section_1">
         <div class="section_1__banner">
-            <h4 class="section_1__title_1">¿Qué espera para conocernos?</h4>
+            <h4 class="section_1__title_1">¿Qué esperas para conocernos?</h4>
             <h1 class="section_1__title_2">¡Hola! Somos <span class="text_blue_primary">Gestión Copropietario</span></h1>
         </div>
         <a href="#section_2" class="section_1__action animate__animated animate__bounce animate__repeat-3">
@@ -79,9 +81,9 @@
                     <span style="color: black;"></span>
                 </div>
                 <div class="card_service__column_2">
-                    <h2 class="text_blue_secondary">Asesorias Legales</h2>
+                    <h2 class="text_blue_secondary">Reportes de tu propiedad</h2>
                     <br>
-                    <p style="color: black;">¿Tienes dudas de algún tema legal? ¡Claro que sí, nosotros podemos ayudarte! Cualquier tipo de inconveniente legal te aclaramos tus dudas.
+                    <p style="color: black;">Cada que lo necesites tendrás descargables en PDF o Excel de tu propiedad y lo que necesites.
                     </p>
                 </div>
             </div>
@@ -149,9 +151,9 @@
                     </svg>
                 </div>
                 <div class="card_service__column_2">
-                    <h2 class="text_blue_secondary">Reportes de tu propiedad</h2>
+                    <h2 class="text_blue_secondary">Asesorias Legales</h2>
                     <br>
-                    <p style="color: black;">Cada que lo necesites tendrás descargables en PDF o Excel de tu propiedad y lo que necesites.
+                    <p style="color: black;">¿Tienes dudas de algún tema legal? ¡Claro que sí, nosotros podemos ayudarte! Cualquier tipo de inconveniente legal te aclaramos tus dudas.
                     </p>
                 </div>
             </div>
@@ -164,7 +166,7 @@
         <span class="section_4__circle_1 bg_blue_primary"></span>
         <img class="section_4__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="William">
         <div class="section_4__content">
-            <h1 class="text_blue_primary">William <br><span class="text_blue_secondary">Henao</span></h1>
+            <h1 class="text_blue_primary">William <br><span class="text_blue_secondary">Henao Gutierrez</span></h1>
             <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod reiciendis vel, cum quaerat est voluptates pariatur id in qui, necessitatibus, ipsam rem illo unde. Iusto quae iure nostrum tempora quo?</p>
             <br>
             <a href="#section_6" class="btn-blue">Pregúntame</a>
@@ -227,15 +229,16 @@
     <div id="section_6" class="section_6 bg_blue_secondary">
         <div style="padding-left: 7em;">
             <br>
-            <img src="{{ asset('landing_resources/img/Logo_blanco.svg') }}" alt="" class="section_6__logo">
+            <img src="{{ asset('landing_resources/img/logo_blanco.svg') }}" alt="" class="section_6__logo">
             <br> <br>
         </div>
         <div style="display: flex; width: 100%;">
             <div class="section_6__column_1">
                 <h4>Información de Contacto</h4>
                 <br>
-                <p>+57 3216548787
-                    <br> Calle 10 # 20 - 25
+                <p>+57 3122860436
+                    <br> +57 3233534591
+                    <br> Cra 23 # 20 - 29 of 306
                     <br> Manizales - Caldas
                     <br> gestioncopropietario@gmail.com
                 </p>

@@ -7,9 +7,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+
     <title>Gestion Copropietarios</title>
-    
+
     <link rel="icon" type="image/png" href="{{ asset('imgs/favicon.png') }}">
     <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/font-awesome.min.css') }}" rel="stylesheet">
@@ -18,6 +18,8 @@
     <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet">
     <link href="{{ asset('build/css/custom.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/master.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
 </head>
 
@@ -28,7 +30,7 @@
                 <div class="left_col scroll-view">
                     <div class="navbar nav_title" style="border: 0;">
                         <a href="{{ url('/') }}" class="site_title">
-                            <i class="fa fa-paw"></i> 
+                            <i class="fa fa-paw"></i>
                             <span>Empleado</span>
                         </a>
                     </div>
@@ -40,13 +42,13 @@
                             <ul class="nav side-menu">
                                 <li @if(session('section') == 'home') class="current-page"@endif>
                                     <a href="{{ url('dueno') }}">
-                                        <i class="fa fa-home"></i> 
+                                        <i class="fa fa-home"></i>
                                         Inicio
                                     </a>
                                 </li>
                                 <li @if(session('section') == 'reservas') class="current-page"@endif>
                                     <a href="{{ url('reservas') }}">
-                                        <i class="fa fa-calendar"></i> 
+                                        <i class="fa fa-calendar"></i>
                                         Reservas de zonas sociales
                                     </a>
                                 </li>
