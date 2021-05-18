@@ -24,8 +24,8 @@
 				<table class="table table-condensed" id="tabla-errores">
 					<thead>
 						<tr>
-							<th># Registro</th>
-							<th>Descripcion del Error</th>
+							<th># REGISTRO</th>
+							<th>DESCRIPCIÓN DEL ERROR</th>
 						</tr>
 					</thead>
 					<tbody id="errores-body">
