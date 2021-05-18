@@ -126,31 +126,7 @@ class CorreoController extends Controller
         } catch (\Throwable $th) {
             return false;
         }
-    }
-
-    /**
-     * send emails saved in the DB and delete from BD
-     *
-     */
-    // public function sendsEmailSaved()
-    // {
-    //     $emails = Correo::get();
-    //     foreach ($emails as $email) {
-    //         $users = array();
-    //         $data = json_decode($email->users);
-    //         foreach ($data as $key) {
-    //             $user = User::find($key);
-    //             if ($user != null) {
-    //                 $users[] = $user;
-    //             }
-    //         }
-    //     }
-
-    //     //send email
-    //     if ($this->enviarEmailToPerson($email->conjunto, $users, $email->subject, $email->content, $email->file)) {
-    //         $email->delete();
-    //     }
-    // }
+    }    
 
     /**
      * Save the email in the BD
