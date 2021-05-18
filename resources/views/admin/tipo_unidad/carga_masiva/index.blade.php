@@ -52,7 +52,7 @@
     <table id="archivos-table" class="table table-stripped">
         <thead>
             <th>Nombre Archivo</th>
-            <th>Ultimo Registro</th>
+            <th>Último Registro</th>
             <th>Fallos</th>
             <th>Procesados</th>
             <th>Estado</th>
