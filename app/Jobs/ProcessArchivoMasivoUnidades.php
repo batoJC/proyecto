@@ -124,7 +124,7 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
                             //when finished and all is good
                             $this->enviarEmailRespuesta("Carga masiva terminada.");
                         } else {
-                            'error de que se esta procesando el archivo';
+                            return array('res' => 0, 'msg' => 'El archivo ya está siendo procesado, por favor espera a que finalice');
                         }
                     }
                 } else {
