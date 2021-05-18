@@ -262,16 +262,16 @@ class ArchivoCargaMasivaController extends Controller
         if ($request != null) {
             //validamos que el archivo que se suba sea del conjunto o conjuntos del usuario loggeado(admin)
             if ($this->archivoMasivo->conjunto_id == Auth::user()->conjunto_id) {
+                $request->estado = 'en progreso';
                 $archivo = ArchivoCargaMasiva::find($request->id);
                 $archivo->usuario_id = Auth::user()->id;
                 $archivo->save();
-                // dd($archivo);
                 $process = new ProcessArchivoMasivoUnidades($archivo);
                 $process->dispatch($archivo)->onQueue('low');
 
                 return array('res' => 1, 'msg' => 'Carga masiva Iniciada, cuando esta termine se le notificara con un correo. Recuerde que puede consultar el estado cada vez que lo desee.');
             } else {
-                return array('res' => 0, 'msg' => 'Ocurrió un error al registrar la mascota.');
+                return array('res' => 0, 'msg' => 'No se puede procesar la carga masiva, el usuario y el conjunto administrado no coinciden');
             }
         } else {
             return array('res' => 0, 'msg' => 'No se puede iniciar la carga masiva, no se subió ningún archivo.');

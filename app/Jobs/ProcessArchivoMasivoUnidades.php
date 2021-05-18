@@ -64,9 +64,8 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
 
                     // Validador si el arreglo está vacío
                     // **********************************
-                    if (!empty($data) && $data->count() > 0) {   
-
-                        $this->archivoMasivo->estado = 'en progreso';
+                    if (!empty($data) && $data->count() > 0) { 
+                        
                         //validar que el archivo no está en progreso, para no encolarlo otra vez y procesarlo
                         if ($this->archivoMasivo->estado != 'en progreso') {                          
 
