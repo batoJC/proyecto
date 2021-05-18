@@ -259,15 +259,23 @@ class ArchivoCargaMasivaController extends Controller
     {
         // Validador si llega un archivo
         // *****************************
+        if ($request != null) {
+            //validamos que el archivo que se suba sea del conjunto o conjuntos del usuario loggeado(admin)
+            if ($this->archivoMasivo->conjunto_id == Auth::user()->conjunto_id) {
+                $archivo = ArchivoCargaMasiva::find($request->id);
+                $archivo->usuario_id = Auth::user()->id;
+                $archivo->save();
+                // dd($archivo);
+                $process = new ProcessArchivoMasivoUnidades($archivo);
+                $process->dispatch($archivo)->onQueue('low');
 
-        $archivo = ArchivoCargaMasiva::find($request->id);
-        $archivo->usuario_id = Auth::user()->id;
-        $archivo->save();
-        // dd($archivo);
-        $process = new ProcessArchivoMasivoUnidades($archivo);
-        $process->dispatch($archivo)->onQueue('low');
-
-        return array('res' => 1, 'msg' => 'Carga masiva Iniciada, cuando esta termine se le notificara con un correo. Recuerde que puede consultar el estado cada vez que lo desee.');
+                return array('res' => 1, 'msg' => 'Carga masiva Iniciada, cuando esta termine se le notificara con un correo. Recuerde que puede consultar el estado cada vez que lo desee.');
+            } else {
+                return array('res' => 0, 'msg' => 'Ocurrió un error al registrar la mascota.');
+            }
+        } else {
+            return array('res' => 0, 'msg' => 'No se puede iniciar la carga masiva, no se subió ningún archivo.');
+        }
     }
 
     public function showErrors(ArchivoCargaMasiva $archivo)
