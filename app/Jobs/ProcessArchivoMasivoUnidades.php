@@ -64,64 +64,68 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
 
                     // Validador si el arreglo está vacío
                     // **********************************
-                    if (!empty($data) && $data->count() > 0) {
-                        // try {
-                        //falta guardar en la base de datos
+                    if (!empty($data) && $data->count() > 0) {   
 
                         $this->archivoMasivo->estado = 'en progreso';
+                        //validar que el archivo no está en progreso, para no encolarlo otra vez y procesarlo
+                        if ($this->archivoMasivo->estado != 'en progreso') {                          
 
-                        $indexLista = array(
-                            "lista mascotas" => $this->archivoMasivo->indice_mascotas,
-                            "lista vehiculos" => $this->archivoMasivo->indice_vehiculos,
-                            "lista residentes" => $this->archivoMasivo->indice_residentes,
-                            "lista visitantes" => $this->archivoMasivo->indice_visitantes,
-                            "lista empleados" => $this->archivoMasivo->indice_empleados
-                        );
+                            //falta guardar en la base de datos
+                            $indexLista = array(
+                                "lista mascotas" => $this->archivoMasivo->indice_mascotas,
+                                "lista vehiculos" => $this->archivoMasivo->indice_vehiculos,
+                                "lista residentes" => $this->archivoMasivo->indice_residentes,
+                                "lista visitantes" => $this->archivoMasivo->indice_visitantes,
+                                "lista empleados" => $this->archivoMasivo->indice_empleados
+                            );
 
-                        $unidadesAgregadas = $this->archivoMasivo->procesados;
-                        $unidadesNoAgregadas = $this->archivoMasivo->fallos;
+                            $unidadesAgregadas = $this->archivoMasivo->procesados;
+                            $unidadesNoAgregadas = $this->archivoMasivo->fallos;
 
-                        $i = $this->archivoMasivo->indice_unidad;
-                        for ($i; $i < $data[0]->count(); $i++) {
-                            //hay que eliminar la unidad y todo lo que se creo si es que
-                            //llega a fallar el proceso de acá en adelante
-                            $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $this->archivoMasivo);
-                            if (!$unidad) {
+                            $i = $this->archivoMasivo->indice_unidad;
+                            for ($i; $i < $data[0]->count(); $i++) {
+                                //hay que eliminar la unidad y todo lo que se creo si es que
+                                //llega a fallar el proceso de acá en adelante
+                                $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $this->archivoMasivo);
+                                if (!$unidad) {
+                                    $this->archivoMasivo->indice_unidad = $i;
+                                    $this->archivoMasivo->save();
+
+                                    break;
+                                }
+
+
+                                $saltarRegistros = $unidad->id == 0;
+                                $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $this->archivoMasivo);
+                                $indexLista = $result["index"];
+
+                                if ($result["error"]) {
+                                    $unidad->delete();
+                                    $unidadesNoAgregadas++;
+                                }
+
+                                $unidadesAgregadas++;
                                 $this->archivoMasivo->indice_unidad = $i;
+                                $this->archivoMasivo->procesados = $unidadesAgregadas;
+                                $this->archivoMasivo->fallos = $unidadesNoAgregadas;
+                                $this->archivoMasivo->indice_residentes = $indexLista['lista residentes'];
+                                $this->archivoMasivo->indice_mascotas = $indexLista['lista mascotas'];
+                                $this->archivoMasivo->indice_empleados = $indexLista['lista empleados'];
+                                $this->archivoMasivo->indice_vehiculos = $indexLista['lista vehiculos'];
+                                $this->archivoMasivo->indice_visitantes = $indexLista['lista visitantes'];
                                 $this->archivoMasivo->save();
-
-                                break;
                             }
-
-
-                            $saltarRegistros = $unidad->id == 0;
-                            $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $this->archivoMasivo);
-                            $indexLista = $result["index"];
-
-                            if ($result["error"]) {
-                                $unidad->delete();
-                                $unidadesNoAgregadas++;
-                            }
-
-                            $unidadesAgregadas++;
                             $this->archivoMasivo->indice_unidad = $i;
+                            $this->archivoMasivo->estado = "terminado";
                             $this->archivoMasivo->procesados = $unidadesAgregadas;
                             $this->archivoMasivo->fallos = $unidadesNoAgregadas;
-                            $this->archivoMasivo->indice_residentes = $indexLista['lista residentes'];
-                            $this->archivoMasivo->indice_mascotas = $indexLista['lista mascotas'];
-                            $this->archivoMasivo->indice_empleados = $indexLista['lista empleados'];
-                            $this->archivoMasivo->indice_vehiculos = $indexLista['lista vehiculos'];
-                            $this->archivoMasivo->indice_visitantes = $indexLista['lista visitantes'];
                             $this->archivoMasivo->save();
-                        }
-                        $this->archivoMasivo->indice_unidad = $i;
-                        $this->archivoMasivo->estado = "terminado";
-                        $this->archivoMasivo->procesados = $unidadesAgregadas;
-                        $this->archivoMasivo->fallos = $unidadesNoAgregadas;
-                        $this->archivoMasivo->save();
 
-                        //when finished and all is good
-                        $this->enviarEmailRespuesta("Carga masiva terminada.");
+                            //when finished and all is good
+                            $this->enviarEmailRespuesta("Carga masiva terminada.");
+                        } else {
+                            'error de que se esta procesando el archivo';
+                        }
                     }
                 } else {
                     $this->enviarEmailRespuesta("El archivo ya fue procesado");
