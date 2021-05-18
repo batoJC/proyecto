@@ -62,13 +62,14 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
                     $data = Excel::load($path, function ($reader) {
                     })->get();
 
-
-
                     // Validador si el arreglo está vacío
                     // **********************************
                     if (!empty($data) && $data->count() > 0) {
                         // try {
                         //falta guardar en la base de datos
+
+                        $this->archivoMasivo->estado = 'en progreso';
+
                         $indexLista = array(
                             "lista mascotas" => $this->archivoMasivo->indice_mascotas,
                             "lista vehiculos" => $this->archivoMasivo->indice_vehiculos,
