@@ -16,7 +16,7 @@ class CreateArchivoCargaMasivasTable extends Migration
         Schema::create('archivo_carga_masivas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ruta');
-            $table->string('nombre_archivo');
+            $table->string('nombre_archivo',100);
             $table->integer('fallos');
             $table->integer('procesados');
             $table->enum('estado',['subido','en progreso','terminado','eliminado']);
