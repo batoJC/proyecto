@@ -231,7 +231,6 @@ class RecaudoController extends Controller
                 file_put_contents(public_path($nombre_archivo), $archivo);
 
                 $this->enviarEmail($recaudo->propietario,$nombre_archivo);
-                // $this->enviarEmail([User::find(6)], $nombre_archivo);
                 @unlink($nombre_archivo);
 
                 return array('res' => 1, 'msg' => 'Recaudo guardado correctamente.', 'pago' => $recaudo);
@@ -242,7 +241,6 @@ class RecaudoController extends Controller
                 $detalle->delete();
             }
 
-            // return $th;
 
             return array('res' => 0, 'msg' => 'Ócurrio un error al guardar el recaudo.');
         }
@@ -378,7 +376,6 @@ class RecaudoController extends Controller
                 file_put_contents(public_path($nombre_archivo), $archivo);
 
                 $this->enviarEmail($recaudo->propietario,$nombre_archivo);
-                // $this->enviarEmail([User::find(6)], $nombre_archivo);
                 @unlink($nombre_archivo);
 
                 return array('res' => 1, 'msg' => 'Recaudo guardado correctamente.', 'pago' => $recaudo);

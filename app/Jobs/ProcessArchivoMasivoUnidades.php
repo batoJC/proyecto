@@ -64,67 +64,62 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
 
                     // Validador si el arreglo está vacío
                     // **********************************
-                    if (!empty($data) && $data->count() > 0) { 
-                        
-                        //validar que el archivo no está en progreso, para no encolarlo otra vez y procesarlo
-                        if ($this->archivoMasivo->estado != 'en progreso') {                          
-
-                            //falta guardar en la base de datos
-                            $indexLista = array(
-                                "lista mascotas" => $this->archivoMasivo->indice_mascotas,
-                                "lista vehiculos" => $this->archivoMasivo->indice_vehiculos,
-                                "lista residentes" => $this->archivoMasivo->indice_residentes,
-                                "lista visitantes" => $this->archivoMasivo->indice_visitantes,
-                                "lista empleados" => $this->archivoMasivo->indice_empleados
-                            );
-
-                            $unidadesAgregadas = $this->archivoMasivo->procesados;
-                            $unidadesNoAgregadas = $this->archivoMasivo->fallos;
-
-                            $i = $this->archivoMasivo->indice_unidad;
-                            for ($i; $i < $data[0]->count(); $i++) {
-                                //hay que eliminar la unidad y todo lo que se creo si es que
-                                //llega a fallar el proceso de acá en adelante
-                                $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $this->archivoMasivo);
-                                if (!$unidad) {
-                                    $this->archivoMasivo->indice_unidad = $i;
-                                    $this->archivoMasivo->save();
-
-                                    break;
-                                }
+                    if (!empty($data) && $data->count() > 0) {
 
 
-                                $saltarRegistros = $unidad->id == 0;
-                                $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $this->archivoMasivo);
-                                $indexLista = $result["index"];
+                        //falta guardar en la base de datos
+                        $indexLista = array(
+                            "lista mascotas" => $this->archivoMasivo->indice_mascotas,
+                            "lista vehiculos" => $this->archivoMasivo->indice_vehiculos,
+                            "lista residentes" => $this->archivoMasivo->indice_residentes,
+                            "lista visitantes" => $this->archivoMasivo->indice_visitantes,
+                            "lista empleados" => $this->archivoMasivo->indice_empleados
+                        );
 
-                                if ($result["error"]) {
-                                    $unidad->delete();
-                                    $unidadesNoAgregadas++;
-                                }
+                        $unidadesAgregadas = $this->archivoMasivo->procesados;
+                        $unidadesNoAgregadas = $this->archivoMasivo->fallos;
 
-                                $unidadesAgregadas++;
+                        $i = $this->archivoMasivo->indice_unidad;
+                        for ($i; $i < $data[0]->count(); $i++) {
+                            //hay que eliminar la unidad y todo lo que se creo si es que
+                            //llega a fallar el proceso de acá en adelante
+                            $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $this->archivoMasivo);
+                            if (!$unidad) {
                                 $this->archivoMasivo->indice_unidad = $i;
-                                $this->archivoMasivo->procesados = $unidadesAgregadas;
-                                $this->archivoMasivo->fallos = $unidadesNoAgregadas;
-                                $this->archivoMasivo->indice_residentes = $indexLista['lista residentes'];
-                                $this->archivoMasivo->indice_mascotas = $indexLista['lista mascotas'];
-                                $this->archivoMasivo->indice_empleados = $indexLista['lista empleados'];
-                                $this->archivoMasivo->indice_vehiculos = $indexLista['lista vehiculos'];
-                                $this->archivoMasivo->indice_visitantes = $indexLista['lista visitantes'];
                                 $this->archivoMasivo->save();
+
+                                break;
                             }
+
+
+                            $saltarRegistros = $unidad->id == 0;
+                            $result = $this->agregarListasPorUnidad($data, $unidad, $indexLista, $saltarRegistros, $this->archivoMasivo);
+                            $indexLista = $result["index"];
+
+                            if ($result["error"]) {
+                                $unidad->delete();
+                                $unidadesNoAgregadas++;
+                            }
+
+                            $unidadesAgregadas++;
                             $this->archivoMasivo->indice_unidad = $i;
-                            $this->archivoMasivo->estado = "terminado";
                             $this->archivoMasivo->procesados = $unidadesAgregadas;
                             $this->archivoMasivo->fallos = $unidadesNoAgregadas;
+                            $this->archivoMasivo->indice_residentes = $indexLista['lista residentes'];
+                            $this->archivoMasivo->indice_mascotas = $indexLista['lista mascotas'];
+                            $this->archivoMasivo->indice_empleados = $indexLista['lista empleados'];
+                            $this->archivoMasivo->indice_vehiculos = $indexLista['lista vehiculos'];
+                            $this->archivoMasivo->indice_visitantes = $indexLista['lista visitantes'];
                             $this->archivoMasivo->save();
-
-                            //when finished and all is good
-                            $this->enviarEmailRespuesta("Carga masiva terminada.");
-                        } else {
-                            return array('res' => 0, 'msg' => 'El archivo ya está siendo procesado, por favor espera a que finalice');
                         }
+                        $this->archivoMasivo->indice_unidad = $i;
+                        $this->archivoMasivo->estado = "terminado";
+                        $this->archivoMasivo->procesados = $unidadesAgregadas;
+                        $this->archivoMasivo->fallos = $unidadesNoAgregadas;
+                        $this->archivoMasivo->save();
+
+                        //when finished and all is good
+                        $this->enviarEmailRespuesta("Carga masiva terminada.");
                     }
                 } else {
                     $this->enviarEmailRespuesta("El archivo ya fue procesado");
@@ -133,6 +128,8 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
                 $this->enviarEmailRespuesta("El archivo no existe");
             }
         } catch (\Throwable $th) {
+            $this->archivoMasivo->estado = "subido";
+            $this->archivoMasivo->save();
             $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);
             Log::channel('slack')->critical("Ocurrió un error al realizar la carga masiva:
             \n Email: {$this->archivoMasivo->usuario->email}
@@ -161,25 +158,25 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             $salida = $correo->enviarEmail($conjunto, [$usuario], "Estado carga masiva {$nombreArchivo}", $mensaje);
             if (!$salida) {
                 Log::channel('slack')->critical("Error, no se pudo enviar mensaje al terminar el proceso de carga masiva para:
-                \n Email: {$this->archivoMasivo->usuario->email}
-                \nArchivo: {$this->archivoMasivo->nombre_archivo}
-                \nConjunto: {$this->archivoMasivo->conjunto->nombre}
-                \nMensaje: {$mensaje}");
+                 Email: {$this->archivoMasivo->usuario->email}
+                Archivo: {$this->archivoMasivo->nombre_archivo}
+                Conjunto: {$this->archivoMasivo->conjunto->nombre}
+                Mensaje: {$mensaje}");
             }
         } catch (\Throwable $th) {
             $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);
             Log::channel('slack')->critical("Error, Ocurrió un error en el proceso de carga masiva para:
-            \n Email: {$this->archivoMasivo->usuario->email}
-            \nArchivo: {$this->archivoMasivo->nombre_archivo}
-            \nConjunto: {$this->archivoMasivo->conjunto->nombre}
-            \nMensaje: {$mensaje}
-            \nError: {$error}");
+             Email: {$this->archivoMasivo->usuario->email}
+            Archivo: {$this->archivoMasivo->nombre_archivo}
+            Conjunto: {$this->archivoMasivo->conjunto->nombre}
+            Mensaje: {$mensaje}
+            Error: {$error}");
             Log::channel('daily')->critical("Error, Ocurrió un error en el proceso de carga masiva para:
-            \n Email: {$this->archivoMasivo->usuario->email}
-            \nArchivo: {$this->archivoMasivo->nombre_archivo}
-            \nConjunto: {$this->archivoMasivo->conjunto->nombre}
-            \nMensaje: {$mensaje}
-            \nError: {$th->getMessage()}");
+             Email: {$this->archivoMasivo->usuario->email}
+            Archivo: {$this->archivoMasivo->nombre_archivo}
+            Conjunto: {$this->archivoMasivo->conjunto->nombre}
+            Mensaje: {$mensaje}
+            Error: {$th->getMessage()}");
         }
     }
 
@@ -231,7 +228,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
         while ($index < $data->count()) {
             //si la unidad que  nos dice no es la que vamos agregar decrementamos el
             //indice y terminamos el ciclo
-            // var_dump($data);
 
             if ($this->dataVacia($data[$index])) {
                 break;
@@ -270,9 +266,9 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
 
                         $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);
                         Log::channel('slack')->critical("Error, no se pudo agregar el documento al crear el redidente en la unidad, en carga masiva de unidades
-                        \n Error: {$error}");
+                         Error: {$error}");
                         Log::channel('daily')->critical("Error, no se pudo agregar el documento al crear el redidente en la unidad, en carga masiva de unidades
-                        \n Error: {$th->getMessage()}");
+                         Error: {$th->getMessage()}");
                     }
                 }
                 $residente->tipo_documento_id = $tipoDocumento->id;
@@ -285,9 +281,9 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
 
                     $error = substr($th->getMessage(), 0, 90);
                     Log::channel('slack')->critical("Error, no se puedo agregar el residente a la unidad, en carga masiva de unidades
-                        \n Error: {$error}");
+                         Error: {$error}");
                     Log::channel('daily')->critical("Error, no se puedo agregar el residente a la unidad, en carga masiva de unidades
-                        \n Error: {$th->getMessage()}");
+                         Error: {$th->getMessage()}");
                 }
             }
             $index++;
@@ -303,7 +299,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
         while ($index < $data->count()) {
             //si la unidad que  nos dice no es la que vamos agregar decrementamos el
             //indice y terminamos el ciclo
-            // var_dump($data);
 
             if ($this->dataVacia($data[$index])) {
                 break;
@@ -337,9 +332,9 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
                         $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
                         $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);
                         Log::channel('slack')->critical("Error, No se pudo agregar el tipo de mascota, cuando agregamos mascota a la unidad, en carga masiva de unidades
-                            \n Error: {$error}");
+                             Error: {$error}");
                         Log::channel('daily')->critical("Error, No se pudo agregar el tipo de mascota, cuando agregamos mascota a la unidad,  en carga masiva de unidades
-                            \n Error: {$th->getMessage()}");
+                             Error: {$th->getMessage()}");
                     }
                 }
                 $mascota->tipo_id = $tipoMascota->id;
@@ -351,7 +346,7 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
                     $this->agregarRegistroFallos($index, $descripcion, $archivo->id);
                     $error = substr($th->getMessage(), 0, 90);
                     Log::channel('slack')->critical("Error, no se pudo agregar la mascota a la unidad, en carga masiva de unidades
-                        \n Error: {$error}");
+                         Error: {$error}");
                     Log::channel('daily')->critical("Error, no se pudo agregar la mascota a la unidad, en carga masiva de unidades
                         \n Error: {$th->getMessage()}");
                 }
@@ -368,7 +363,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
         while ($index < $data->count()) {
             //si la unidad que  nos dice no es la que vamos agregar decrementamos el
             //indice y terminamos el ciclo
-            // var_dump($data);
 
             if ($this->dataVacia($data[$index])) {
                 break;
@@ -415,7 +409,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
         while ($index < $data->count()) {
             //si la unidad que  nos dice no es la que vamos agregar decrementamos el
             //indice y terminamos el ciclo
-            // var_dump($data);
 
             if ($this->dataVacia($data[$index])) {
                 break;
@@ -481,7 +474,6 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
         while ($index < $data->count()) {
             //si la unidad que  nos dice no es la que vamos agregar decrementamos el
             //indice y terminamos el ciclo
-            // var_dump($data);
 
             if ($this->dataVacia($data[$index])) {
                 break;

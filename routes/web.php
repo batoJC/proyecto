@@ -167,12 +167,12 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//Ir ala vista de carga masiva
 	Route::get('cargaMasivaUnidad/{tipo}', 'ArchivoCargaMasivaController@index');
-	//ruta para generar la plantilla 
+	//ruta para generar la plantilla
 	Route::get('generarPlantillaMasivoUnidades/{tipoUnidad}', 'ArchivoCargaMasivaController@downloadExcel');
 	//ruta para comenzar la carga masiva
-	Route::post('unidades_csv_post', 'ArchivoCargaMasivaController@unidades_csv_post');	
+	Route::post('unidades_csv_post', 'ArchivoCargaMasivaController@unidades_csv_post');
 	// ruta para ver el modal con la tabla de errores
-	Route::get('errores/{archivo}', 'ArchivoCargaMasivaController@showErrors');
+	Route::get('erroresCargaMasiva/{archivo}', 'ArchivoCargaMasivaController@showErrors');
 
 	// Ruta para el dashboard
 	Route::get('admin', 'HomeController@admin');

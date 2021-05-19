@@ -63,7 +63,7 @@ class ProcessEmail implements ShouldQueue
                  Log::channel('slack')->critical("Error, no se pudo enviar el email de la cola para:
                 \n Email id: {$this->correo->id}
                 \nAsunto: {$this->correo->subject}
-                \nEmail donde se intento enviar: {$conjunto->email}
+                \nEmail de donde se intento enviar: {$conjunto->email}
                 \nMensaje: {$this->correo->content}");
             }
 
@@ -74,7 +74,7 @@ class ProcessEmail implements ShouldQueue
              Log::channel('slack')->critical("Error, Ocurrio un errror al enviar el correo desde la cola:
                 \n Email id: {$this->correo->id}
                 \nAsunto: {$this->correo->subject}
-                \nEmail donde se intento enviar: {$conjunto->email}
+                \nEmail de donde se intento enviar: {$conjunto->email}
                 \nMensaje: {$this->correo->content}
                 \nError: {$error}");
         }

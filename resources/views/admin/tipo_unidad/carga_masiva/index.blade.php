@@ -154,7 +154,7 @@
     function showForm(id) {
 
         $.ajax({
-            url: "{{ url('errores') }}" + "/" + id
+            url: "{{ url('erroresCargaMasiva') }}" + "/" + id
             , type: "GET"
             , dataType: "JSON"
             , success: function (data) {

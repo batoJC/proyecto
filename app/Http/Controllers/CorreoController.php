@@ -60,7 +60,7 @@ class CorreoController extends Controller
 
         //send mail
         if(!$mail->send()){
-            return new Exception($mail->ErrorInfo);
+            throw new Exception($mail->ErrorInfo);
         }
 
         return true;
@@ -126,7 +126,7 @@ class CorreoController extends Controller
         } catch (\Throwable $th) {
             return false;
         }
-    }    
+    }
 
     /**
      * Save the email in the BD

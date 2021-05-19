@@ -89,7 +89,9 @@ class ArchivoCargaMasivaController extends Controller
                 return array('res' => 0, 'msg' => 'Error, por favor selecciona un archivo');
             }
         } catch (\Trowable $th) {
-            return array('res' => 0, 'msg' => 'Ocurrió un error al registrar la mascota.');
+            Log::channel('slack')->critical("Guardar archivo carga masiva: Ocurrio el siguiente error:
+                Error: {$th->getMessage()}");
+            return array('res' => 0, 'msg' => 'Ocurrió un error al registrar el archivo masivo.');
         }
     }
 
@@ -261,9 +263,14 @@ class ArchivoCargaMasivaController extends Controller
         // *****************************
         if ($request != null) {
             //validamos que el archivo que se suba sea del conjunto o conjuntos del usuario loggeado(admin)
-            if ($this->archivoMasivo->conjunto_id == Auth::user()->conjunto_id) {
-                $request->estado = 'en progreso';
-                $archivo = ArchivoCargaMasiva::find($request->id);
+            $archivo = ArchivoCargaMasiva::find($request->id);
+            if ($archivo->conjunto_id == Auth::user()->id_conjunto) {
+                if($archivo->estado != "subido"){
+                    return array('res' => 0, 'msg' => "No se puede procesar la carga masiva,
+                    el proceso del archivo esta en el estado: {$archivo->estado}");
+                }
+
+                $archivo->estado = 'en progreso';
                 $archivo->usuario_id = Auth::user()->id;
                 $archivo->save();
                 $process = new ProcessArchivoMasivoUnidades($archivo);
