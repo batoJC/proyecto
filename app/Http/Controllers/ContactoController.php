@@ -96,11 +96,11 @@ class ContactoController extends Controller
             // Envio de correo que alerta la comunicación
             // ******************************************
             // $data = array(
-            //     'name' => 'Gestion Copropietarios',
+            //     'name' => 'Gestion Copropietario',
             // );
             //TODO: revisar este envio o hacer un envio a slack
             // Mail::send('emails.contacto', $data, function ($message) {
-            //     $message->from('gestioncopropietario@gmail.com', 'Gestion Copropietarios');
+            //     $message->from('gestioncopropietario@gmail.com', 'Gestion Copropietario');
             //     $message->to('juacagiri@gmail.com')->subject('¡Un Nuevo Contacto!');
             // });
 

@@ -287,7 +287,7 @@ class CuentasCobroController extends Controller
     private function enviarEmail($propietario, $file)
     {
         $aux = new CorreoController();
-        $res = $aux->enviarEmail(Conjunto::find(session('conjunto')), $propietario, 'Cuenta de cobro', '<p>Se ha generado una cuenta de cobro a su nombre. Se adjunta una copia en pdf de la misma.</p>', $file);
+        $res = $aux->enviarEmail(Conjunto::find(session('conjunto')), [$propietario], 'Cuenta de cobro', '<p>Se ha generado una cuenta de cobro a su nombre. Se adjunta una copia en pdf de la misma.</p>', $file);
 
         if ($res) {
             return true;

@@ -37,7 +37,14 @@ return [
         'database' => [
             'driver' => 'database',
             'table' => 'jobs',
-            'queue' => 'default',
+            'queue' => 'high',
+            'retry_after' => 90,
+        ],
+
+        'database2' => [
+            'driver' => 'database',
+            'table' => 'jobs',
+            'queue' => 'low',
             'retry_after' => 90,
         ],
 

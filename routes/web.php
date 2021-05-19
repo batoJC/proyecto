@@ -162,6 +162,18 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('unidadestipo/{tipo}', 'UnidadController@indexTipo');
 	Route::get('addUnidad/{tipo}', 'UnidadController@loadAddForTipo');
 	Route::get('asignarPropietario/{unidad}/{id}', 'UnidadController@setPropietario');
+
+	//carga masiva unidades
+
+	//Ir ala vista de carga masiva
+	Route::get('cargaMasivaUnidad/{tipo}', 'ArchivoCargaMasivaController@index');
+	//ruta para generar la plantilla
+	Route::get('generarPlantillaMasivoUnidades/{tipoUnidad}', 'ArchivoCargaMasivaController@downloadExcel');
+	//ruta para comenzar la carga masiva
+	Route::post('unidades_csv_post', 'ArchivoCargaMasivaController@unidades_csv_post');
+	// ruta para ver el modal con la tabla de errores
+	Route::get('erroresCargaMasiva/{archivo}', 'ArchivoCargaMasivaController@showErrors');
+
 	// Ruta para el dashboard
 	Route::get('admin', 'HomeController@admin');
 	// Cambio de conjunto
@@ -193,6 +205,12 @@ Route::group(['middleware' => ['admin']], function () {
 
 	//novedades conjunto
 	Route::resource('novedadesConjunto', 'NovedadesConjuntoController');
+
+
+	//Carga masiva de unidades
+	Route::post('archivos', 'ArchivoCargaMasivaController@store');
+	Route::post('estadoProcesoCargaArchivo/{archivoCargaMasiva}', 'ArchivoCargaMasivaController@show');
+	Route::delete('archivos/{archivoCargaMasiva}', 'ArchivoCargaMasivaController@destroy');
 
 
 	/**************************************** */
@@ -353,6 +371,7 @@ Route::group(['middleware' => ['admin']], function () {
 	Route::get('api.mantenimientos', 'MantenimientoController@datatables');
 	Route::get('api.zonas_comunes.admin', 'ZonasComunesController@datatables');
 	Route::get('api.inventarios', 'InventarioController@datatables');
+	Route::get('api.archivos_masivos/{tipo}', 'ArchivoCargaMasivaController@datatables');
 	//módulo financiero
 	Route::get('api.presupuesto_total.admin', 'EjecucionPreTotalController@datatables');
 	Route::get('api.tipo_presupuesto.admin', 'TipoEjecucionPreController@datatables');

@@ -12,7 +12,7 @@
 	</div>
 	<div class="mail-footer border">
 		<img src="http://gestioncopropietario.com/imgs/encabezado2.png" alt="Encabezado" style="width: 10%; display:block; margin:0px 36.5%;">
-		<p style="text-align: center; margin:0px; color:rgba(0,0,0,0.4); ">Todos los derechos reservados - Gestion Copropietarios © - 2018</p>
+		<p style="text-align: center; margin:0px; color:rgba(0,0,0,0.4); ">Todos los derechos reservados - Gestion Copropietario © - 2021>
 		<br>
 	</div>
 </body>

@@ -60,8 +60,8 @@ class RecordatorioMantenimientos extends Command
             //para enviar desde el correo de la app
             $conjunto = new Conjunto();
             $conjunto->nombre = 'Gestión copropietario';
-            $conjunto->correo = 'gestioncopropietario@gmail.com';
-            $conjunto->password = Crypt::encrypt('gestioncopropietario2019');
+            $conjunto->correo = env("MAIL_USERNAME");
+            $conjunto->password = Crypt::encrypt(env("MAIL_PASSWORD"));
 
             $correo->enviarEmail($conjunto,[$administrador],'Mantenimiento programado',$contenido);
         }

@@ -9,7 +9,7 @@
 		        </button>
 		        <h4 class="text-center modal-title">
 		        	<i class="fa fa-user"></i>
-		        	&nbsp; 
+		        	&nbsp;
 		        </h4>
       		</div>
       		<div class="modal-body">
@@ -38,13 +38,6 @@
 					<br>
 					<div class="">
 						<label class="check">
-							Pertenece a otra unidad
-							<input name="unidad_id" value="1" type="checkbox" class="js-switch" data-switchery="true">
-						</label>
-					</div>
-					<br>
-					<div class="">
-						<label class="check">
 							Propietario con usuario
 							<input name="propietario" value="1" type="checkbox" class="js-switch" data-switchery="true">
 						</label>
@@ -68,13 +61,6 @@
 						<label class="check">
 							Lista vehículos
 							<input name="lista_vehiculos" value="1" type="checkbox" class="js-switch" data-switchery="true">
-						</label>
-					</div>
-					<br>
-					<div class="">
-						<label class="check">
-							Lista unidades
-							<input name="lista_unidades" value="1" type="checkbox" class="js-switch" data-switchery="false">
 						</label>
 					</div>
 					<br>

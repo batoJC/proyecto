@@ -27,8 +27,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('quejas:refresh');
-        // $schedule->command('mantenimientos:email');
+        $schedule->command('queue:work --queue=high,normal,low --tries=3')
+                  ->yearly();
+        $schedule->command('quejas:refresh');
+        $schedule->command('mantenimientos:email');
     }
 
     /**

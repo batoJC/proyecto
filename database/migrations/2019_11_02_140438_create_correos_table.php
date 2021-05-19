@@ -16,13 +16,13 @@ class CreateCorreosTable extends Migration
         Schema::create('correos', function (Blueprint $table) {
             $table->increments('id');
             $table->text('users');
-            $table->string('subject',300);
+            $table->string('subject',1000);
             $table->text('content');
             $table->string('file')->nullable();
 
             // Conjunto al que pertenece
             // *************************
-            $table->integer('conjunto_id')->unsigned();
+            $table->integer('conjunto_id')->unsigned()->nullable();
             $table->foreign('conjunto_id')->references('id')->on('conjuntos')->onDelete('cascade');
             $table->timestamps();
         });
