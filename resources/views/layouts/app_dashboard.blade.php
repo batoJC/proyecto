@@ -141,6 +141,13 @@
     <script src="{{ asset('build/js/custom.min.js') }}"></script>
     <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('js/dataTables.bootstrap.min.js') }}"></script>
+    <script >
+        $.ajaxSetup({
+				headers: {
+						'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+				}
+		});
+    </script>
     @yield('ajax_crud')
 </body>
 </html>

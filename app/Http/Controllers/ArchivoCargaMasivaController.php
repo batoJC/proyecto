@@ -228,7 +228,7 @@ class ArchivoCargaMasivaController extends Controller
 
         Excel::create('plantilla ' . ucfirst($tipoUnidadLabel), function ($excel) use ($tipoUnidadLabel, $propiedades, $listas) {
 
-            $excel->sheet("attributos " . $tipoUnidadLabel, function ($sheet) use ($propiedades) {
+            $excel->sheet("atributos " . $tipoUnidadLabel, function ($sheet) use ($propiedades) {
                 $sheet->fromArray($propiedades, NULL, 'A1');
             });
 

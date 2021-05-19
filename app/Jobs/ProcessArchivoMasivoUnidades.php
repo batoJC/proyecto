@@ -132,15 +132,15 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             $this->archivoMasivo->save();
             $error = substr($th->getMessage(), 0, self::LETRAS_ERROR);
             Log::channel('slack')->critical("Ocurrió un error al realizar la carga masiva:
-            \n Email: {$this->archivoMasivo->usuario->email}
-            \nArchivo: {$this->archivoMasivo->nombre_archivo}
-            \Error: {$error}
-            \nConjunto: {$this->archivoMasivo->conjunto->nombre}");
+            Email: {$this->archivoMasivo->usuario->email}
+            Archivo: {$this->archivoMasivo->nombre_archivo}
+            Error: {$error}
+            Conjunto: {$this->archivoMasivo->conjunto->nombre}");
             Log::channel('daily')->critical("Ocurrió un error al realizar la carga masiva:
-            \n Email: {$this->archivoMasivo->usuario->email}
-            \nArchivo: {$this->archivoMasivo->nombre_archivo}
-            \nConjunto: {$this->archivoMasivo->conjunto->nombre}
-            \nError: {$th->getMessage()}");
+             Email: {$this->archivoMasivo->usuario->email}
+            Archivo: {$this->archivoMasivo->nombre_archivo}
+            Conjunto: {$this->archivoMasivo->conjunto->nombre}
+            Error: {$th->getMessage()}");
             $this->enviarEmailRespuesta("Ocurrió un error al procesar la carga masiva, si el error persiste pongase en contacto con nuestro soporte técnico");
         }
     }
@@ -624,6 +624,7 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             try {
                 $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso_propietario']]);
             } catch (\Throwable $th) {
+                $unidad->delete();
                 if (str_contains($th->getMessage(), "Invalid datetime format")) {
                     $descripcion = "Problema con el formato de la fecha de ingreso de la unidad. Unidad: " . $unidad->numero_letra;
                 } else {

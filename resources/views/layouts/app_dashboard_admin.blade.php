@@ -674,7 +674,6 @@
     {{-- <script src="../vendors/switchery/dist/switchery.min.js"></script> --}}
     @yield('calendar')
     <script >
-        console.log("test");
         $.ajaxSetup({
 				headers: {
 						'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
