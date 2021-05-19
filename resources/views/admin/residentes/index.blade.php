@@ -67,11 +67,7 @@
 @section('ajax_crud')
 	<script>
 
-		$.ajaxSetup({
-				headers: {
-						'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-				}
-		});
+
 
 		var actualizarTabla = (data,callback,settings) => {
             $.ajax({
