@@ -13,10 +13,10 @@
 		</div>
 		<div class="col-1 col md-1 text-right">
 			<div class="btn-group">
-				<i  data-placement="left" 
-					title="Ayuda" 
-					data-toggle="dropdown" 
-					type="button" 
+				<i  data-placement="left"
+					title="Ayuda"
+					data-toggle="dropdown"
+					type="button"
 					aria-expanded="false"
 					class="fa blue fa-question-circle-o ayuda">
 				</i>
@@ -32,15 +32,15 @@
 		<i class="fa fa-plus"></i>
 		Agregar Residente
 	</a>
-	
+
 	<a class="btn btn-warning" onclick="exportForm()">
 		<i class="fa fa-download"></i>
 		Exportar lista de residentes
 	</a>
-	
+
 	@include('admin.unidades.modalInfo')
-	
-	
+
+
 	@include('admin.residentes.form')
 	<br><br>
 	<table id="residentes-table" class="table table-stripped">
@@ -62,10 +62,16 @@
 	</table>
 </div>
 
-	
+
 @endsection
 @section('ajax_crud')
 	<script>
+
+		$.ajaxSetup({
+				headers: {
+						'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+				}
+		});
 
 		var actualizarTabla = (data,callback,settings) => {
             $.ajax({
@@ -83,7 +89,7 @@
                 }
             });
         }
-        
+
         // Listar los registros
 		// *************************************
 		var table  = $('#residentes-table').DataTable({
@@ -128,7 +134,7 @@
 		});
 
 
-		// mostrar modal para agregar 
+		// mostrar modal para agregar
         // ---------------
         function addForm(){
             save_method = "add";
@@ -138,15 +144,15 @@
             $('.modal-title').text('Agregar Residente');
             $('#send_form').attr('type', 'button');
 		}
-		
+
 		// mostrar modal para listar residentes
-		
+
 		function exportForm(){
             $('#exportarResidentes').modal('show');
             $('#exportarResidentes form')[0].reset();
 		}
 
-		//Enviar al servidor para guardar 
+		//Enviar al servidor para guardar
 		/*******************************/
 		function guardarResidente(){
 			if(verificarFormulario('dataResidente',5)){
@@ -162,7 +168,7 @@
 							$('#residentes').modal('hide');
 						});
 					}else{
-						swal('Error!',res.msg,'error');	
+						swal('Error!',res.msg,'error');
 					}
 				}).fail((res)=>{
 					swal('Error!','Ocurrió un error en el servidor','error');
