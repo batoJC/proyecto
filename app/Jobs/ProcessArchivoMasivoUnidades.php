@@ -79,8 +79,13 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
                         $unidadesAgregadas = $this->archivoMasivo->procesados;
                         $unidadesNoAgregadas = $this->archivoMasivo->fallos;
 
+                        if (get_class($data) == "Maatwebsite\Excel\Collections\RowCollection"){//when only have one sheet
+                            $aux = $data;
+                            $data = array( 0 => $aux);
+                        }
+
                         $i = $this->archivoMasivo->indice_unidad;
-                        for ($i; $i < $data[0]->count(); $i++) {
+                        for ($i; $i < count($data[0]); $i++) {
                             //hay que eliminar la unidad y todo lo que se creo si es que
                             //llega a fallar el proceso de acá en adelante
                             $unidad = $this->crearUnidad($i, $data[0][$i], $tipoUnidad, $this->archivoMasivo);
@@ -183,7 +188,7 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
 
     private function agregarListasPorUnidad($hojasExcel, $unidad, $indexLista, $error, $archivo)
     {
-        for ($i = 1; $i < $hojasExcel->count(); $i++) {
+        for ($i = 1; $i < count($hojasExcel); $i++) {
             $nombreHoja = $hojasExcel[$i]->getTitle();
             switch ($nombreHoja) {
                 case  "lista mascotas":
@@ -622,7 +627,10 @@ class ProcessArchivoMasivoUnidades implements ShouldQueue
             }
 
             try {
-                $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $data['fecha_ingreso_propietario']]);
+                $fecha = $data['fecha_ingreso_propietario'];
+                $fecha = str_replace("/", "-", $fecha);
+                $fecha = date("Y/m/d", strtotime($fecha));
+                $propietario->unidades()->attach($unidad, ['fecha_ingreso' => $fecha ]);
             } catch (\Throwable $th) {
                 $unidad->delete();
                 if (str_contains($th->getMessage(), "Invalid datetime format")) {
