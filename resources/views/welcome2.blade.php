@@ -19,7 +19,7 @@
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 
-<body class="container">
+<body class="container" onresize="changeConfig();">
     <!-- NAVBAR -->
     <nav id="nav_bar" class="blue-bar navbar">
         <img id="logo" class="logo" src="{{ asset('landing_resources/img/logo_blanco.svg') }}" alt="logo">
@@ -44,6 +44,7 @@
         <div class="section_1__banner">
             <h4 class="section_1__title_1">¿Qué esperas para conocernos?</h4>
             <h1 class="section_1__title_2">¡Hola! Somos <span class="text_blue_primary">Gestión Copropietario</span></h1>
+            <h4 class="section_1__title_3">¿Qué esperas para conocernos?</h4>
         </div>
         <a href="#section_2" class="section_1__action animate__animated animate__bounce animate__repeat-3">
             <svg class="section_1__icon">
@@ -193,37 +194,37 @@
             <div id="person_1" class="card">
                 <img class="card__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="person">
                 <h3 class="text_blue_secondary">William Henao</h3>
-                <p>Abogado</p>
+                <p>Abogado 1</p>
             </div>
             <div id="person_2" class="card">
                 <img class="card__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="person">
                 <h3 class="text_blue_secondary">William Henao</h3>
-                <p>Abogado</p>
+                <p>Abogado 2</p>
             </div>
             <div id="person_3" class="card">
                 <img class="card__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="person">
                 <h3 class="text_blue_secondary">William Henao</h3>
-                <p>Abogado</p>
+                <p>Abogado 3</p>
             </div>
             <div id="person_4" class="card">
                 <img class="card__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="person">
                 <h3 class="text_blue_secondary">William Henao</h3>
-                <p>Abogado</p>
+                <p>Abogado 4</p>
             </div>
             <div id="person_5" class="card">
                 <img class="card__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="person">
                 <h3 class="text_blue_secondary">William Henao</h3>
-                <p>Abogado</p>
+                <p>Abogado 5</p>
             </div>
             <div id="person_6" class="card">
                 <img class="card__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="person">
                 <h3 class="text_blue_secondary">William Henao</h3>
-                <p>Abogado</p>
+                <p>Abogado 6</p>
             </div>
             <div id="person_7" class="card">
                 <img class="card__image" src="{{ asset('landing_resources/img/person.jpg') }}" alt="person">
                 <h3 class="text_blue_secondary">William Henao</h3>
-                <p>Abogado</p>
+                <p>Abogado 7</p>
             </div>
         </div>
         <div class="section_5__arrow_right">
@@ -239,7 +240,7 @@
             <img src="{{ asset('landing_resources/img/logo_blanco.svg') }}" alt="" class="section_6__logo">
             <br> <br>
         </div>
-        <div style="display: flex; width: 100%;">
+        <div class="section_6__content">
             <div class="section_6__column_1">
                 <h4>Información de Contacto</h4>
                 <br>
